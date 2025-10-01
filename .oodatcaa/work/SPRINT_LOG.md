@@ -86,8 +86,11 @@
 
 ## Heartbeats (Negotiator Status Checks)
 
-**2025-10-01T10:00Z** — Sprint 0 → Initializing  
+**2025-10-01T00:00Z** — Sprint 0 → Initializing  
 WIP: 0/6 agents | Sprint: none | Action: Launch Sprint Planner
+
+**2025-10-01T00:01Z** — Sprint 0 → Coordinating  
+WIP: 0/6 agents | Sprint: awaiting_planning | Objective: 0% | ❌ Need Sprint Planner launch
 
 **2025-10-01T10:30Z** — Sprint 1 → Planning  
 WIP: 1/6 (planner-A) | Tasks: 4 needs_plan | Sprint 1 created ✅

@@ -18,6 +18,7 @@
 
 **Timebox:** TBD by agents  
 **Status:** `awaiting_planning`  
+**Last Coordinator Check:** 2025-10-01T00:01Z  
 **Owner:** Negotiator (Coordinator)  
 **Objective Progress:** 0% toward completion
 
