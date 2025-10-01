@@ -2,7 +2,7 @@
 
 > **This file is managed by agents.** The Negotiator assigns work to agents based on capacity and priorities.
 
-**Status:** Awaiting first sprint — Launch the Negotiator to begin!
+**Status:** Negotiator active — Sprint Planner launch triggered for Sprint 1
 
 ---
 
