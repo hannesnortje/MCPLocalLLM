@@ -1,0 +1,31 @@
+# Project Execution Rules (Repo-Local, Python)
+
+Commands (Python):
+- Format: `black .`
+- Lint: `ruff check .`
+- Types: `mypy .`
+- Unit: `pytest -q`
+- Integration: `pytest -q tests/acceptance` (or another folder)
+- Coverage: `pytest --cov=src --cov-report=term-missing --cov-fail-under=85`
+- Build (pkg): `python -m build`  
+- Security: `pip-audit` (and optionally `bandit -r src -ll`)
+
+Acceptance Criteria & Budgets (examples):
+- API p95 ≤ 200ms @ 100 RPS (local).
+- Parser p95 < 150ms on Apple M1 Max (local benchmark).
+- Coverage (changed files): lines ≥ 85%, branches ≥ 75% (enforced via fail-under & review).
+
+CI Gates (must pass before merge):
+- black --check, ruff, mypy, pytest (unit + acceptance), coverage ≥ threshold, build, pip-audit
+
+Background Worker Defaults:
+- WIP limits: builder=3, tester=2, integrator=1 (tune in `.oodatcaa/work/SPRINT_QUEUE.json`)
+- Lease TTLs: planner=30m, builder=90m, tester=45m, refiner=45m, integrator=30m
+- Heartbeat interval: 10m
+- Locks expire after 5m (may be broken with log note)
+
+Start-Over Gate (trigger when):
+- Fundamental ACs unmet after two Adapt loops
+- Architectural dead-end (Planner+Refiner agree)
+- Scope creep beyond sprint plan
+

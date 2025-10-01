@@ -1,0 +1,21 @@
+{
+  "name": "Cursor OODATCAA Python",
+  "image": "mcr.microsoft.com/devcontainers/python:3.11",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "postCreateCommand": "pip install -e .[dev] && pre-commit install",
+  "customizations": {
+    "vscode": {
+      "settings": { "editor.formatOnSave": true },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "ms-python.black-formatter"
+      ]
+    }
+  }
+}
+

@@ -1,0 +1,89 @@
+[build-system]
+requires = ["setuptools>=69", "wheel", "build"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mdnotes"
+version = "0.1.0"
+description = "CLI tool for managing and searching Markdown notes"
+readme = "README.md"
+authors = [{ name = "Your Name", email = "you@example.com" }]
+requires-python = ">=3.11"
+keywords = ["markdown", "notes", "cli", "knowledge-management", "search"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Text Processing :: Markup",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "click>=8.1.0",
+    "rich>=13.0.0",
+    "whoosh>=2.7.4",
+]
+
+[project.scripts]
+mdnotes = "mdnotes.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/mdnotes"
+Repository = "https://github.com/yourusername/mdnotes"
+
+[project.optional-dependencies]
+dev = [
+  "black>=24.0.0",
+  "ruff>=0.5.0",
+  "mypy>=1.8.0",
+  "pytest>=8.0.0",
+  "pytest-cov>=4.1.0",
+  "pip-audit>=2.7.0",
+  "bandit>=1.7.7",
+  "build>=1.2.1",
+  "types-setuptools"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+extend-select = [
+  "F",  # pyflakes
+  "E", "W",  # pycodestyle
+  "I",       # isort imports
+  "B",       # flake8-bugbear
+  "UP",      # pyupgrade
+  "S",       # bandit (security checks)
+]
+ignore = ["S101"]  # assert used in tests
+
+[tool.ruff.lint.isort]
+known-first-party = ["mdnotes"]
+
+[tool.mypy]
+python_version = "3.11"
+packages = ["mdnotes"]
+strict = true
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+exclude = ["tests/"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["src"]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 85
+

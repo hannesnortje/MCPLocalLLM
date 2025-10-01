@@ -1,0 +1,5 @@
+line-length = 100
+src = ["src", "tests"]
+extend-select = ["F", "E", "W", "I", "B", "UP", "S"]
+ignore = ["S101"]
+

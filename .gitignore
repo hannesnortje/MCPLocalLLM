@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.build/
+.dist/
+.venv/
+.env
+
+# Test & coverage
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Logs
+*.log
+
+# Project
+.leases/
+.locks/
+
+# OODATCAA working files (optional - uncomment to ignore sprint work logs)
+# .oodatcaa/work/*.md
+# .oodatcaa/work/*.json
+
