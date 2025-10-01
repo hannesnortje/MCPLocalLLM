@@ -2,12 +2,18 @@
 
 > **This file tracks sprint summaries and key decisions.** Updated by Negotiator and Sprint Planner.
 
-**Status:** No sprints yet — Launch the Negotiator to begin!
+**Status:** System initialized — Sprint Planner launch required!
 
 ---
 
 ## Current Sprint
-*No active sprint. Waiting for Sprint Planner to generate Sprint 1.*
+*No active sprint. Sprint Planner needs to generate Sprint 1 from OBJECTIVE.md.*
+
+## Heartbeats (Negotiator Status Checks)
+
+**2025-10-01T00:00Z** — System Start → No Sprint Exists  
+WIP: 0/6 agents | Sprint: none | Tasks: 0 | Action: Launch Sprint Planner  
+Objective progress: 0% → Awaiting first sprint planning
 
 ---
 
