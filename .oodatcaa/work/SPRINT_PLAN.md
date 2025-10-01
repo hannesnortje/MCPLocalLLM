@@ -2,13 +2,14 @@
 
 > **This file is managed by agents.** The Negotiator assigns work to agents based on capacity and priorities.
 
-**Status:** Awaiting first sprint — Launch the Negotiator to begin!
+**Status:** Sprint planning triggered — Launch Sprint Planner to generate Sprint 1
 
 ---
 
 ## Current Sprint Assignments
 
-*No sprint active yet. Once Sprint Planner creates Sprint 1, assignments will appear here.*
+*Sprint Planner needed to create Sprint 1 based on OBJECTIVE.md*
+*Once sprint is created, work assignments will appear here.*
 
 ---
 
