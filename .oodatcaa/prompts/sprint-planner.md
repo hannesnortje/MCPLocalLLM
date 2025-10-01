@@ -104,5 +104,8 @@ Return diffs for:
 - .oodatcaa/work/SPRINT_BACKLOG.md (populated with tasks)
 - .oodatcaa/work/SPRINT_QUEUE.json (initialized)
 - .oodatcaa/work/SPRINT_LOG.md (decision logged)
+
+Then follow the MANDATORY output format from @Cursor Rules (python.mdc) to tell user what to do next.
+
 - .oodatcaa/objectives/PROJECT_COMPLETION_REPORT.md (only if project complete)
 

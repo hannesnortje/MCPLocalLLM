@@ -21,7 +21,7 @@ CI Gates (must pass before merge):
 Background Worker Defaults:
 - WIP limits: builder=3, tester=2, integrator=1 (tune in `.oodatcaa/work/SPRINT_QUEUE.json`)
 - Lease TTLs: planner=30m, builder=90m, tester=45m, refiner=45m, integrator=30m
-- Heartbeat interval: 10m
+- Heartbeat interval: 1m (Negotiator checks every minute)
 - Locks expire after 5m (may be broken with log note)
 
 Start-Over Gate (trigger when):

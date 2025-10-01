@@ -132,7 +132,7 @@ YOU: Launch Builder-B (background) with OWNER_TAG: agent-builder-B
 ## 🎯 Agent Lifecycle Management
 
 ### Always Running (Background)
-- **Negotiator** — Coordination loop (runs every 15-30 min)
+- **Negotiator** — Coordination loop (runs every 5 min)
 
 ### Launch on Demand (Background)
 These agents should run continuously once launched:

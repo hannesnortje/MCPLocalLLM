@@ -32,3 +32,38 @@ Start-Over Gate (trigger when):
 - Architectural dead-end (Planner+Refiner agree)
 - Scope creep beyond sprint plan
 
+---
+
+## CRITICAL: Agent Output Format (MANDATORY)
+
+**EVERY agent response MUST end with this exact format:**
+
+```markdown
+---
+
+## 🎯 NEXT ACTION REQUIRED
+
+**LAUNCH AGENT: <Agent Name>**
+
+**COPY-PASTE THIS COMMAND:**
+```
+Load @Cursor Rules and @Project Rules. 
+Run .oodatcaa/prompts/<exact-filename>.md exactly.
+```
+
+**Run as:** [Background | Once (not in background)]
+
+**Why:** <Brief explanation>
+
+**What it will do:** <Expected outcome>
+```
+
+**Agent filename examples:**
+- Sprint Planner → `sprint-planner.md`
+- Planner (for task details) → `planner.md`
+- Builder → `builder.md`
+- Tester → `tester.md`
+- Negotiator → `negotiator.md`
+
+**NEVER output generic instructions - always provide the exact, copy-pasteable command block above.**
+

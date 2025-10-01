@@ -73,16 +73,6 @@ Autonomously coordinate all agents, manage sprint lifecycle, and ensure progress
 ```markdown
 ## Coordination Status — Sprint N
 
-### Actions Needed (if any):
-[If agents need to be launched, provide clear instructions]
-
-⚠️ LAUNCH AGENT: <Role>
-- Reason: <why this agent is needed>
-- Command: Load @Cursor Rules and @Project Rules. 
-           Run .oodatcaa/prompts/<role>.md exactly.
-- Run: [In background | Once (not background)]
-- OWNER_TAG: <if multiple instances needed>
-
 ### Current State:
 - Sprint: <N> - <Goal> - <status>
 - Objective progress: <X>%
@@ -97,6 +87,29 @@ Autonomously coordinate all agents, manage sprint lifecycle, and ensure progress
 - ❌ <AC-3>: Not started
 ```
 
+Then you MUST end your response with the MANDATORY output format from @Cursor Rules (python.mdc):
+
+```markdown
+---
+
+## 🎯 NEXT ACTION REQUIRED
+
+**LAUNCH AGENT: <Agent Name>**
+
+**COPY-PASTE THIS COMMAND:**
+```
+Load @Cursor Rules and @Project Rules. 
+Run .oodatcaa/prompts/<filename>.md exactly.
+```
+
+**Run as:** [Background | Once (not in background)]
+
+**Why:** <explanation>
+**What it will do:** <expected outcome>
+```
+
+DO NOT output the old format. You MUST use the exact format above with the copy-paste code block
+
 ### File Diffs
 Return diffs for:
 - .oodatcaa/work/SPRINT_QUEUE.json (task status updates)
@@ -106,5 +119,5 @@ Return diffs for:
 
 ---
 
-**Note:** This agent should run continuously in background (every 15-30 minutes) to maintain coordination.
+**Note:** This agent should run continuously in background with **1-minute heartbeat interval** to maintain responsive coordination and quickly detect state changes.
 

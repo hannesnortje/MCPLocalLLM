@@ -1,16 +1,15 @@
-# Test Plan: W123 (Python)
-## Commands
-black --check .
-ruff check .
-mypy .
-pytest -q
-pytest -q tests/acceptance
-pytest --cov=src --cov-report=term-missing --cov-fail-under=85
-python -m build
-pip-audit
-# optional: bandit -r src -ll
+# Test Plan (AGENT-GENERATED)
 
-## Acceptance Tests
-- tests/acceptance/test_grammar_x.py::test_tokens_ABC
-- tests/perf/test_parse_bench.py::test_parse_1k_lines_p95_lt_150ms
+> **This file contains test strategies and validation criteria.** Updated by Tester agents.
 
+**Status:** No test plan yet — Launch the Negotiator to begin!
+
+---
+
+## Current Sprint Test Plan
+*No test plan yet. Waiting for Tester agent to create validation strategies.*
+
+---
+
+## Test Format
+Each test plan should include: test scenarios, acceptance criteria, validation steps, performance benchmarks.

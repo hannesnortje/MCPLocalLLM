@@ -37,3 +37,5 @@ Protocol:
 
 Return diffs for: .oodatcaa/work/AGENT_PLAN.md, .oodatcaa/work/TEST_PLAN.md, .oodatcaa/work/SPRINT_QUEUE.json, .oodatcaa/work/SPRINT_PLAN.md, .oodatcaa/work/AGENT_LOG.md.
 
+10) At the end, follow the MANDATORY output format from @Cursor Rules (python.mdc) to tell user what to do next.
+
