@@ -87,7 +87,28 @@ Autonomously coordinate all agents, manage sprint lifecycle, and ensure progress
 - ❌ <AC-3>: Not started
 ```
 
-Then you MUST end your response with the MANDATORY output format from @Cursor Rules (python.mdc):
+Then you MUST end your response with the MANDATORY output format from @Cursor Rules (python.mdc).
+
+**For multiple ready tasks:** Provide commands for each agent with unique OWNER_TAGs:
+- First agent: No OWNER_TAG needed
+- Second agent: Add `OWNER_TAG: builder-B` as first line
+- Third agent: Add `OWNER_TAG: builder-C` as first line
+
+Example for 2 builders:
+```
+Builder #1:
+```
+Load @Cursor Rules and @Project Rules. 
+Run .oodatcaa/prompts/builder.md exactly.
+```
+
+Builder #2 (optional, for parallel work):
+```
+OWNER_TAG: builder-B
+Load @Cursor Rules and @Project Rules. 
+Run .oodatcaa/prompts/builder.md exactly.
+```
+```
 
 ```markdown
 ---
@@ -119,5 +140,14 @@ Return diffs for:
 
 ---
 
-**Note:** This agent should run continuously in background with **1-minute heartbeat interval** to maintain responsive coordination and quickly detect state changes.
+## Background Mode Operation
+
+When running in background:
+- Re-read ALL coordination files at the START of each cycle (don't use cached data)
+- Check for state changes (sprint status, task statuses, file timestamps)
+- If state has changed since last check: Execute full coordination cycle and output instructions
+- If no changes: Output brief status and wait
+- Heartbeat interval: Check every **30 seconds** for responsive coordination
+
+**Critical:** Always re-read files fresh - never use cached file contents!
 

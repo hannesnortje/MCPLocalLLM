@@ -8,7 +8,7 @@ All OODATCAA files have been reset to their initial state. The system is ready f
 
 ## 📋 Step-by-Step Instructions
 
-### **Step 1: Launch the Negotiator (Background Coordinator)**
+### **Step 1: Launch the Negotiator (Status Checker)**
 
 **PASTE THIS COMMAND in a NEW Cursor chat:**
 
@@ -19,9 +19,9 @@ CRITICAL: Follow the MANDATORY output format from @Cursor Rules.
 Return only file diffs.
 ```
 
-**IMPORTANT:** Click **"Run in Background"** ✨
+**Run as:** Once (not in background)
 
-**Note:** The Negotiator will check the system every 1 minute and update you with next steps automatically.
+**Note:** Due to limitations with background agents, run the Negotiator **manually after each agent completes** to get the next action.
 
 ---
 

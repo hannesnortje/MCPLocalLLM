@@ -1,85 +1,13 @@
 {
-  "sprint": 1,
-  "status": "planning",
-  "wip_limits": {
-    "planner": 1,
-    "builder": 3,
-    "tester": 2,
-    "integrator": 1
+  "version": 1,
+  "updated_at": "2025-10-01T00:00:00Z",
+  "wip_limits": { 
+    "planner": 1, 
+    "builder": 3, 
+    "tester": 2, 
+    "refiner": 1, 
+    "integrator": 1 
   },
-  "tasks": [
-    {
-      "id": "W001",
-      "title": "MCP Server File Migration",
-      "status": "needs_plan",
-      "priority": 0,
-      "assigned_to": null,
-      "lease": null
-    },
-    {
-      "id": "W002",
-      "title": "Dependency Consolidation",
-      "status": "needs_plan",
-      "priority": 0,
-      "assigned_to": null,
-      "lease": null
-    },
-    {
-      "id": "W003",
-      "title": "Package Renaming & Cleanup",
-      "status": "needs_plan",
-      "priority": 1,
-      "assigned_to": null,
-      "lease": null
-    },
-    {
-      "id": "W004",
-      "title": "Core Functionality Verification",
-      "status": "needs_plan",
-      "priority": 1,
-      "assigned_to": null,
-      "lease": null
-    },
-    {
-      "id": "W005",
-      "title": "MCP Protocol Communication",
-      "status": "needs_plan",
-      "priority": 1,
-      "assigned_to": null,
-      "lease": null
-    },
-    {
-      "id": "W006",
-      "title": "Quality Gates Setup",
-      "status": "needs_plan",
-      "priority": 1,
-      "assigned_to": null,
-      "lease": null
-    },
-    {
-      "id": "W007",
-      "title": "Documentation Foundation",
-      "status": "needs_plan",
-      "priority": 2,
-      "assigned_to": null,
-      "lease": null
-    },
-    {
-      "id": "W008",
-      "title": "Qdrant Vector Database Setup",
-      "status": "needs_plan",
-      "priority": 2,
-      "assigned_to": null,
-      "lease": null
-    }
-  ],
-  "lease_ttls": {
-    "planner": "30m",
-    "builder": "90m",
-    "tester": "45m",
-    "refiner": "45m",
-    "integrator": "30m"
-  },
-  "heartbeat_interval": "10m",
-  "lock_timeout": "5m"
+  "tasks": [],
+  "comment": "This file will be populated by agents when Sprint Planner creates the first sprint. Launch the Negotiator to begin!"
 }
