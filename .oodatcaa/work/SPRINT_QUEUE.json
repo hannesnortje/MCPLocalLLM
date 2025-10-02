@@ -471,10 +471,15 @@
       "title": "W006 Steps 4-6: Policy Tests + Regression Validation + Quality Gates",
       "type": "Implementation",
       "complexity": "S",
-      "status": "awaiting_test",
+      "status": "integrating",
       "priority": 6,
-      "agent": "builder",
-      "lease": null,
+      "agent": "integrator",
+      "lease": {
+        "agent": "integrator",
+        "acquired": "2025-10-03T14:55:00+00:00",
+        "ttl": 30,
+        "last_heartbeat": "2025-10-03T14:55:00+00:00"
+      },
       "dependencies": ["W006-B01"],
       "objective": "OBJ-2025-002",
       "sprint": "1",
@@ -483,7 +488,9 @@
       "branch": "feat/W006-step-01-integration-tests",
       "completed_at": "2025-10-03T14:15:00+00:00",
       "commit": "aca31e3",
-      "notes": "Builder completed Steps 4-6: Policy tests (4 tests), regression validation (13 passed, 0 failed), quality gates (black, ruff, build all pass). All tests pass, zero regressions."
+      "notes": "Builder completed Steps 4-6: Policy tests (4 tests), regression validation (13 passed, 0 failed), quality gates (black, ruff, build all pass). All tests pass, zero regressions. Ready for Tester validation.",
+      "test_result": "9/10 ACs PASS (90% success). All critical ACs pass: AC3 (4 policy tests), AC4 (zero regressions), AC5-7 (organization, performance, quality gates), AC9-10 (isolation, docs). AC8 (coverage) optional. 13/16 tests pass (3 skip expected). Performance 19.92s/18.32s < 30s. Zero issues found. APPROVED for integration.",
+      "test_completed_at": "2025-10-03T14:50:00+00:00"
     },
     {
       "id": "W006-T01",
@@ -530,13 +537,13 @@
   ],
                            "metadata": {
                              "created": "2025-10-01T00:00:00Z",
-                             "updated": "2025-10-03T14:30:00+00:00",
+                             "updated": "2025-10-03T14:55:00+00:00",
                              "sprint_goal": "MCP Server Foundation - Migrate and integrate MCP infrastructure",
                              "total_tasks": 31,
                              "story_tasks": 8,
                              "builder_tasks": 17,
                              "tester_tasks": 6,
-                             "completed_tasks": 26,
+                             "completed_tasks": 27,
                              "ready_tasks": 0,
                              "blocked_tasks": 1,
                              "in_progress_tasks": 1,
@@ -549,7 +556,7 @@
                              "adapting_tasks": 0,
                              "adapted_tasks": 2,
                              "ready_for_integrator_tasks": 0,
-                             "integrating_tasks": 0,
+                             "integrating_tasks": 1,
                              "done_tasks": 26
                            }
 }
