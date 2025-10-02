@@ -7,10 +7,7 @@ import json
 import sys
 from typing import Any
 
-try:
-    from .server_config import MCP_PROTOCOL_VERSION, MCP_SERVER_INFO, get_logger
-except ImportError:
-    from server_config import MCP_PROTOCOL_VERSION, MCP_SERVER_INFO, get_logger
+from .server_config import MCP_PROTOCOL_VERSION, MCP_SERVER_INFO, get_logger
 
 logger = get_logger("mcp-protocol")
 
@@ -18,16 +15,18 @@ logger = get_logger("mcp-protocol")
 class MCPProtocolHandler:
     """Handles MCP protocol communication and message routing."""
 
-    def __init__(self, server_instance):
+    def __init__(self, server_instance: Any) -> None:
         """Initialize with a server instance to delegate to."""
         self.server = server_instance
 
     @staticmethod
     def send_response(
-        request_id: str | None, result: dict[str, Any] = None, error: dict[str, Any] = None
-    ):
+        request_id: str | None,
+        result: dict[str, Any] | None = None,
+        error: dict[str, Any] | None = None,
+    ) -> None:
         """Send a response back to the MCP client."""
-        response = {"jsonrpc": "2.0", "id": request_id}
+        response: dict[str, Any] = {"jsonrpc": "2.0", "id": request_id}
 
         if error:
             response["error"] = error
@@ -37,9 +36,9 @@ class MCPProtocolHandler:
         print(json.dumps(response), flush=True)
 
     @staticmethod
-    def send_notification(method: str, params: dict[str, Any] = None):
+    def send_notification(method: str, params: dict[str, Any] | None = None) -> None:
         """Send a notification to the MCP client."""
-        notification = {"jsonrpc": "2.0", "method": method}
+        notification: dict[str, Any] = {"jsonrpc": "2.0", "method": method}
 
         if params:
             notification["params"] = params
