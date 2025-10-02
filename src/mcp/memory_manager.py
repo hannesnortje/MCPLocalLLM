@@ -13,8 +13,8 @@ from typing import Any
 
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
-from src.config import Config
 
+from .config import Config
 from .error_handler import retry_qdrant_operation
 from .generic_memory_service import GenericMemoryService
 

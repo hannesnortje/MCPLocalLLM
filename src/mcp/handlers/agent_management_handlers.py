@@ -126,7 +126,6 @@ class AgentManagementHandlers:
 
             # Determine overall status
             if errors:
-                status = "error"
                 status_icon = "❌"
                 status_text = "FAILED"
             else:

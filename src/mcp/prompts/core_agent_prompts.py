@@ -176,7 +176,7 @@ Your active memory layers: **{', '.join(layers)}**
 ```
 Use the memory tools to store information:
 - add_to_global_memory(content, title, memory_type)
-- add_to_learned_memory(content, title, memory_type) 
+- add_to_learned_memory(content, title, memory_type)
 - add_to_agent_memory(content, title, memory_type)
 ```
 

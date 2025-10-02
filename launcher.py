@@ -18,14 +18,14 @@ Usage:
     python launcher.py --with-ui         # Force launch both server and UI
 """
 
-import sys
 import argparse
-import subprocess
+import logging
 import signal
+import subprocess
+import sys
 import time
 from pathlib import Path
-from typing import Optional, Any
-import logging
+from typing import Any
 
 # Add project root to path first, then import
 project_root = Path(__file__).parent
@@ -33,10 +33,10 @@ sys.path.insert(0, str(project_root / "src"))
 
 # Now import after path is set
 from src.ui_config import (  # noqa: E402
-    get_config,
-    update_ui_launch_mode,
     UILaunchMode,
+    get_config,
     should_launch_ui,
+    update_ui_launch_mode,
 )
 
 
@@ -45,8 +45,8 @@ class MCPLauncher:
 
     def __init__(self) -> None:
         self.config = get_config()
-        self.server_process: Optional[subprocess.Popen] = None
-        self.ui_process: Optional[subprocess.Popen] = None
+        self.server_process: subprocess.Popen | None = None
+        self.ui_process: subprocess.Popen | None = None
         self.qdrant_started_by_launcher = False
         self.logger = self._setup_logging()
 

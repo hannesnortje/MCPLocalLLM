@@ -131,7 +131,7 @@ def _wait_for_qdrant_ready() -> bool:
     """Wait for Qdrant to be ready and responding."""
     logger.info("Waiting for Qdrant to be ready...")
 
-    for attempt in range(QDRANT_STARTUP_TIMEOUT):
+    for _attempt in range(QDRANT_STARTUP_TIMEOUT):
         time.sleep(1)
         if is_qdrant_running():
             logger.info("✅ Qdrant is ready!")

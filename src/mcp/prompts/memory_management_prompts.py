@@ -834,7 +834,7 @@ After: ```javascript
 def analyze_content(content, file_path=None):
     indicators = {
         'global': count_global_indicators(content),
-        'learned': count_learned_indicators(content), 
+        'learned': count_learned_indicators(content),
         'agent': count_agent_indicators(content)
     }
     return indicators

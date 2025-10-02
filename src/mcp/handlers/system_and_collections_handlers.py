@@ -175,7 +175,7 @@ class SystemAndCollectionsHandlers:
                 }
 
             # Use the GenericMemoryService to create the collection
-            result = await self.memory_manager.generic_service.create_collection(
+            await self.memory_manager.generic_service.create_collection(
                 collection_name, description, metadata
             )
 

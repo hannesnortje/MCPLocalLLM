@@ -13,7 +13,11 @@ Protocol:
    - Quick fix: specify minimal patch; set task back to "ready" for Builder.
    - Start-Over Gate: reset to baseline tag `pre/<ticket>-<ISO8601>` (document), bump .oodatcaa/work/AGENT_PLAN.md version (v+1), adjust steps/ACs, write brief Post-Mortem.
 5) LOG + QUEUE: append decision+rationale to .oodatcaa/work/AGENT_LOG.md; update .oodatcaa/work/SPRINT_QUEUE.json.
-6) RELEASE lease.
+6) COMPLETION REPORT (REQUIRED):
+   - Create `.oodatcaa/work/reports/<TASK_ID>/refiner_<iteration>.md` using template at `.oodatcaa/templates/AGENT_REPORT_TEMPLATE.md`
+   - Include: objective, actions (quick fix or rollback decision), deliverables (fixed code or updated plan), metrics (errors before/after, fixes applied), challenges, solutions, handoff notes
+   - Append executive summary to `.oodatcaa/work/AGENT_REPORTS.md` with link to detailed report
+7) RELEASE lease.
 
-Return diffs: (if any) .oodatcaa/work/AGENT_PLAN.md, .oodatcaa/work/AGENT_LOG.md, .oodatcaa/work/SPRINT_QUEUE.json.
+Return diffs: (if any) .oodatcaa/work/AGENT_PLAN.md, .oodatcaa/work/AGENT_LOG.md, .oodatcaa/work/SPRINT_QUEUE.json + completion report.
 

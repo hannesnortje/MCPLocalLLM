@@ -12,7 +12,11 @@ Protocol:
 4) CI: ensure all gates pass in CI.
 5) MERGE: per policy (squash/rebase). Tag if applicable. Update CHANGELOG + docs.
 6) STATUS + LOG: set task "done"; add shipped entry to .oodatcaa/work/SPRINT_LOG.md (ticket, step, PR URL, tag).
-7) RELEASE lease.
+7) COMPLETION REPORT (REQUIRED):
+   - Create `.oodatcaa/work/reports/<TASK_ID>/integrator.md` using template at `.oodatcaa/templates/AGENT_REPORT_TEMPLATE.md`
+   - Include: objective, actions (PR creation, merge, tagging), deliverables (merged code, CHANGELOG, docs), metrics (commits merged, files changed, PR review time), challenges, solutions, impact (what unblocked)
+   - Append executive summary to `.oodatcaa/work/AGENT_REPORTS.md` with link to detailed report
+8) RELEASE lease.
 
-Return diffs: .oodatcaa/work/SPRINT_LOG.md + .oodatcaa/work/SPRINT_QUEUE.json.
+Return diffs: .oodatcaa/work/SPRINT_LOG.md + .oodatcaa/work/SPRINT_QUEUE.json + CHANGELOG (if updated) + completion report.
 

@@ -390,7 +390,7 @@ Exception Request:
 - **Communication Improvement:** Better compliance communication
 
 ---
-*Effective policy compliance requires understanding, commitment, and 
+*Effective policy compliance requires understanding, commitment, and
 continuous attention to both letter and spirit of policies*"""
 
         return {
@@ -410,7 +410,7 @@ continuous attention to both letter and spirit of policies*"""
 ## Immediate Response Protocol
 
 ### 1. Stop and Assess (STOP)
-- **Halt Current Operations:** Immediately cease activities that may 
+- **Halt Current Operations:** Immediately cease activities that may
   worsen the violation
 - **Secure the System:** Prevent further unauthorized access or exposure
 - **Document Initial State:** Capture current system state for analysis
@@ -612,7 +612,7 @@ Result: Root cause identification and corrective action plan
 - **System Resilience:** Build more resilient systems and processes
 
 ---
-*Effective violation recovery requires swift action, thorough analysis, 
+*Effective violation recovery requires swift action, thorough analysis,
 and commitment to preventing recurrence*"""
 
         return {
