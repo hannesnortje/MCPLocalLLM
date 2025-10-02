@@ -1,7 +1,7 @@
 """
 Prompt handler modules for MCP Memory Server.
 
-This package contains specialized prompt handler modules that were extracted 
+This package contains specialized prompt handler modules that were extracted
 from the original monolithic prompt_handlers.py file for better maintainability
 and separation of concerns.
 
@@ -18,8 +18,4 @@ from .core_agent_prompts import CoreAgentPrompts
 from .memory_management_prompts import MemoryManagementPrompts
 from .policy_compliance_prompts import PolicyCompliancePrompts
 
-__all__ = [
-    "CoreAgentPrompts",
-    "MemoryManagementPrompts", 
-    "PolicyCompliancePrompts"
-]
+__all__ = ["CoreAgentPrompts", "MemoryManagementPrompts", "PolicyCompliancePrompts"]

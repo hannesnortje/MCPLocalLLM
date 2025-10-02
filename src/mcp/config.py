@@ -24,9 +24,7 @@ class Config:
     DEFAULT_MEMORY_TYPE: str = "global"
     CHUNK_SIZE: int = int(os.getenv("CHUNK_SIZE", "1000"))
     CHUNK_OVERLAP: int = int(os.getenv("CHUNK_OVERLAP", "200"))
-    SIMILARITY_THRESHOLD: float = float(
-        os.getenv("SIMILARITY_THRESHOLD", "0.8")
-    )
+    SIMILARITY_THRESHOLD: float = float(os.getenv("SIMILARITY_THRESHOLD", "0.8"))
     MAX_RESULTS: int = int(os.getenv("MAX_RESULTS", "10"))
 
     # Collection Names
@@ -51,13 +49,11 @@ class Config:
         "Principles",
         "Forbidden Actions",
         "Required Sections",
-        "Style Guide"
+        "Style Guide",
     ]
 
     @classmethod
-    def get_collection_name(
-        cls, memory_type: str, agent_id: Optional[str] = None
-    ) -> str:
+    def get_collection_name(cls, memory_type: str, agent_id: Optional[str] = None) -> str:
         """Get the collection name for a specific memory type and agent."""
         if memory_type == "global":
             return cls.GLOBAL_MEMORY_COLLECTION

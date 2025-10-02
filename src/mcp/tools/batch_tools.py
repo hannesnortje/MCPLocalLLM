@@ -25,82 +25,60 @@ class BatchTools:
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "path": {
-                            "type": "string",
-                            "description": "File path to process"
-                        },
+                        "path": {"type": "string", "description": "File path to process"},
                         "memory_type": {
                             "type": "string",
                             "enum": ["global", "learned", "agent"],
-                            "description": (
-                                "Memory type (null for auto-suggestion)"
-                            )
+                            "description": ("Memory type (null for auto-suggestion)"),
                         },
                         "auto_suggest": {
                             "type": "boolean",
-                            "description": (
-                                "Auto-suggest memory type (default true)"
-                            )
+                            "description": ("Auto-suggest memory type (default true)"),
                         },
                         "agent_id": {
                             "type": "string",
-                            "description": (
-                                "Agent ID for agent-specific memory"
-                            )
-                        }
+                            "description": ("Agent ID for agent-specific memory"),
+                        },
                     },
-                    "required": ["path"]
-                }
+                    "required": ["path"],
+                },
             },
             {
                 "name": "batch_process_markdown_files",
                 "description": (
-                    "Process multiple markdown files with specific "
-                    "memory type assignments"
+                    "Process multiple markdown files with specific " "memory type assignments"
                 ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "file_assignments": {
                             "type": "array",
-                            "description": (
-                                "Array of file processing assignments"
-                            ),
+                            "description": ("Array of file processing assignments"),
                             "items": {
                                 "type": "object",
                                 "properties": {
-                                    "path": {
-                                        "type": "string",
-                                        "description": "File path"
-                                    },
+                                    "path": {"type": "string", "description": "File path"},
                                     "memory_type": {
                                         "type": "string",
                                         "enum": ["global", "learned", "agent"],
-                                        "description": (
-                                            "Memory type for this file"
-                                        )
+                                        "description": ("Memory type for this file"),
                                     },
                                     "agent_id": {
                                         "type": "string",
-                                        "description": (
-                                            "Agent ID if memory_type is agent"
-                                        )
-                                    }
+                                        "description": ("Agent ID if memory_type is agent"),
+                                    },
                                 },
-                                "required": ["path"]
-                            }
+                                "required": ["path"],
+                            },
                         },
                         "default_memory_type": {
                             "type": "string",
                             "enum": ["global", "learned", "agent"],
-                            "description": (
-                                "Default memory type for files "
-                                "without assignment"
-                            )
-                        }
+                            "description": ("Default memory type for files " "without assignment"),
+                        },
                     },
-                    "required": ["file_assignments"]
-                }
+                    "required": ["file_assignments"],
+                },
             },
             {
                 "name": "batch_process_directory",
@@ -113,34 +91,25 @@ class BatchTools:
                     "properties": {
                         "directory": {
                             "type": "string",
-                            "description": (
-                                "Directory to process "
-                                "(default current directory)"
-                            )
+                            "description": ("Directory to process " "(default current directory)"),
                         },
                         "memory_type": {
                             "type": "string",
                             "enum": ["global", "learned", "agent"],
                             "description": (
-                                "Memory type for all files "
-                                "(null for auto-suggestion)"
-                            )
+                                "Memory type for all files " "(null for auto-suggestion)"
+                            ),
                         },
                         "recursive": {
                             "type": "boolean",
-                            "description": (
-                                "Process subdirectories recursively "
-                                "(default true)"
-                            )
+                            "description": ("Process subdirectories recursively " "(default true)"),
                         },
                         "agent_id": {
                             "type": "string",
-                            "description": (
-                                "Agent ID for agent-specific memory"
-                            )
-                        }
+                            "description": ("Agent ID for agent-specific memory"),
+                        },
                     },
-                    "required": []
-                }
-            }
+                    "required": [],
+                },
+            },
         ]

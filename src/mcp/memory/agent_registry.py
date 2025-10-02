@@ -19,22 +19,22 @@ logger = logging.getLogger(__name__)
 
 class AgentRegistry:
     """Manager for agent registration and permissions."""
-    
+
     def __init__(self, client: QdrantClient, embedding_service):
         """Initialize agent registry with client and embedding service."""
         self.client = client
         self.embedding_service = embedding_service
-    
+
     def _agent_id_to_point_id(self, agent_id: str) -> str:
         """Convert agent ID to valid Qdrant point ID.
-        
+
         Qdrant requires point IDs to be either unsigned integers or UUIDs.
         This function converts any agent ID to a valid UUID using UUID5
         (deterministic namespace-based UUID).
-        
+
         Args:
             agent_id: The original agent ID (may have prefixes like 'dev-')
-            
+
         Returns:
             A valid UUID string that can be used as Qdrant point ID
         """
@@ -44,29 +44,29 @@ class AgentRegistry:
             return agent_id  # It's already a valid UUID
         except ValueError:
             pass
-        
+
         # Create a deterministic UUID5 based on the agent_id
         # Using a fixed namespace for consistency
-        namespace = uuid.UUID('6ba7b810-9dad-11d1-80b4-00c04fd430c8')
+        namespace = uuid.UUID("6ba7b810-9dad-11d1-80b4-00c04fd430c8")
         return str(uuid.uuid5(namespace, agent_id))
-    
+
     async def register_agent(
         self,
         agent_id: str,
         agent_role: str = "general",
         memory_layers: List[str] = None,
-        permissions: Dict[str, Any] = None
+        permissions: Dict[str, Any] = None,
     ) -> Dict[str, Any]:
         """Register a new agent in the agent registry."""
         try:
             if memory_layers is None:
                 memory_layers = ["global", "learned"]
-            
+
             if permissions is None:
                 permissions = {
                     "can_read": memory_layers,
                     "can_write": memory_layers,
-                    "can_admin": []
+                    "can_admin": [],
                 }
 
             agent_metadata = {
@@ -75,7 +75,7 @@ class AgentRegistry:
                 "memory_layers": memory_layers,
                 "permissions": permissions,
                 "created_at": datetime.now().isoformat(),
-                "status": "active"
+                "status": "active",
             }
 
             # Create embedding for searchability
@@ -84,63 +84,42 @@ class AgentRegistry:
 
             # Store in agent registry
             point = PointStruct(
-                id=self._agent_id_to_point_id(agent_id),
-                vector=embedding,
-                payload=agent_metadata
+                id=self._agent_id_to_point_id(agent_id), vector=embedding, payload=agent_metadata
             )
 
-            self.client.upsert(
-                collection_name=Config.AGENT_REGISTRY_COLLECTION,
-                points=[point]
-            )
+            self.client.upsert(collection_name=Config.AGENT_REGISTRY_COLLECTION, points=[point])
 
-            logger.info(
-                f"✅ Registered agent {agent_id} with role {agent_role}"
-            )
+            logger.info(f"✅ Registered agent {agent_id} with role {agent_role}")
             return {
                 "success": True,
                 "agent_id": agent_id,
-                "message": f"Agent {agent_id} registered successfully"
+                "message": f"Agent {agent_id} registered successfully",
             }
 
         except Exception as e:
             logger.error(f"❌ Failed to register agent {agent_id}: {e}")
-            return {
-                "success": False,
-                "error": f"Failed to register agent: {str(e)}"
-            }
+            return {"success": False, "error": f"Failed to register agent: {str(e)}"}
 
     async def get_agent(self, agent_id: str) -> Dict[str, Any]:
         """Get agent information from registry."""
         try:
             result = self.client.retrieve(
                 collection_name=Config.AGENT_REGISTRY_COLLECTION,
-                ids=[self._agent_id_to_point_id(agent_id)]
+                ids=[self._agent_id_to_point_id(agent_id)],
             )
 
             if result:
                 agent_data = result[0].payload
-                return {
-                    "success": True,
-                    "agent": agent_data
-                }
+                return {"success": True, "agent": agent_data}
             else:
-                return {
-                    "success": False,
-                    "error": f"Agent {agent_id} not found"
-                }
+                return {"success": False, "error": f"Agent {agent_id} not found"}
 
         except Exception as e:
             logger.error(f"❌ Failed to get agent {agent_id}: {e}")
-            return {
-                "success": False,
-                "error": f"Failed to get agent: {str(e)}"
-            }
+            return {"success": False, "error": f"Failed to get agent: {str(e)}"}
 
     async def update_agent_permissions(
-        self,
-        agent_id: str,
-        permissions: Dict[str, Any]
+        self, agent_id: str, permissions: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Update agent permissions."""
         try:
@@ -160,29 +139,21 @@ class AgentRegistry:
 
             # Update in registry
             point = PointStruct(
-                id=self._agent_id_to_point_id(agent_id),
-                vector=embedding,
-                payload=agent_data
+                id=self._agent_id_to_point_id(agent_id), vector=embedding, payload=agent_data
             )
 
-            self.client.upsert(
-                collection_name=Config.AGENT_REGISTRY_COLLECTION,
-                points=[point]
-            )
+            self.client.upsert(collection_name=Config.AGENT_REGISTRY_COLLECTION, points=[point])
 
             logger.info(f"✅ Updated permissions for agent {agent_id}")
             return {
                 "success": True,
                 "agent_id": agent_id,
-                "message": "Permissions updated successfully"
+                "message": "Permissions updated successfully",
             }
 
         except Exception as e:
             logger.error(f"❌ Failed to update agent permissions: {e}")
-            return {
-                "success": False,
-                "error": f"Failed to update permissions: {str(e)}"
-            }
+            return {"success": False, "error": f"Failed to update permissions: {str(e)}"}
 
     async def list_agents(self) -> Dict[str, Any]:
         """List all registered agents."""
@@ -191,7 +162,7 @@ class AgentRegistry:
             result = self.client.scroll(
                 collection_name=Config.AGENT_REGISTRY_COLLECTION,
                 limit=100,  # Adjust as needed
-                with_payload=True
+                with_payload=True,
             )
 
             agents = []
@@ -199,25 +170,13 @@ class AgentRegistry:
                 for point in result[0]:
                     agents.append(point.payload)
 
-            return {
-                "success": True,
-                "agents": agents,
-                "count": len(agents)
-            }
+            return {"success": True, "agents": agents, "count": len(agents)}
 
         except Exception as e:
             logger.error(f"❌ Failed to list agents: {e}")
-            return {
-                "success": False,
-                "error": f"Failed to list agents: {str(e)}"
-            }
+            return {"success": False, "error": f"Failed to list agents: {str(e)}"}
 
-    async def check_agent_permission(
-        self,
-        agent_id: str,
-        action: str,
-        memory_type: str
-    ) -> bool:
+    async def check_agent_permission(self, agent_id: str, action: str, memory_type: str) -> bool:
         """Check if agent has permission for a specific action."""
         try:
             agent_result = await self.get_agent(agent_id)
@@ -226,7 +185,7 @@ class AgentRegistry:
 
             permissions = agent_result["agent"].get("permissions", {})
             allowed_layers = permissions.get(f"can_{action}", [])
-            
+
             return memory_type in allowed_layers
 
         except Exception as e:
@@ -239,7 +198,7 @@ class AgentRegistry:
         action: str,
         context: Dict[str, Any],
         outcome: str,
-        store_as_learned: bool = False
+        store_as_learned: bool = False,
     ) -> Dict[str, Any]:
         """Log an agent action and optionally store as learned memory."""
         try:
@@ -248,7 +207,7 @@ class AgentRegistry:
                 "action": action,
                 "context": context,
                 "outcome": outcome,
-                "timestamp": datetime.now().isoformat()
+                "timestamp": datetime.now().isoformat(),
             }
 
             # Store as learned memory if requested
@@ -257,13 +216,12 @@ class AgentRegistry:
                     f"Agent {agent_id} performed {action}. "
                     f"Context: {context}. Outcome: {outcome}"
                 )
-                
+
                 # Use vector operations to store learned content
                 from .vector_operations import VectorOperations
-                vector_ops = VectorOperations(
-                    self.client, self.embedding_service
-                )
-                
+
+                vector_ops = VectorOperations(self.client, self.embedding_service)
+
                 await vector_ops.async_add_to_memory(
                     content=learned_content,
                     collection=Config.LEARNED_MEMORY_COLLECTION,
@@ -272,20 +230,17 @@ class AgentRegistry:
                         "pattern_type": "behavioral",
                         "agent_id": agent_id,
                         "action": action,
-                        **action_log
-                    }
+                        **action_log,
+                    },
                 )
 
             logger.info(f"📝 Logged action for agent {agent_id}: {action}")
             return {
                 "success": True,
                 "message": "Action logged successfully",
-                "stored_as_learned": store_as_learned
+                "stored_as_learned": store_as_learned,
             }
 
         except Exception as e:
             logger.error(f"❌ Failed to log action for {agent_id}: {e}")
-            return {
-                "success": False,
-                "error": f"Failed to log action: {str(e)}"
-            }
+            return {"success": False, "error": f"Failed to log action: {str(e)}"}

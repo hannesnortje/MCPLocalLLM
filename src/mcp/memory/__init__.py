@@ -14,14 +14,15 @@ try:
     from .collection_manager import CollectionManager
 
     __all__ = [
-        'VectorOperations',
-        'AgentRegistry',
-        'FileMetadataManager',
-        'EmbeddingService',
-        'CollectionManager'
+        "VectorOperations",
+        "AgentRegistry",
+        "FileMetadataManager",
+        "EmbeddingService",
+        "CollectionManager",
     ]
 except ImportError as e:
     # Handle import errors gracefully during development
     import logging
+
     logging.warning(f"Memory module import error: {e}")
     __all__ = []

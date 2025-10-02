@@ -24,5 +24,5 @@ __all__ = [
     "MarkdownProcessingHandlers",
     "AgentManagementHandlers",
     "PolicyAndGuidanceHandlers",
-    "SystemAndCollectionsHandlers"
+    "SystemAndCollectionsHandlers",
 ]

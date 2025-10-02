@@ -19,13 +19,8 @@ class SystemTools:
             {
                 "name": "system_health",
                 "description": (
-                    "Check system health and get diagnostic information "
-                    "about all components"
+                    "Check system health and get diagnostic information " "about all components"
                 ),
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {},
-                    "additionalProperties": False
-                }
+                "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
             }
         ]

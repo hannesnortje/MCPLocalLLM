@@ -14,6 +14,7 @@ except ImportError:
     def get_logger(name: str):
         return logging.getLogger(name)
 
+
 logger = get_logger("memory-management-prompts")
 
 
@@ -29,81 +30,57 @@ class MemoryManagementPrompts:
         return [
             {
                 "name": "agent_memory_usage_patterns",
-                "description": (
-                    "Best practices for agents using the memory system"
-                ),
-                "arguments": []
+                "description": ("Best practices for agents using the memory system"),
+                "arguments": [],
             },
             {
                 "name": "context_preservation_strategy",
-                "description": (
-                    "Strategies for maintaining context across sessions"
-                ),
-                "arguments": []
+                "description": ("Strategies for maintaining context across sessions"),
+                "arguments": [],
             },
             {
                 "name": "memory_query_optimization",
-                "description": (
-                    "Techniques for optimizing memory queries and retrieval"
-                ),
-                "arguments": []
+                "description": ("Techniques for optimizing memory queries and retrieval"),
+                "arguments": [],
             },
             {
                 "name": "markdown_optimization_rules",
-                "description": (
-                    "Guidelines for processing and storing markdown content"
-                ),
-                "arguments": []
+                "description": ("Guidelines for processing and storing markdown content"),
+                "arguments": [],
             },
             {
                 "name": "memory_type_selection_criteria",
-                "description": (
-                    "Criteria for selecting appropriate memory types"
-                ),
-                "arguments": []
+                "description": ("Criteria for selecting appropriate memory types"),
+                "arguments": [],
             },
             {
                 "name": "duplicate_detection_strategy",
-                "description": (
-                    "Strategies for detecting and handling duplicate content"
-                ),
-                "arguments": []
+                "description": ("Strategies for detecting and handling duplicate content"),
+                "arguments": [],
             },
             {
                 "name": "directory_processing_best_practices",
-                "description": (
-                    "Best practices for batch processing directories"
-                ),
-                "arguments": []
+                "description": ("Best practices for batch processing directories"),
+                "arguments": [],
             },
             {
                 "name": "memory_type_suggestion_guidelines",
-                "description": (
-                    "Guidelines for AI-powered memory type suggestions"
-                ),
-                "arguments": []
-            }
+                "description": ("Guidelines for AI-powered memory type suggestions"),
+                "arguments": [],
+            },
         ]
 
     def get_prompt(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Get a memory management prompt by name."""
         method_map = {
-            "agent_memory_usage_patterns": 
-                self._get_agent_memory_usage_patterns_prompt,
-            "context_preservation_strategy": 
-                self._get_context_preservation_strategy_prompt,
-            "memory_query_optimization": 
-                self._get_memory_query_optimization_prompt,
-            "markdown_optimization_rules": 
-                self._get_markdown_optimization_rules_prompt,
-            "memory_type_selection_criteria": 
-                self._get_memory_type_selection_criteria_prompt,
-            "duplicate_detection_strategy": 
-                self._get_duplicate_detection_strategy_prompt,
-            "directory_processing_best_practices": 
-                self._get_directory_processing_best_practices_prompt,
-            "memory_type_suggestion_guidelines": 
-                self._get_memory_type_suggestion_guidelines_prompt
+            "agent_memory_usage_patterns": self._get_agent_memory_usage_patterns_prompt,
+            "context_preservation_strategy": self._get_context_preservation_strategy_prompt,
+            "memory_query_optimization": self._get_memory_query_optimization_prompt,
+            "markdown_optimization_rules": self._get_markdown_optimization_rules_prompt,
+            "memory_type_selection_criteria": self._get_memory_type_selection_criteria_prompt,
+            "duplicate_detection_strategy": self._get_duplicate_detection_strategy_prompt,
+            "directory_processing_best_practices": self._get_directory_processing_best_practices_prompt,
+            "memory_type_suggestion_guidelines": self._get_memory_type_suggestion_guidelines_prompt,
         }
 
         if name in method_map:
@@ -111,12 +88,7 @@ class MemoryManagementPrompts:
         else:
             return {
                 "isError": True,
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"Unknown memory management prompt: {name}"
-                    }
-                ]
+                "content": [{"type": "text", "text": f"Unknown memory management prompt: {name}"}],
             }
 
     def _get_agent_memory_usage_patterns_prompt(self) -> Dict[str, Any]:
@@ -176,8 +148,8 @@ class MemoryManagementPrompts:
                 "name": "agent_memory_usage_patterns",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_context_preservation_strategy_prompt(self) -> Dict[str, Any]:
@@ -253,8 +225,8 @@ work, and enables agents to build on previous interactions effectively.
                 "name": "context_preservation_strategy",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_memory_query_optimization_prompt(self) -> Dict[str, Any]:
@@ -339,8 +311,8 @@ Specific Query: "Express.js JWT authentication implementation"
                 "name": "memory_query_optimization",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_markdown_optimization_rules_prompt(self) -> Dict[str, Any]:
@@ -442,8 +414,8 @@ After: ```javascript
                 "name": "markdown_optimization_rules",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_memory_type_selection_criteria_prompt(self) -> Dict[str, Any]:
@@ -571,8 +543,8 @@ After: ```javascript
                 "name": "memory_type_selection_criteria",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_duplicate_detection_strategy_prompt(self) -> Dict[str, Any]:
@@ -678,8 +650,8 @@ After: ```javascript
                 "name": "duplicate_detection_strategy",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_directory_processing_best_practices_prompt(self) -> Dict[str, Any]:
@@ -805,8 +777,8 @@ After: ```javascript
                 "name": "directory_processing_best_practices",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_memory_type_suggestion_guidelines_prompt(self) -> Dict[str, Any]:
@@ -971,6 +943,6 @@ def calculate_confidence(content_indicators, context_indicators):
                 "name": "memory_type_suggestion_guidelines",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }

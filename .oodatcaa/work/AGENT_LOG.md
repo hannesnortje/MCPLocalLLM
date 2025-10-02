@@ -469,6 +469,49 @@
 - Migration can proceed with high confidence (LOW risk, comprehensive checklist)
 
 **Status:** ✅ COMPLETE - W001 SHIPPED | **Sprint Progress:** 15% (1 of 8 stories complete)
+
+### 2025-10-02T10:30:00+02:00 | Planner | W002 Planning Complete
+**Action:** Created detailed implementation plan for W002 (Execute MCP Server Migration)  
+**Outcome:** AGENT_PLAN.md and TEST_PLAN.md completed
+- **Plan Version:** 1.0
+- **Implementation Steps:** 8 steps organized into 3 builder tasks (B01, B02, B03) + 1 tester task (T01)
+- **Migration Strategy:** Selective copy per W001 migration checklist (24 steps)
+- **Files to Copy:** 67 essential MCP files (src/mcp/, policy/, docs/mcp/, scripts/, infrastructure)
+- **Protected Areas:** `.oodatcaa/` and `src/mdnotes/` with verification steps and rollback triggers
+- **Key Approach:**
+  - **Step 1-3 (W002-B01):** Pre-migration setup + baseline tag + copy core MCP files
+  - **Step 4-6 (W002-B02):** Config merge + critical verification + commit
+  - **Step 7-8 (W002-B03):** Post-migration validation + push
+- **Acceptance Criteria:** 10 ACs defined (7 functional + 3 non-functional)
+- **Risk Assessment:** LOW (per W001 analysis, comprehensive protection checks)
+- **Rollback Plan:** Baseline tag with 4 trigger conditions (OODATCAA modified, mdnotes modified, tests fail, file count deviation)
+- **Branch:** `feat/W002-step-01-copy-mcp-core`  
+**Rationale:** W001 analysis provides complete migration strategy with LOW risk. Selective copy approach minimizes conflicts. Critical protection checks prevent OODATCAA/mdnotes damage. Builder tasks sequenced for verification at each phase.  
+**Files Updated:**
+- `.oodatcaa/work/AGENT_PLAN.md` → Detailed 8-step implementation plan with 3 builder tasks
+- `.oodatcaa/work/TEST_PLAN.md` → Test strategy with 10 ACs and protection checks
+- `.oodatcaa/work/SPRINT_QUEUE.json` → Added W002-B01 (ready), W002-B02 (blocked), W002-B03 (blocked), W002-T01 (blocked)
+- `.oodatcaa/work/SPRINT_PLAN.md` → Updated with W002 implementation plan and next steps
+- `.oodatcaa/work/AGENT_LOG.md` → This entry  
+**Next Steps:** Negotiator should assign W002-B01 to Builder agent for execution of Steps 1-3 (pre-migration setup + baseline + copy core MCP files)
+
+### 2025-10-02T11:00:00+02:00 | Negotiator | Work Coordination Cycle
+**Action:** Phase 2 coordination - W002 execution begins  
+**Outcome:** W002-B01 activated for Builder agent  
+- **Task:** W002-B01 - Setup + Core Copy (Steps 1-3)
+- **Agent:** Builder (first MCP file copy task)
+- **Status:** ready → in_progress
+- **WIP Status:** builder 1/3, tester 0/2, planner 0/1, integrator 0/1
+- **Dependencies:** None (W001 complete provides full migration strategy)
+- **Remaining Ready:** 0 tasks
+- **Blocked:** W002-B02, W002-B03, W002-T01 (by dependency chain); W003-W008 (by W002 completion)  
+**Rationale:** W002 planning complete with detailed 8-step migration plan. W002-B01 will perform ACTUAL FILE COPYING of 67 essential MCP files from `/media/hannesn/storage/Code/MCP/` to this project. Critical protection checks in place for `.oodatcaa/` and `src/mdnotes/`. Rollback plan ready with baseline tag.  
+**Files Updated:**
+- `.oodatcaa/work/SPRINT_QUEUE.json` → W002 status → in_progress, W002-B01 status → in_progress, agent assigned, metadata updated
+- `.oodatcaa/work/SPRINT_PLAN.md` → W002-B01 assignment recorded
+- `.oodatcaa/work/AGENT_LOG.md` → This entry
+- `.oodatcaa/work/SPRINT_LOG.md` → Heartbeat added  
+**Next Steps:** Builder agent will execute W002-B01 per AGENT_PLAN.md (**THIS IS WHERE THE ACTUAL FILE COPYING HAPPENS**)
   
 ---
 

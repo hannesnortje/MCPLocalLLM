@@ -27,168 +27,134 @@ class CollectionTools:
                     "properties": {
                         "collection_name": {
                             "type": "string",
-                            "description": "Name of the collection to create"
+                            "description": "Name of the collection to create",
                         },
                         "description": {
                             "type": "string",
-                            "description": (
-                                "Description of the collection (optional)"
-                            )
+                            "description": ("Description of the collection (optional)"),
                         },
                         "metadata": {
                             "type": "object",
-                            "description": (
-                                "Additional metadata for the collection "
-                                "(optional)"
-                            )
-                        }
+                            "description": ("Additional metadata for the collection " "(optional)"),
+                        },
                     },
-                    "required": ["collection_name"]
-                }
+                    "required": ["collection_name"],
+                },
             },
             {
                 "name": "list_collections",
                 "description": (
-                    "List all available memory collections with their "
-                    "metadata and statistics"
+                    "List all available memory collections with their " "metadata and statistics"
                 ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "include_stats": {
                             "type": "boolean",
-                            "description": (
-                                "Include collection statistics "
-                                "(default true)"
-                            )
+                            "description": ("Include collection statistics " "(default true)"),
                         }
                     },
-                    "required": []
-                }
+                    "required": [],
+                },
             },
             {
                 "name": "add_to_collection",
                 "description": (
-                    "Add content to a specific memory collection with "
-                    "optional metadata"
+                    "Add content to a specific memory collection with " "optional metadata"
                 ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "collection_name": {
                             "type": "string",
-                            "description": (
-                                "Name of the collection to add content to"
-                            )
+                            "description": ("Name of the collection to add content to"),
                         },
                         "content": {
                             "type": "string",
-                            "description": "Content to add to the collection"
+                            "description": "Content to add to the collection",
                         },
                         "metadata": {
                             "type": "object",
-                            "description": (
-                                "Additional metadata for the content "
-                                "(optional)"
-                            )
+                            "description": ("Additional metadata for the content " "(optional)"),
                         },
                         "importance": {
                             "type": "number",
-                            "description": (
-                                "Importance score 0.0-1.0 "
-                                "(optional, default 0.5)"
-                            )
-                        }
+                            "description": ("Importance score 0.0-1.0 " "(optional, default 0.5)"),
+                        },
                     },
-                    "required": ["collection_name", "content"]
-                }
+                    "required": ["collection_name", "content"],
+                },
             },
             {
                 "name": "query_collection",
                 "description": (
-                    "Search and retrieve relevant information from a "
-                    "specific memory collection"
+                    "Search and retrieve relevant information from a " "specific memory collection"
                 ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "collection_name": {
                             "type": "string",
-                            "description": (
-                                "Name of the collection to query"
-                            )
+                            "description": ("Name of the collection to query"),
                         },
                         "query": {
                             "type": "string",
-                            "description": (
-                                "Search query to find relevant memories"
-                            )
+                            "description": ("Search query to find relevant memories"),
                         },
                         "limit": {
                             "type": "number",
-                            "description": (
-                                "Maximum number of results "
-                                "(optional, default 10)"
-                            )
+                            "description": ("Maximum number of results " "(optional, default 10)"),
                         },
                         "min_score": {
                             "type": "number",
                             "description": (
-                                "Minimum similarity score 0.0-1.0 "
-                                "(optional, default 0.3)"
-                            )
+                                "Minimum similarity score 0.0-1.0 " "(optional, default 0.3)"
+                            ),
                         },
                         "include_metadata": {
                             "type": "boolean",
                             "description": (
-                                "Include metadata in results "
-                                "(optional, default true)"
-                            )
-                        }
+                                "Include metadata in results " "(optional, default true)"
+                            ),
+                        },
                     },
-                    "required": ["collection_name", "query"]
-                }
+                    "required": ["collection_name", "query"],
+                },
             },
             {
                 "name": "delete_collection",
-                "description": (
-                    "Delete an entire memory collection and all its contents"
-                ),
+                "description": ("Delete an entire memory collection and all its contents"),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "collection_name": {
                             "type": "string",
-                            "description": "Name of the collection to delete"
+                            "description": "Name of the collection to delete",
                         },
                         "confirm": {
                             "type": "boolean",
                             "description": (
-                                "Confirmation flag required for deletion "
-                                "(must be true)"
-                            )
-                        }
+                                "Confirmation flag required for deletion " "(must be true)"
+                            ),
+                        },
                     },
-                    "required": ["collection_name", "confirm"]
-                }
+                    "required": ["collection_name", "confirm"],
+                },
             },
             {
                 "name": "get_collection_stats",
                 "description": (
-                    "Get detailed statistics and information about a "
-                    "specific memory collection"
+                    "Get detailed statistics and information about a " "specific memory collection"
                 ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "collection_name": {
                             "type": "string",
-                            "description": (
-                                "Name of the collection to get stats for"
-                            )
+                            "description": ("Name of the collection to get stats for"),
                         }
                     },
-                    "required": ["collection_name"]
-                }
-            }
+                    "required": ["collection_name"],
+                },
+            },
         ]

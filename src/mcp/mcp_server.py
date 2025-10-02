@@ -21,6 +21,7 @@ logger = get_logger("mcp-server")
 # Import our memory manager
 try:
     from .memory_manager import QdrantMemoryManager
+
     MEMORY_AVAILABLE = True
     logger.info("Memory manager available")
 except ImportError as e:
@@ -30,20 +31,15 @@ except ImportError as e:
 
 class MemoryMCPServer:
     """MCP Server focused solely on memory management using Qdrant."""
-    
+
     def __init__(self, server_mode="full"):
         self.server_mode = server_mode
-        logger.info(
-            f"Starting Memory MCP Server in {server_mode.upper()} mode..."
-        )
-        
+        logger.info(f"Starting Memory MCP Server in {server_mode.upper()} mode...")
+
         # Ensure Qdrant is running before initializing memory manager
         if not ensure_qdrant_running():
-            logger.error(
-                "❌ Failed to start Qdrant. "
-                "Memory server will not function properly."
-            )
-        
+            logger.error("❌ Failed to start Qdrant. " "Memory server will not function properly.")
+
         if MEMORY_AVAILABLE:
             try:
                 self.memory_manager = QdrantMemoryManager()
@@ -53,12 +49,12 @@ class MemoryMCPServer:
                 self.memory_manager = None
         else:
             self.memory_manager = None
-        
+
         # Initialize handlers and monitors
         self.tool_handlers = ToolHandlers(self.memory_manager)
         self.resource_handlers = ResourceHandlers(self.memory_manager)
         self.health_monitor = SystemHealthMonitor(self.memory_manager)
-        
+
         # Conditionally initialize prompt handlers based on server mode
         if server_mode in ["full", "prompts-only"]:
             self.prompt_handlers = PromptHandlers(self.memory_manager)
@@ -66,7 +62,7 @@ class MemoryMCPServer:
         else:
             self.prompt_handlers = None
             logger.info("Prompt handlers disabled (tools-only mode)")
-        
+
         logger.info("Memory MCP Server initialized")
 
     def get_system_health(self) -> Dict[str, Any]:
@@ -79,9 +75,7 @@ class MemoryMCPServer:
             return []
         return MemoryToolDefinitions.get_all_tools()
 
-    async def handle_tool_call(
-        self, tool_name: str, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def handle_tool_call(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Handle a tool call and return the result."""
         return await self.tool_handlers.handle_tool_call(tool_name, arguments)
 
@@ -91,51 +85,36 @@ class MemoryMCPServer:
             return []
         return self.resource_handlers.list_resources()
 
-    async def handle_resource_read(
-        self, uri: str, params: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def handle_resource_read(self, uri: str, params: Dict[str, Any]) -> Dict[str, Any]:
         """Handle a resource read request."""
         try:
             # Read the resource with all parameters
             result = await self.resource_handlers.read_resource(uri, **params)
-            
-            if result.get('status') == 'error':
+
+            if result.get("status") == "error":
                 return {
                     "error": {
                         "code": -32603,
-                        "message": result.get('message', 'Resource read failed')
+                        "message": result.get("message", "Resource read failed"),
                     }
                 }
-            
+
             # Format successful response - MCP requires 'contents' array
-            resource_data = result.get('data', {})
-            
+            resource_data = result.get("data", {})
+
             # Convert the data to a properly formatted JSON string
             json_text = json.dumps(resource_data, indent=2, ensure_ascii=False)
-            
-            return {
-                "contents": [{
-                    "uri": uri,
-                    "mimeType": "application/json", 
-                    "text": json_text
-                }]
-            }
-            
+
+            return {"contents": [{"uri": uri, "mimeType": "application/json", "text": json_text}]}
+
         except Exception as e:
             logger.error(f"Error reading resource {uri}: {e}")
-            return {
-                "error": {
-                    "code": -32603,
-                    "message": f"Failed to read resource: {str(e)}"
-                }
-            }
+            return {"error": {"code": -32603, "message": f"Failed to read resource: {str(e)}"}}
 
     def get_available_prompts(self) -> List[Dict[str, Any]]:
         """Get list of available prompts."""
         # Return empty list in tools-only mode or if components not available
-        if (self.server_mode == "tools-only" or
-                not self.memory_manager or
-                not self.prompt_handlers):
+        if self.server_mode == "tools-only" or not self.memory_manager or not self.prompt_handlers:
             return []
         return self.prompt_handlers.list_prompts()
 
@@ -146,64 +125,54 @@ class MemoryMCPServer:
         # Return error in tools-only mode
         if self.server_mode == "tools-only" or not self.prompt_handlers:
             return {
-                "error": {
-                    "code": -32601,
-                    "message": "Prompts not available in tools-only mode"
-                }
+                "error": {"code": -32601, "message": "Prompts not available in tools-only mode"}
             }
-            
+
         try:
             # Get the prompt with arguments
             result = await self.prompt_handlers.get_prompt(name, arguments)
-            
-            if result.get('status') == 'error':
+
+            if result.get("status") == "error":
                 return {
-                    "error": {
-                        "code": -32603,
-                        "message": result.get('message', 'Prompt get failed')
-                    }
+                    "error": {"code": -32603, "message": result.get("message", "Prompt get failed")}
                 }
-            
+
             # Format successful response - trying simple text display approach
-            prompt_data = result.get('prompt', {})
-            guidance_text = prompt_data.get('content', '')
-            
+            prompt_data = result.get("prompt", {})
+            guidance_text = prompt_data.get("content", "")
+
             # Try formatting as pure reference content, not a request
             return {
-                "description": prompt_data.get('name', name),
+                "description": prompt_data.get("name", name),
                 "messages": [
                     {
                         "role": "assistant",
                         "content": {
                             "type": "text",
-                            "text": f"Here is the {name} reference guide:\n\n{guidance_text}\n\n---\nThis is reference information only."
-                        }
+                            "text": f"Here is the {name} reference guide:\n\n{guidance_text}\n\n---\nThis is reference information only.",
+                        },
                     }
-                ]
+                ],
             }
-            
+
         except Exception as e:
             logger.error(f"Error getting prompt {name}: {e}")
-            return {
-                "error": {
-                    "code": -32603,
-                    "message": f"Failed to get prompt: {str(e)}"
-                }
-            }
+            return {"error": {"code": -32603, "message": f"Failed to get prompt: {str(e)}"}}
 
 
 async def run_mcp_server(server_mode="full"):
     """Main server loop for MCP protocol handling."""
     # Create server instance with specified mode
     server = MemoryMCPServer(server_mode)
-    
+
     # Create protocol handler
     protocol_handler = MCPProtocolHandler(server)
-    
+
     # Run the protocol loop
     await protocol_handler.run_protocol_loop()
 
 
 if __name__ == "__main__":
     import asyncio
+
     asyncio.run(run_mcp_server())

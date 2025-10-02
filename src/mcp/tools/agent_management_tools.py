@@ -31,60 +31,44 @@ class AgentManagementTools:
                             "description": (
                                 "Unique identifier for the agent "
                                 "(auto-generated if not provided)"
-                            )
+                            ),
                         },
                         "agent_role": {
                             "type": "string",
-                            "description": (
-                                "Role of the agent (default: general)"
-                            )
+                            "description": ("Role of the agent (default: general)"),
                         },
                         "memory_layers": {
                             "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": ["global", "learned", "agent"]
-                            },
+                            "items": {"type": "string", "enum": ["global", "learned", "agent"]},
                             "description": (
-                                "Memory layers agent can access "
-                                "(default: ['global', 'learned'])"
-                            )
+                                "Memory layers agent can access " "(default: ['global', 'learned'])"
+                            ),
                         },
                         "policy_version": {
                             "type": "string",
-                            "description": (
-                                "Policy version to load (default: latest)"
-                            )
+                            "description": ("Policy version to load (default: latest)"),
                         },
                         "policy_hash": {
                             "type": "string",
-                            "description": (
-                                "Expected policy hash for verification"
-                            )
+                            "description": ("Expected policy hash for verification"),
                         },
                         "load_policies": {
                             "type": "boolean",
                             "description": (
-                                "Whether to load policies during "
-                                "initialization (default: true)"
-                            )
-                        }
+                                "Whether to load policies during " "initialization (default: true)"
+                            ),
+                        },
                     },
-                    "required": []
-                }
+                    "required": [],
+                },
             },
             {
                 "name": "configure_agent_permissions",
-                "description": (
-                    "Configure memory layer access permissions for an agent"
-                ),
+                "description": ("Configure memory layer access permissions for an agent"),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "agent_id": {
-                            "type": "string",
-                            "description": "Agent ID to configure"
-                        },
+                        "agent_id": {"type": "string", "description": "Agent ID to configure"},
                         "permissions": {
                             "type": "object",
                             "description": "Permission configuration",
@@ -93,112 +77,88 @@ class AgentManagementTools:
                                     "type": "array",
                                     "items": {
                                         "type": "string",
-                                        "enum": ["global", "learned", "agent"]
+                                        "enum": ["global", "learned", "agent"],
                                     },
-                                    "description": (
-                                        "Memory layers agent can read from"
-                                    )
+                                    "description": ("Memory layers agent can read from"),
                                 },
                                 "can_write": {
                                     "type": "array",
                                     "items": {
                                         "type": "string",
-                                        "enum": ["global", "learned", "agent"]
+                                        "enum": ["global", "learned", "agent"],
                                     },
-                                    "description": (
-                                        "Memory layers agent can write to"
-                                    )
+                                    "description": ("Memory layers agent can write to"),
                                 },
                                 "can_admin": {
                                     "type": "array",
                                     "items": {
                                         "type": "string",
-                                        "enum": ["global", "learned", "agent"]
+                                        "enum": ["global", "learned", "agent"],
                                     },
-                                    "description": (
-                                        "Memory layers agent can administer"
-                                    )
-                                }
-                            }
-                        }
+                                    "description": ("Memory layers agent can administer"),
+                                },
+                            },
+                        },
                     },
-                    "required": ["agent_id", "permissions"]
-                }
+                    "required": ["agent_id", "permissions"],
+                },
             },
             {
                 "name": "query_memory_for_agent",
                 "description": (
-                    "Query memory for an agent with "
-                    "permission-based access control"
+                    "Query memory for an agent with " "permission-based access control"
                 ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "agent_id": {
                             "type": "string",
-                            "description": "Agent ID performing the query"
+                            "description": "Agent ID performing the query",
                         },
-                        "query": {
-                            "type": "string",
-                            "description": "Search query text"
-                        },
+                        "query": {"type": "string", "description": "Search query text"},
                         "memory_layers": {
                             "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": ["global", "learned", "agent"]
-                            },
-                            "description": (
-                                "Memory layers to search "
-                                "(subject to permissions)"
-                            )
+                            "items": {"type": "string", "enum": ["global", "learned", "agent"]},
+                            "description": ("Memory layers to search " "(subject to permissions)"),
                         },
                         "limit": {
                             "type": "integer",
-                            "description": (
-                                "Maximum number of results (default: 10)"
-                            )
-                        }
+                            "description": ("Maximum number of results (default: 10)"),
+                        },
                     },
-                    "required": ["agent_id", "query"]
-                }
+                    "required": ["agent_id", "query"],
+                },
             },
             {
                 "name": "store_agent_action",
                 "description": (
-                    "Store an agent action with optional "
-                    "learned memory integration"
+                    "Store an agent action with optional " "learned memory integration"
                 ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "agent_id": {
                             "type": "string",
-                            "description": "Agent ID performing the action"
+                            "description": "Agent ID performing the action",
                         },
                         "action": {
                             "type": "string",
-                            "description": "Description of the action taken"
+                            "description": "Description of the action taken",
                         },
                         "context": {
                             "type": "object",
-                            "description": (
-                                "Contextual information about the action"
-                            )
+                            "description": ("Contextual information about the action"),
                         },
                         "outcome": {
                             "type": "string",
-                            "description": "Result or outcome of the action"
+                            "description": "Result or outcome of the action",
                         },
                         "learn": {
                             "type": "boolean",
-                            "description": (
-                                "Store action as learned memory "
-                                "(default: false)"
-                            )
-                        }
+                            "description": ("Store action as learned memory " "(default: false)"),
+                        },
                     },
-                    "required": ["agent_id", "action", "outcome"]
-                }
-            }
+                    "required": ["agent_id", "action", "outcome"],
+                },
+            },
         ]

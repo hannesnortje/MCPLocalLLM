@@ -19,8 +19,7 @@ class MarkdownTools:
             {
                 "name": "scan_workspace_markdown",
                 "description": (
-                    "Scan directory for markdown files with configurable "
-                    "recursive search"
+                    "Scan directory for markdown files with configurable " "recursive search"
                 ),
                 "inputSchema": {
                     "type": "object",
@@ -28,20 +27,16 @@ class MarkdownTools:
                         "directory": {
                             "type": "string",
                             "description": (
-                                "Directory path to scan "
-                                "(default current directory)"
-                            )
+                                "Directory path to scan " "(default current directory)"
+                            ),
                         },
                         "recursive": {
                             "type": "boolean",
-                            "description": (
-                                "Whether to scan subdirectories "
-                                "(default true)"
-                            )
-                        }
+                            "description": ("Whether to scan subdirectories " "(default true)"),
+                        },
                     },
-                    "required": []
-                }
+                    "required": [],
+                },
             },
             {
                 "name": "analyze_markdown_content",
@@ -52,25 +47,18 @@ class MarkdownTools:
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "content": {
-                            "type": "string",
-                            "description": "Markdown content to analyze"
-                        },
+                        "content": {"type": "string", "description": "Markdown content to analyze"},
                         "suggest_memory_type": {
                             "type": "boolean",
-                            "description": (
-                                "Whether to suggest memory type (default true)"
-                            )
+                            "description": ("Whether to suggest memory type (default true)"),
                         },
                         "ai_enhance": {
                             "type": "boolean",
-                            "description": (
-                                "Whether to apply AI enhancements (default true)"
-                            )
-                        }
+                            "description": ("Whether to apply AI enhancements (default true)"),
+                        },
                     },
-                    "required": ["content"]
-                }
+                    "required": ["content"],
+                },
             },
             {
                 "name": "optimize_content_for_storage",
@@ -81,33 +69,24 @@ class MarkdownTools:
                 "inputSchema": {
                     "type": "object",
                     "properties": {
-                        "content": {
-                            "type": "string",
-                            "description": "Content to optimize"
-                        },
+                        "content": {"type": "string", "description": "Content to optimize"},
                         "memory_type": {
                             "type": "string",
                             "enum": ["global", "learned", "agent"],
-                            "description": (
-                                "Target memory type (default global)"
-                            )
+                            "description": ("Target memory type (default global)"),
                         },
                         "ai_optimization": {
                             "type": "boolean",
-                            "description": (
-                                "Whether to apply AI optimizations (default true)"
-                            )
+                            "description": ("Whether to apply AI optimizations (default true)"),
                         },
                         "suggested_type": {
                             "type": "string",
                             "enum": ["global", "learned", "agent"],
-                            "description": (
-                                "Originally suggested memory type for comparison"
-                            )
-                        }
+                            "description": ("Originally suggested memory type for comparison"),
+                        },
                     },
-                    "required": ["content"]
-                }
+                    "required": ["content"],
+                },
             },
             {
                 "name": "process_markdown_directory",
@@ -120,39 +99,30 @@ class MarkdownTools:
                     "properties": {
                         "directory": {
                             "type": "string",
-                            "description": (
-                                "Directory to process (default current directory)"
-                            )
+                            "description": ("Directory to process (default current directory)"),
                         },
                         "memory_type": {
                             "type": "string",
                             "enum": ["global", "learned", "agent"],
-                            "description": (
-                                "Fixed memory type (null for auto-suggestion)"
-                            )
+                            "description": ("Fixed memory type (null for auto-suggestion)"),
                         },
                         "auto_suggest": {
                             "type": "boolean",
                             "description": (
-                                "Whether to auto-suggest memory types "
-                                "(default true)"
-                            )
+                                "Whether to auto-suggest memory types " "(default true)"
+                            ),
                         },
                         "ai_enhance": {
                             "type": "boolean",
-                            "description": (
-                                "Whether to apply AI enhancements (default true)"
-                            )
+                            "description": ("Whether to apply AI enhancements (default true)"),
                         },
                         "recursive": {
                             "type": "boolean",
-                            "description": (
-                                "Whether to scan subdirectories (default true)"
-                            )
-                        }
+                            "description": ("Whether to scan subdirectories (default true)"),
+                        },
                     },
-                    "required": []
-                }
+                    "required": [],
+                },
             },
             {
                 "name": "validate_and_deduplicate",
@@ -165,37 +135,31 @@ class MarkdownTools:
                     "properties": {
                         "content": {
                             "type": "string",
-                            "description": "Content to check for duplicates"
+                            "description": "Content to check for duplicates",
                         },
                         "memory_type": {
                             "type": "string",
                             "enum": ["global", "learned", "agent"],
-                            "description": (
-                                "Memory type to check against (default global)"
-                            )
+                            "description": ("Memory type to check against (default global)"),
                         },
                         "agent_id": {
                             "type": "string",
-                            "description": (
-                                "Agent ID for agent-specific memory checks"
-                            )
+                            "description": ("Agent ID for agent-specific memory checks"),
                         },
                         "threshold": {
                             "type": "number",
                             "description": (
-                                "Similarity threshold (0.0-1.0, "
-                                "defaults to configured value)"
-                            )
+                                "Similarity threshold (0.0-1.0, " "defaults to configured value)"
+                            ),
                         },
                         "enable_near_miss": {
                             "type": "boolean",
                             "description": (
-                                "Enable near-miss detection and logging "
-                                "(default true)"
-                            )
-                        }
+                                "Enable near-miss detection and logging " "(default true)"
+                            ),
+                        },
                     },
-                    "required": ["content"]
-                }
-            }
+                    "required": ["content"],
+                },
+            },
         ]

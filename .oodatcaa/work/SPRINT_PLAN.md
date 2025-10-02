@@ -49,8 +49,14 @@
 - Deliverables: 7 analysis artifacts (2,690+ lines)
 - Next: Create PR, merge to main, tag baseline, update CHANGELOG
 
+**Planner → W002: Execute MCP Server Migration**  
+- Status: Planning Complete (AGENT_PLAN.md and TEST_PLAN.md created)
+- Assigned: 2025-10-02T10:30:00+02:00  
+- Completed: 2025-10-02T10:30:00+02:00
+- Artifacts: AGENT_PLAN.md, TEST_PLAN.md
+- Ready: W002-B01 (Steps 1-3: Setup + Core Copy)
+
 ### Pending Assignment (blocked by dependencies)
-- W002: Execute MCP Server Migration (depends on W001)
 - W003: Integrate MCP Dependencies (depends on W002)
 - W004: Adapt MCP for Training Use Case (depends on W002, W003)
 - W005: Python Tooling & Quality Gates (depends on W004)
@@ -85,6 +91,29 @@
 - `.oodatcaa/work/analysis/W001/W001_ANALYSIS_SUMMARY.md`
 
 **Exit Criteria:** All 10 ACs verified, W002 unblocked
+
+---
+
+### W002: Execute MCP Server Migration (Planning Complete)
+
+**Plan Version:** 1.0  
+**Branch:** `feat/W002-step-01-copy-mcp-core`  
+**Plan Document:** `.oodatcaa/work/AGENT_PLAN.md`  
+**Test Document:** `.oodatcaa/work/TEST_PLAN.md`
+
+**Implementation Steps:**
+1. **Step 1-3:** Pre-migration setup + baseline + copy core files → W002-B01 (ready)
+2. **Step 4-6:** Config merge + verification + commit → W002-B02 (blocked by B01)
+3. **Step 7-8:** Validation + push + docs update → W002-B03 (blocked by B02)
+4. **Testing:** Verify all 10 ACs and protection checks → W002-T01 (blocked by B03)
+
+**Deliverables:**
+- 67 essential MCP files in `src/mcp/`, `policy/`, `docs/mcp/`
+- Infrastructure: `docker-compose.yml`, `.env.example`, `server.py`
+- Configuration: `.gitignore` merged with MCP entries
+- Protection verified: `.oodatcaa/` and `src/mdnotes/` untouched
+
+**Exit Criteria:** All 10 ACs pass, existing tests pass, W003 unblocked
 
 ---
 

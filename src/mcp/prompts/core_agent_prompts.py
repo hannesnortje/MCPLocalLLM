@@ -11,8 +11,10 @@ try:
     from ..server_config import get_logger
 except ImportError:
     import logging
+
     def get_logger(name: str):
         return logging.getLogger(name)
+
 
 logger = get_logger("core-agent-prompts")
 
@@ -26,6 +28,7 @@ class CoreAgentPrompts:
         # Initialize policy processor for agent startup operations
         try:
             from ..policy_processor import PolicyProcessor
+
             self.policy_processor = PolicyProcessor()
         except ImportError:
             self.policy_processor = None
@@ -44,73 +47,58 @@ class CoreAgentPrompts:
                     {
                         "name": "agent_id",
                         "description": (
-                            "Unique identifier for the agent "
-                            "(auto-generated if not provided)"
+                            "Unique identifier for the agent " "(auto-generated if not provided)"
                         ),
-                        "required": False
+                        "required": False,
                     },
                     {
                         "name": "agent_role",
                         "description": (
-                            "Agent role (developer, analyst, admin) - "
-                            "defaults to 'general'"
+                            "Agent role (developer, analyst, admin) - " "defaults to 'general'"
                         ),
-                        "required": False
+                        "required": False,
                     },
                     {
                         "name": "memory_layers",
                         "description": (
-                            "Comma-separated list of memory layers "
-                            "(global,learned,agent)"
+                            "Comma-separated list of memory layers " "(global,learned,agent)"
                         ),
-                        "required": False
+                        "required": False,
                     },
                     {
                         "name": "policy_version",
-                        "description": (
-                            "Policy version for compliance tracking"
-                        ),
-                        "required": False
+                        "description": ("Policy version for compliance tracking"),
+                        "required": False,
                     },
                     {
                         "name": "policy_hash",
-                        "description": (
-                            "Policy hash for integrity verification"
-                        ),
-                        "required": False
-                    }
-                ]
+                        "description": ("Policy hash for integrity verification"),
+                        "required": False,
+                    },
+                ],
             },
             {
                 "name": "development_agent_startup",
-                "description": (
-                    "Alias for agent_startup optimized for development agents"
-                ),
+                "description": ("Alias for agent_startup optimized for development agents"),
                 "arguments": [
                     {
                         "name": "agent_id",
-                        "description": (
-                            "Unique identifier for the development agent"
-                        ),
-                        "required": True
+                        "description": ("Unique identifier for the development agent"),
+                        "required": True,
                     }
-                ]
+                ],
             },
             {
                 "name": "testing_agent_startup",
-                "description": (
-                    "Alias for agent_startup optimized for testing agents"
-                ),
+                "description": ("Alias for agent_startup optimized for testing agents"),
                 "arguments": [
                     {
                         "name": "agent_id",
-                        "description": (
-                            "Unique identifier for the testing agent"
-                        ),
-                        "required": True
+                        "description": ("Unique identifier for the testing agent"),
+                        "required": True,
                     }
-                ]
-            }
+                ],
+            },
         ]
 
     async def get_prompt(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -124,17 +112,10 @@ class CoreAgentPrompts:
         else:
             return {
                 "isError": True,
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"Unknown core agent prompt: {name}"
-                    }
-                ]
+                "content": [{"type": "text", "text": f"Unknown core agent prompt: {name}"}],
             }
 
-    async def _get_agent_startup_prompt(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def _get_agent_startup_prompt(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Generate comprehensive agent startup prompt."""
         try:
             # Extract and validate arguments
@@ -143,7 +124,7 @@ class CoreAgentPrompts:
             memory_layers = arguments.get("memory_layers", "global,learned,agent")
             policy_version = arguments.get("policy_version", "latest")
             policy_hash = arguments.get("policy_hash", "auto-generated")
-            
+
             # Parse memory layers
             layers = [layer.strip().lower() for layer in memory_layers.split(",")]
             valid_layers = ["global", "learned", "agent"]
@@ -284,20 +265,15 @@ Your operations are governed by the **MCP Memory Server Policy Framework**:
 """
 
             return {
-                "content": [
-                    {
-                        "type": "text", 
-                        "text": startup_content
-                    }
-                ],
+                "content": [{"type": "text", "text": startup_content}],
                 "metadata": {
                     "agent_id": agent_id,
                     "agent_role": agent_role,
                     "memory_layers": layers,
                     "policy_version": policy_version,
                     "session_timestamp": session_timestamp,
-                    "prompt_type": "agent_startup"
-                }
+                    "prompt_type": "agent_startup",
+                },
             }
 
         except Exception as e:
@@ -305,11 +281,8 @@ Your operations are governed by the **MCP Memory Server Policy Framework**:
             return {
                 "isError": True,
                 "content": [
-                    {
-                        "type": "text",
-                        "text": f"Error generating agent startup prompt: {str(e)}"
-                    }
-                ]
+                    {"type": "text", "text": f"Error generating agent startup prompt: {str(e)}"}
+                ],
             }
 
     async def _get_development_agent_startup_prompt(
@@ -320,18 +293,16 @@ Your operations are governed by the **MCP Memory Server Policy Framework**:
         dev_arguments = {
             "agent_role": "developer",
             "memory_layers": "global,learned,agent",
-            **arguments
+            **arguments,
         }
         return await self._get_agent_startup_prompt(dev_arguments)
 
-    async def _get_testing_agent_startup_prompt(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def _get_testing_agent_startup_prompt(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
         """Generate testing agent startup prompt (alias)."""
         # Set testing-specific defaults
         test_arguments = {
             "agent_role": "testing",
-            "memory_layers": "global,learned,agent", 
-            **arguments
+            "memory_layers": "global,learned,agent",
+            **arguments,
         }
         return await self._get_agent_startup_prompt(test_arguments)

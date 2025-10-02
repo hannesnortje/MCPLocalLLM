@@ -58,9 +58,7 @@ class MCPLauncher:
         )
         return logging.getLogger(__name__)
 
-    def should_launch_ui_local(
-        self, force_ui: bool = False, ui_only: bool = False
-    ) -> bool:
+    def should_launch_ui_local(self, force_ui: bool = False, ui_only: bool = False) -> bool:
         """Determine if UI should be launched based on config and flags."""
 
         if ui_only:
@@ -125,9 +123,7 @@ class MCPLauncher:
 
                 for i in range(10):  # Try for 10 seconds
                     try:
-                        response = requests.get(
-                            "http://localhost:6333/", timeout=1
-                        )
+                        response = requests.get("http://localhost:6333/", timeout=1)
                         if response.status_code == 200:
                             msg = "✅ Qdrant server started successfully"
                             self.logger.info(msg)
@@ -148,9 +144,7 @@ class MCPLauncher:
             self.logger.error("❌ Qdrant startup timed out")
             return False
         except FileNotFoundError:
-            self.logger.error(
-                "❌ Docker not found. Please install Docker to use Qdrant."
-            )
+            self.logger.error("❌ Docker not found. Please install Docker to use Qdrant.")
             return False
         except Exception as e:
             self.logger.error(f"❌ Failed to start Qdrant: {e}")
@@ -296,9 +290,7 @@ class MCPLauncher:
         self.logger.info("=" * 60)
         self.logger.info("MCP Memory Server Unified Launcher")
         self.logger.info("=" * 60)
-        mode_str = (
-            self.config.ui.launch_mode.value if self.config.ui else "never"
-        )
+        mode_str = self.config.ui.launch_mode.value if self.config.ui else "never"
         self.logger.info(f"Configuration mode: {mode_str}")
 
         try:
@@ -343,9 +335,7 @@ class MCPLauncher:
                 time.sleep(1)
 
                 # Check if processes are still running
-                server_alive = (
-                    self.server_process and self.server_process.poll() is None
-                )
+                server_alive = self.server_process and self.server_process.poll() is None
                 ui_alive = self.ui_process and self.ui_process.poll() is None
 
                 if launch_server and not server_alive:

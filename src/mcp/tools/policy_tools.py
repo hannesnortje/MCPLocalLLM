@@ -19,100 +19,81 @@ class PolicyTools:
             {
                 "name": "build_policy_from_markdown",
                 "description": (
-                    "Build policy from markdown files in directory "
-                    "and optionally activate it"
+                    "Build policy from markdown files in directory " "and optionally activate it"
                 ),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "directory": {
                             "type": "string",
-                            "description": (
-                                "Policy directory path (default: ./policy)"
-                            )
+                            "description": ("Policy directory path (default: ./policy)"),
                         },
                         "policy_version": {
                             "type": "string",
-                            "description": (
-                                "Policy version identifier (default: latest)"
-                            )
+                            "description": ("Policy version identifier (default: latest)"),
                         },
                         "activate": {
                             "type": "boolean",
                             "description": (
-                                "Store policy in memory for enforcement "
-                                "(default: true)"
-                            )
-                        }
+                                "Store policy in memory for enforcement " "(default: true)"
+                            ),
+                        },
                     },
-                    "required": []
-                }
+                    "required": [],
+                },
             },
             {
                 "name": "get_policy_rulebook",
-                "description": (
-                    "Get the canonical policy rulebook as JSON"
-                ),
+                "description": ("Get the canonical policy rulebook as JSON"),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "version": {
                             "type": "string",
-                            "description": (
-                                "Policy version to retrieve (default: latest)"
-                            )
+                            "description": ("Policy version to retrieve (default: latest)"),
                         }
                     },
-                    "required": []
-                }
+                    "required": [],
+                },
             },
             {
                 "name": "validate_json_against_schema",
-                "description": (
-                    "Validate JSON structure against "
-                    "policy schema requirements"
-                ),
+                "description": ("Validate JSON structure against " "policy schema requirements"),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "schema_name": {
                             "type": "string",
-                            "description": (
-                                "Name of the schema to validate against"
-                            )
+                            "description": ("Name of the schema to validate against"),
                         },
                         "candidate_json": {
                             "type": "string",
-                            "description": "JSON string to validate"
-                        }
+                            "description": "JSON string to validate",
+                        },
                     },
-                    "required": ["schema_name", "candidate_json"]
-                }
+                    "required": ["schema_name", "candidate_json"],
+                },
             },
             {
                 "name": "log_policy_violation",
-                "description": (
-                    "Log a policy violation for compliance tracking"
-                ),
+                "description": ("Log a policy violation for compliance tracking"),
                 "inputSchema": {
                     "type": "object",
                     "properties": {
                         "agent_id": {
                             "type": "string",
-                            "description": "Agent ID that violated the policy"
+                            "description": "Agent ID that violated the policy",
                         },
                         "rule_id": {
                             "type": "string",
-                            "description": "Policy rule ID that was violated"
+                            "description": "Policy rule ID that was violated",
                         },
                         "context": {
                             "type": "object",
-                            "description": (
-                                "Additional context about the violation"
-                            )
-                        }
+                            "description": ("Additional context about the violation"),
+                        },
                     },
-                    "required": ["agent_id", "rule_id"]
-                }
-            }
+                    "required": ["agent_id", "rule_id"],
+                },
+            },
         ]

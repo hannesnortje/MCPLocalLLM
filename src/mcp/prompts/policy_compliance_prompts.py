@@ -14,6 +14,7 @@ except ImportError:
     def get_logger(name: str):
         return logging.getLogger(name)
 
+
 logger = get_logger("policy-compliance-prompts")
 
 
@@ -29,25 +30,19 @@ class PolicyCompliancePrompts:
         return [
             {
                 "name": "final_checklist",
-                "description": (
-                    "Pre-finalization policy compliance checklist"
-                ),
-                "arguments": []
+                "description": ("Pre-finalization policy compliance checklist"),
+                "arguments": [],
             },
             {
                 "name": "policy_compliance_guide",
-                "description": (
-                    "Comprehensive guide for following the policy rulebook"
-                ),
-                "arguments": []
+                "description": ("Comprehensive guide for following the policy rulebook"),
+                "arguments": [],
             },
             {
                 "name": "policy_violation_recovery",
-                "description": (
-                    "Recovery procedures when policy conflicts arise"
-                ),
-                "arguments": []
-            }
+                "description": ("Recovery procedures when policy conflicts arise"),
+                "arguments": [],
+            },
         ]
 
     def get_prompt(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
@@ -55,8 +50,7 @@ class PolicyCompliancePrompts:
         method_map = {
             "final_checklist": self._get_final_checklist_prompt,
             "policy_compliance_guide": self._get_policy_compliance_guide_prompt,
-            "policy_violation_recovery": 
-                self._get_policy_violation_recovery_prompt
+            "policy_violation_recovery": self._get_policy_violation_recovery_prompt,
         }
 
         if name in method_map:
@@ -64,12 +58,7 @@ class PolicyCompliancePrompts:
         else:
             return {
                 "isError": True,
-                "content": [
-                    {
-                        "type": "text",
-                        "text": f"Unknown policy compliance prompt: {name}"
-                    }
-                ]
+                "content": [{"type": "text", "text": f"Unknown policy compliance prompt: {name}"}],
             }
 
     def _get_final_checklist_prompt(self) -> Dict[str, Any]:
@@ -226,8 +215,8 @@ class PolicyCompliancePrompts:
                 "name": "final_checklist",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_policy_compliance_guide_prompt(self) -> Dict[str, Any]:
@@ -410,8 +399,8 @@ continuous attention to both letter and spirit of policies*"""
                 "name": "policy_compliance_guide",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
 
     def _get_policy_violation_recovery_prompt(self) -> Dict[str, Any]:
@@ -632,6 +621,6 @@ and commitment to preventing recurrence*"""
                 "name": "policy_violation_recovery",
                 "content": content,
                 "arguments_used": {},
-                "timestamp": datetime.now().isoformat()
-            }
+                "timestamp": datetime.now().isoformat(),
+            },
         }
