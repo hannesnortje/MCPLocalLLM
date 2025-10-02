@@ -424,7 +424,7 @@ class PolicyAndGuidanceHandlers:
         return self._get_guidance_content("policy_violation_recovery")
 
     # Policy Helper Methods
-    async def _store_policy_entries(self, entries: list) -> dict[str, Any]:
+    async def _store_policy_entries(self, entries: list[dict[str, Any]]) -> dict[str, Any]:
         """Store policy entries in Qdrant."""
         try:
             import uuid
@@ -463,7 +463,9 @@ class PolicyAndGuidanceHandlers:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    async def _query_policy_memory(self, version: str = "latest", limit: int = 1000) -> list:
+    async def _query_policy_memory(
+        self, version: str = "latest", limit: int = 1000
+    ) -> list[dict[str, Any]]:
         """Query policy memory collection."""
         try:
             from ..config import Config
@@ -492,11 +494,11 @@ class PolicyAndGuidanceHandlers:
             logger.error(f"Error querying policy memory: {e}")
             return []
 
-    def _build_rulebook_structure(self, policy_entries: list) -> dict[str, Any]:
+    def _build_rulebook_structure(self, policy_entries: list[dict[str, Any]]) -> dict[str, Any]:
         """Build structured rulebook from policy entries."""
         try:
             # Group by section
-            sections: dict[str, list] = {}
+            sections: dict[str, list[dict[str, Any]]] = {}
             policy_hash = None
 
             for entry in policy_entries:
@@ -538,7 +540,7 @@ class PolicyAndGuidanceHandlers:
             logger.error(f"Error building rulebook: {e}")
             return {"policy_hash": "unknown", "sections": {}, "json": "{}"}
 
-    def _extract_required_sections(self, policy_entries: list) -> list:
+    def _extract_required_sections(self, policy_entries: list[dict[str, Any]]) -> list[str]:
         """Extract required sections from policy entries."""
         # Find rules that specify required sections (R- prefix typically)
         required_sections = []
@@ -551,7 +553,7 @@ class PolicyAndGuidanceHandlers:
         return list(set(required_sections))
 
     def _validate_json_structure(
-        self, candidate_json: str, schema_name: str, required_sections: list
+        self, candidate_json: str, schema_name: str, required_sections: list[str]
     ) -> dict[str, Any]:
         """Validate JSON structure against policy requirements."""
         try:

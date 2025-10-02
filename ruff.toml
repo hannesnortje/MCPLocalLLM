@@ -1,5 +1,9 @@
 line-length = 100
 src = ["src", "tests"]
+
+[lint]
 extend-select = ["F", "E", "W", "I", "B", "UP", "S"]
 ignore = ["S101"]
 
+[lint.isort]
+known-first-party = ["mdnotes", "mcp"]

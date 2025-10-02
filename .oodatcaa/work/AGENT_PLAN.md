@@ -1,251 +1,407 @@
-# Agent Plan — W004: Adapt MCP for Training Use Case
+# AGENT PLAN — W005: Python Tooling & Quality Gates
 
-**Objective:** OBJ-2025-002 | **Epic:** MCP Integration | **Sprint:** 1 | **Work Item:** W004  
-**Plan Version:** 1.0 | **Created:** 2025-10-02 | **Agent:** Planner
+**Objective ID:** OBJ-2025-002  
+**Epic:** MCP Integration (Critical)  
+**Sprint:** 1  
+**Task ID:** W005  
+**Complexity:** M  
+**Dependencies:** W004 (Complete ✅)  
+**Created:** 2025-10-03T00:15:00+02:00  
+**Planner:** agent-planner-A  
 
 ---
 
 ## Problem Statement
 
-Adapt and clean up the migrated MCP server code to pass all quality gates and work optimally for the training use case. Fix 385 ruff linting errors (primarily import sorting, type annotations, deprecated syntax) and resolve mypy type errors. Remove or disable UI-related code, simplify unnecessary features, and ensure core MCP functionality (memory management, vector search, policy system) remains intact.
+After W004's successful MCP code adaptation (88.97% error reduction from 390 to 43 ruff errors), we need to complete the quality gates work by addressing the remaining linting and type checking issues. Currently:
 
-**Context:** W002 migrated 61 MCP files and W003 installed all dependencies. However, the MCP code has quality issues: 385 ruff errors (318 auto-fixable) and multiple mypy type errors. Most issues are mechanical (import sorting, type annotations using old syntax like `List[]` instead of `list[]`, `Optional[]` instead of `| None`). The code is functional but doesn't meet project quality standards.
+- **43 ruff errors** remain (negotiated acceptance in W004, but should be resolved for clean CI)
+- **496 mypy type errors** in MCP code (deferred from W004 for comprehensive typing effort)
+- **Black formatting:** ✅ PASS (52 files)
+- **Build:** ✅ PASS
+- **Tests:** ✅ PASS (no regressions)
+- **mdnotes module:** ✅ PASS (fully type-safe)
 
----
-
-## Constraints / Risks
-
-**Constraints:**
-- MUST preserve core MCP functionality (memory, vector search, policy system)
-- MUST NOT break existing mdnotes functionality
-- MUST pass all quality gates (black, ruff, mypy, pytest)
-- MCP SDK (`mcp` package) lacks type stubs - will need type: ignore comments
-- MUST maintain compatibility with installed dependencies
-
-**Key Risks & Mitigation:**
-- **Breaking MCP functionality (HIGH):** Automated fixes could break code → Run tests after each fix batch
-- **Type annotation errors (MEDIUM):** Complex types may need manual fixes → Start with auto-fixes, then manual
-- **Import errors from changes (MEDIUM):** Refactoring could break imports → Test imports after changes
-- **Loss of needed functionality (LOW):** Removing code could break features → Only remove UI-specific code, keep core
+W005 aims to achieve **100% quality gate compliance** to unblock production deployment and establish a clean baseline for future development.
 
 ---
 
-## Definition of Done
+## Current State Analysis
 
-**Functional:**
-- [ ] **AC1:** All ruff linting errors resolved (0 errors in `ruff check .`)
-- [ ] **AC2:** Import sorting corrected (all imports properly ordered)
-- [ ] **AC3:** Type annotations modernized (PEP 585/604: `list[]` not `List[]`, `| None` not `Optional[]`)
-- [ ] **AC4:** Mypy type checking passes on MCP code (with reasonable ignores for untyped libraries)
-- [ ] **AC5:** UI-related code identified and disabled/removed
-- [ ] **AC6:** Core MCP functionality preserved (memory, vector search, policy)
-- [ ] **AC7:** Existing tests still pass (no regressions)
+### Ruff Errors (43 total)
 
-**Non-Functional:**
-- [ ] **AC8:** Black formatting passes on all code
-- [ ] **AC9:** Build succeeds with cleaned code
-- [ ] **AC10:** No new security issues introduced
+**Breakdown by type:**
+- **13 E501** (line-too-long): Long strings in prompts, acceptable but fixable by reformatting
+- **8 F821** (undefined-name): ALL in `memory_manager_backup.py` (backup file - can be deleted)
+- **7 S603** (subprocess security warning): Docker management in launcher.py, memory_server.py
+- **7 S607** (subprocess security warning): Partial executable path for Docker commands
+- **3 S110** (try-except-pass): Error handling patterns in memory_server.py
+- **2 S311** (non-cryptographic random): Acceptable for non-security contexts
+- **1 B007** (unused loop variable): launcher.py line 124 (`i` → `_i`)
+- **1 E722** (bare except): Error handling
+- **1 F811** (redefined while unused): Import issue
+
+**Files affected:**
+- `launcher.py`: 9 errors (6 S603/S607, 1 B007, 2 others)
+- `memory_server.py`: 9 errors (3 S110, 3 S603, 3 others)
+- `src/mcp/memory_manager_backup.py`: 8 F821 errors (backup file - should be deleted)
+- Other MCP files: 17 errors (E501 long lines, misc)
+
+### Mypy Errors (496 total in 29 files)
+
+**Common patterns:**
+1. **Missing return type annotations** (`no-untyped-def`): ~150 errors
+   - Functions/methods without `-> None` or explicit return type
+2. **Missing generic type parameters** (`type-arg`): ~80 errors
+   - `dict` → `dict[str, Any]`
+   - `list` → `list[str]`
+3. **Library stubs not installed** (`import-untyped`): ~30 errors
+   - `yaml` → needs `types-PyYAML`
+   - `aiofiles` → needs `types-aiofiles`
+4. **Type mismatches** (`assignment`, `arg-type`, `union-attr`): ~150 errors
+   - Incompatible types in assignments
+   - Optional handling issues
+5. **Untyped calls** (`no-untyped-call`, `no-any-return`): ~86 errors
+   - Calling untyped functions from typed context
+
+**Most affected files:**
+- `src/mcp/server_config.py`: 24 errors (config loading, env handling)
+- `src/mcp/policy_processor.py`: 60+ errors (policy system core)
+- `src/mcp/mcp_protocol_handler.py`: 37 errors (MCP protocol implementation)
+- `src/mcp/prompts/*.py`: ~40 errors across 3 files (prompt systems)
 
 ---
 
-## Alternatives & Choice
+## Constraints / Interfaces / Risks
 
-**Alternative 1:** Manual fixes for all issues → ❌ REJECTED (time-consuming, error-prone for 385 errors)  
-**Alternative 2:** Automated ruff --fix + targeted manual fixes → ✅ **CHOSEN** (fast, reliable, 318/385 auto-fixable)  
-**Alternative 3:** Disable type checking for MCP → ❌ REJECTED (defeats quality goals)
+### Constraints
+- **No functional changes**: Only type annotations and code quality improvements
+- **Zero regressions**: All existing tests must pass
+- **Preserve W004 work**: Build on 88.97% error reduction, don't undo progress
+- **Time budget**: 4-6 hours max (systematic but not exhaustive)
 
-**Rationale:** Alternative 2 leverages automated tooling for mechanical fixes (85% of issues) and focuses manual effort on complex type annotations. This is efficient and maintains code quality.
+### Interfaces
+- **Quality Gates**: black, ruff, mypy, pytest, coverage, build, pip-audit
+- **Type System**: mypy strict mode with pragmatic ignore rules for external deps
+- **Dependencies**: May need to add type stubs: `types-PyYAML`, `types-aiofiles`
+
+### Risks
+1. **Time creep**: 496 mypy errors could take 10+ hours for perfect resolution
+   - **Mitigation**: Focus on systematic patterns, use pragmatic ignore rules where needed
+2. **Breaking changes**: Adding types might reveal bugs
+   - **Mitigation**: Run tests after each major change, rollback if issues
+3. **Backup files**: Some errors in backup files that shouldn't be in codebase
+   - **Mitigation**: Delete backup files (memory_manager_backup.py, etc.)
+4. **Ruff security warnings**: Some S603/S607 are intentional (Docker management)
+   - **Mitigation**: Use `# noqa: S603` comments with justification
+
+---
+
+## Definition of Done (DoD)
+
+### Functional Requirements
+- [x] All W004 functionality preserved (zero regressions)
+- [ ] All MCP imports still work
+- [ ] All existing tests pass
+- [ ] Package builds successfully
+
+### Quality Requirements
+- [ ] **Ruff:** 0 errors (down from 43)
+- [ ] **Mypy:** 0 errors in core code (pragmatic ignore for edge cases acceptable)
+- [ ] **Black:** PASS (already passing, maintain)
+- [ ] **Pytest:** All tests pass (maintain 100%)
+- [ ] **Build:** Successful (maintain)
+- [ ] **Security:** pip-audit clean (maintain)
+
+### Documentation Requirements
+- [ ] Add inline `# noqa` comments with justifications for intentional rule exceptions
+- [ ] Update `mypy.ini` if new ignore rules needed
+- [ ] Update `ruff.toml` if needed (deprecation warning fix)
+
+---
+
+## Acceptance Criteria (ACs)
+
+### AC1: Zero Ruff Errors ✅
+- **Measure:** `ruff check .` returns exit code 0
+- **Current:** 43 errors
+- **Target:** 0 errors
+- **Method:** Delete backup files (8 errors), fix minor issues (35 errors)
+
+### AC2: Mypy Core Code Clean ✅
+- **Measure:** `mypy src/mcp` has 0 critical errors (type stubs for external libs acceptable)
+- **Current:** 496 errors
+- **Target:** < 10 errors (all in external lib imports or documented edge cases)
+- **Method:** Add return types, generic parameters, install type stubs
+
+### AC3: No Regressions ✅
+- **Measure:** `pytest -q` passes all tests
+- **Current:** 3/3 tests passing
+- **Target:** 3/3 tests passing (maintain)
+
+### AC4: Black Formatting Maintained ✅
+- **Measure:** `black --check .` passes
+- **Current:** PASS
+- **Target:** PASS
+
+### AC5: Build Success ✅
+- **Measure:** `python -m build` succeeds
+- **Current:** PASS
+- **Target:** PASS
+
+### AC6: Security Clean ✅
+- **Measure:** `pip-audit` returns no high-severity issues
+- **Current:** 1 informational issue
+- **Target:** No high-severity issues
+
+### AC7: Config Cleanup ✅
+- **Measure:** Ruff deprecation warning resolved
+- **Current:** Warning about top-level linter settings
+- **Target:** No warnings, all settings in `[tool.ruff.lint]` section
+
+---
+
+## Alternatives Considered
+
+### Alternative 1: Minimal Fix (Quick Fix)
+**Approach:** Only fix auto-fixable errors, add `# type: ignore` for rest
+- **Pros:** Fast (1-2 hours), low risk
+- **Cons:** Technical debt remains, doesn't achieve quality goal
+- **Decision:** ❌ Rejected - W005 goal is "ensure quality gates pass", not "quick fix"
+
+### Alternative 2: Perfect Typing (Exhaustive)
+**Approach:** Add perfect type annotations to all 496 mypy errors, no compromises
+- **Pros:** Perfect type coverage, highest quality
+- **Cons:** 12-16 hours effort, high risk of bugs, diminishing returns
+- **Decision:** ❌ Rejected - Time/benefit ratio too high
+
+### Alternative 3: Pragmatic Systematic Fix (SELECTED ✅)
+**Approach:** Systematic pattern-based fixes with pragmatic ignore rules for edge cases
+- **Delete backup files** (8 ruff errors eliminated)
+- **Fix ruff auto-fixable errors** (run `ruff check --fix --unsafe-fixes`)
+- **Add type stubs** for yaml, aiofiles (eliminates ~30 mypy errors)
+- **Systematic type annotation** pass: return types, generic parameters (4-5 hours)
+- **Pragmatic ignore rules** for complex edge cases with documentation
+- **Pros:** Achieves 95%+ quality coverage, reasonable time (4-6 hours), pragmatic
+- **Cons:** May have 5-10 remaining mypy errors with documented ignore rules
+- **Decision:** ✅ **SELECTED** - Best balance of quality, time, and pragmatism
 
 ---
 
 ## Implementation Plan
 
-### Step 1: Branch Setup and Baseline
-**Branch:** `feat/W004-step-01-adapt-mcp-code`  
+### Step 1: Cleanup & Auto-Fixes (Branch Setup)
+**Time:** 15 minutes  
 **Actions:**
-1. Create baseline tag: `pre/W004-$(date -Iseconds)`
-2. Create and checkout adaptation branch
-3. Run initial quality check to document baseline errors
+1. Create branch `feat/W005-step-01-quality-gates`
+2. Create baseline tag: `pre/W005-$(date -Iseconds)`
+3. Delete backup files:
+   - `src/mcp/memory_manager_backup.py` (8 F821 errors)
+   - `src/mcp/tool_definitions_backup.py` (if exists)
+   - `src/mcp/prompt_handlers_original.py` (if errors remain)
+4. Run `ruff check --fix --unsafe-fixes .` (auto-fix ~10 errors)
+5. Run `black .` (ensure formatting maintained)
+6. **Commit:** `[refactor] W005: Delete backup files and auto-fix ruff issues`
+7. **Exit Gate:** Ruff errors reduced by ~50%, tests pass
 
-**Exit Gate:** Branch ready, baseline documented (385 ruff errors, multiple mypy errors)
-
----
-
-### Step 2: Automated Ruff Fixes (Batch 1)
+### Step 2: Install Type Stubs
+**Time:** 10 minutes  
 **Actions:**
-1. Run `ruff check src/mcp --fix` to auto-fix 318 errors:
-   - Import sorting (36 errors)
-   - Type annotations: `List[]` → `list[]` (220 errors)
-   - Type annotations: `Optional[]` → `| None` (34 errors)
-   - Type annotations: `Union[]` → `|` (8 errors)
-   - F-string fixes (13 errors)
-   - Remove unused imports (5 errors)
-   - Other mechanical fixes (2 errors)
-2. Run black to format changed files
-3. Commit: `[refactor] W004: Apply automated ruff fixes to MCP code`
+1. Add to `pyproject.toml` `[project.optional-dependencies]` dev section:
+   - `types-PyYAML`
+   - `types-aiofiles`
+2. Run `pip install -e .[dev]`
+3. Verify mypy error count drops by ~30
+4. **Commit:** `[build] W005: Add type stubs for yaml and aiofiles`
+5. **Exit Gate:** Mypy errors reduced to ~466, build succeeds
 
-**Expected Outcome:** ~318 errors fixed, ~67 errors remaining  
-**Exit Gate:** Ruff errors reduced significantly, code still compiles
-
----
-
-### Step 3: Manual Ruff Fixes (Batch 2)
+### Step 3: Fix Ruff Config Deprecation
+**Time:** 5 minutes  
 **Actions:**
-1. Fix remaining ~67 ruff errors that need manual attention:
-   - Trailing whitespace (9 errors)
-   - Line too long (7 errors)
-   - Security warnings (subprocess calls: 8 errors)
-   - Unused variables (4 errors)
-   - Other non-auto-fixable issues
-2. Run black to format
-3. Commit: `[refactor] W004: Fix remaining ruff issues in MCP code`
+1. Update `ruff.toml`:
+   - Move `extend-select` → `lint.extend-select`
+   - Move `ignore` → `lint.ignore`
+2. Verify warning disappears: `ruff check .`
+3. **Commit:** `[config] W005: Fix ruff.toml deprecation warnings`
+4. **Exit Gate:** No deprecation warnings
 
-**Expected Outcome:** 0 ruff errors  
-**Exit Gate:** `ruff check .` passes with 0 errors
-
----
-
-### Step 4: Add Type Annotations for Mypy
+### Step 4: Add Return Type Annotations (Core Files)
+**Time:** 90 minutes  
 **Actions:**
-1. Add return type annotations to functions missing them
-2. Add type parameters to generic types (`dict` → `dict[str, Any]`, `list` → `list[str]`)
-3. Add `# type: ignore[import-untyped]` for mcp SDK imports (no type stubs available)
-4. Fix any complex type issues
-5. Create mypy configuration exclusions if needed for external libraries
-6. Commit: `[refactor] W004: Add type annotations for mypy compliance`
+1. **Target files** (highest impact, ~150 errors):
+   - `src/mcp/server_config.py`
+   - `src/mcp/mcp_protocol_handler.py`
+   - `src/mcp/policy_processor.py`
+   - `src/mcp/prompts/*.py`
+2. **Pattern:** Add `-> None` to functions without return, explicit types for others
+3. **Method:** File-by-file systematic pass
+4. Run `mypy src/mcp` after each file to track progress
+5. **Commit after each file:** `[refactor] W005: Add return types to <filename>`
+6. **Exit Gate:** ~150 `no-untyped-def` errors eliminated
 
-**Expected Outcome:** Mypy errors significantly reduced  
-**Exit Gate:** Mypy passes on MCP code (with documented ignores for untyped libraries)
-
----
-
-### Step 5: Remove/Disable UI Components
+### Step 5: Add Generic Type Parameters
+**Time:** 60 minutes  
 **Actions:**
-1. Identify UI-related code (already excluded src/ui/ directory in W002)
-2. Check for UI imports in remaining code (PySide6, websockets references)
-3. Comment out or remove UI-specific code blocks
-4. Verify no UI dependencies remain
-5. Commit: `[refactor] W004: Remove UI-related code references`
+1. **Pattern:** Replace bare generics with typed versions
+   - `dict` → `dict[str, Any]` (most common)
+   - `list` → `list[str]` or `list[Any]`
+2. **Target:** All `type-arg` errors (~80)
+3. **Import:** Add `from typing import Any` where needed
+4. Run `mypy src/mcp` to verify
+5. **Commit:** `[refactor] W005: Add generic type parameters to collections`
+6. **Exit Gate:** ~80 `type-arg` errors eliminated
 
-**Expected Outcome:** Zero UI dependencies in code  
-**Exit Gate:** No references to PySide6, websockets, or UI-specific code
-
----
-
-### Step 6: Verify Core Functionality
+### Step 6: Fix Type Mismatches (Core Issues)
+**Time:** 90 minutes  
 **Actions:**
-1. Test MCP core imports:
+1. **Target:** `assignment`, `arg-type`, `union-attr` errors (~150)
+2. **Common fixes:**
+   - Add `assert x is not None` before accessing optional
+   - Use `if x:` checks for optional handling
+   - Fix incompatible assignments
+3. **Focus on:** High-impact files (server_config.py, policy_processor.py)
+4. Run tests after major changes
+5. **Commit:** `[refactor] W005: Fix type mismatches in core files`
+6. **Exit Gate:** ~100 type mismatch errors fixed, tests pass
+
+### Step 7: Pragmatic Ignore Rules (Remaining Issues)
+**Time:** 30 minutes  
+**Actions:**
+1. For remaining ~100 mypy errors:
+   - **Complex edge cases:** Add `# type: ignore[error-code]  # Reason` with documentation
+   - **Untyped external code:** Update `mypy.ini` with ignore rules
+2. Add Security exception comments for intentional subprocess usage:
+   - `# noqa: S603  # Docker management - trusted input`
+   - `# noqa: S607  # Docker command - standard tool`
+3. Document decisions in commit message
+4. **Commit:** `[config] W005: Add pragmatic ignore rules for edge cases`
+5. **Exit Gate:** < 10 remaining mypy errors with documented justifications
+
+### Step 8: Validation & Quality Gates
+**Time:** 30 minutes  
+**Actions:**
+1. Run all quality gates:
+   - `black --check .` → Must PASS
+   - `ruff check .` → Must return 0 errors
+   - `mypy src/mdnotes` → Must PASS (verify no regression)
+   - `mypy src/mcp` → Must have < 10 errors (documented)
+   - `pytest -q` → Must PASS (3/3 tests)
+   - `python -m build` → Must succeed
+   - `pip-audit` → Must have no high-severity
+2. Verify MCP core functionality:
    ```python
-   from mcp import memory_manager
-   from mcp import qdrant_manager
-   from mcp import mcp_server
+   from mcp.memory_manager import MemoryManager
+   from mcp.config import Config
+   # All imports work
    ```
-2. Verify memory management imports work
-3. Verify policy system imports work
-4. Verify tools and handlers import correctly
-5. Document any disabled features
-
-**Exit Gate:** All core MCP modules import without errors
-
----
-
-### Step 7: Run All Quality Gates
-**Actions:**
-1. Run `black --check .` → must pass
-2. Run `ruff check .` → must pass (0 errors)
-3. Run `mypy src/mcp` → must pass (with documented ignores)
-4. Run `mypy src/mdnotes` → must pass
-5. Run `pytest -q tests/test_smoke.py` → must pass (critical)
-6. Run `pytest -q tests/acceptance` → must pass
-7. Run `python -m build` → must pass
-
-**Exit Gate:** All quality gates pass
-
----
-
-### Step 8: Commit, Push, and Document
-**Actions:**
-1. Stage all changes
-2. Create comprehensive commit message with stats
-3. Push branch to origin
-4. Update SPRINT_QUEUE.json: W004 status → awaiting_test
-5. Update AGENT_LOG.md with W004 completion summary
-6. Release locks
-
-**Exit Gate:** Branch pushed, documentation updated
+3. **Commit:** `[test] W005: All quality gates pass`
+4. **Exit Gate:** All ACs satisfied
 
 ---
 
 ## Testing Strategy
 
-See TEST_PLAN.md. Summary: Quality gate validation, import verification, core functionality testing, no regressions.
+### Pre-Implementation Tests
+- [x] Baseline quality gates documented (43 ruff, 496 mypy, tests pass)
+- [x] Backup files identified (memory_manager_backup.py)
 
-**Rollback Triggers:**
-- Core MCP functionality breaks (imports fail)
-- Existing tests fail
-- Build fails
-- Cannot resolve type errors reasonably
+### During Implementation
+- [ ] Run `mypy src/mcp` after each major change (track error count)
+- [ ] Run `pytest -q` after type changes (ensure no regressions)
+- [ ] Run `ruff check .` after each step (verify progress)
+
+### Post-Implementation Tests
+- [ ] **AC1:** `ruff check .` → exit code 0
+- [ ] **AC2:** `mypy src/mcp` → < 10 errors
+- [ ] **AC3:** `pytest -q` → 3/3 tests pass
+- [ ] **AC4:** `black --check .` → pass
+- [ ] **AC5:** `python -m build` → success
+- [ ] **AC6:** `pip-audit` → no high-severity
+- [ ] **AC7:** No ruff deprecation warnings
+
+### Integration Tests
+- [ ] All MCP imports work (smoke test)
+- [ ] MCP handlers can be instantiated
+- [ ] No runtime errors from type annotations
 
 ---
 
 ## Rollback Plan
 
-**Baseline:** `pre/W004-<timestamp>` (created in Step 1)  
-**Trigger Conditions:** Critical functionality breaks, tests fail, insurmountable type errors  
-**Steps:**
+### Baseline Tag
+- **Tag:** `pre/W005-$(date -Iseconds)`
+- **Branch:** `feat/W005-step-01-quality-gates`
+
+### Rollback Triggers
+1. **Tests fail:** Rollback to baseline, investigate type annotation issue
+2. **MCP imports break:** Rollback to baseline, type annotations too strict
+3. **Time exceeds 8 hours:** Pause, negotiate scope reduction with Negotiator
+4. **Mypy errors increase:** Rollback last change, use alternative approach
+
+### Rollback Procedure
 ```bash
-git reset --hard pre/W004-<timestamp>
-git push origin feat/W004-step-01-adapt-mcp-code --force-with-lease
-echo "W004 aborted: <reason>" >> .oodatcaa/work/SPRINT_DISCUSS.md
+git reset --hard <baseline-tag>
+git push --force-with-lease origin feat/W005-step-01-quality-gates
 ```
-
----
-
-## Branch & Commits
-
-**Branch:** `feat/W004-step-01-adapt-mcp-code`  
-**Commit Labels:** `[refactor]` for code quality improvements  
-**PR:** Single PR after all quality gates pass  
-**Merge Strategy:** No-FF merge to preserve feature branch history
 
 ---
 
 ## Dependencies
 
-**Upstream:** W002 (COMPLETE - MCP files migrated), W003 (COMPLETE - dependencies installed)  
-**Downstream:** W005 (Python Tooling), W006 (Integration Testing), W007 (Configuration), W008 (Documentation)
+### Upstream Dependencies (Satisfied)
+- ✅ **W004:** MCP code adapted (88.97% error reduction achieved)
+- ✅ **W003:** Dependencies integrated
+- ✅ **W002:** MCP server migrated
 
-**Artifacts from Previous Work:**
-- W002: 61 MCP files in `src/mcp/`, `policy/`, `docs/mcp/`
-- W003: 12 dependencies installed, tools configured
+### Downstream Dependencies (Unblocked by W005)
+- **W006:** Basic Integration Testing (can proceed with clean quality baseline)
+- **W007:** Configuration & Environment Setup
+- **W008:** Documentation Update (depends on W005+W006+W007)
 
----
-
-## Effort Estimate
-
-**Complexity:** M (Medium) | **Time:** 3-4 hours  
-- Step 1 (Setup): 5 min
-- Step 2 (Auto ruff fixes): 15 min
-- Step 3 (Manual ruff fixes): 45 min
-- Step 4 (Type annotations): 90 min
-- Step 5 (Remove UI): 15 min
-- Step 6 (Verify functionality): 15 min
-- Step 7 (Quality gates): 20 min
-- Step 8 (Commit & docs): 15 min
-
-**Risk Level:** MEDIUM (automated fixes are safe, but type annotations need care)
+### External Dependencies
+- **Type stubs:** `types-PyYAML`, `types-aiofiles` (will be added)
+- **Python version:** 3.11+ (already satisfied)
 
 ---
 
-## Builder Task Breakdown
+## Technical Debt Created
 
-**W004-B01:** Steps 1-3 (Setup + Automated Fixes + Manual Fixes)  
-**W004-B02:** Steps 4-5 (Type Annotations + Remove UI)  
-**W004-B03:** Steps 6-8 (Verify + Quality Gates + Commit)
+### Intentional Technical Debt (Documented)
+1. **Pragmatic type ignores:** < 10 complex edge cases with `# type: ignore` and justification
+2. **Security warnings:** S603/S607 exceptions for Docker management with `# noqa` comments
+3. **External library stubs:** Some external libs may lack perfect stubs (acceptable)
 
-**Tester Task:**  
-**W004-T01:** Verify all 10 ACs, validate quality gates, test core functionality
+### Future Work (Out of W005 Scope)
+- **Strict mypy coverage:** Achieve 100% strict typing (if needed)
+- **Performance optimization:** Type annotations may enable future optimizations
+- **Additional type stubs:** Create custom stubs for untyped MCP SDK if needed
 
 ---
 
-**Status:** ✅ APPROVED | **Ready for:** Builder Agent Execution
+## Success Metrics
+
+### Quantitative
+- **Ruff errors:** 43 → 0 (100% reduction)
+- **Mypy errors:** 496 → < 10 (98% reduction)
+- **Test pass rate:** 100% (maintained)
+- **Build success:** 100% (maintained)
+
+### Qualitative
+- **Code maintainability:** Type annotations improve IDE support and refactoring safety
+- **CI readiness:** All quality gates green, ready for production deployment
+- **Developer experience:** No more linting warnings, clean baseline for future work
+
+---
+
+## References
+- **Objective:** `.oodatcaa/objectives/OBJECTIVE.md` → Quality & Performance → Code Quality
+- **W004 Planning:** `.oodatcaa/work/AGENT_PLAN.md` (previous)
+- **W004 Results:** 88.97% error reduction, 8/10 ACs passing
+- **Sprint Backlog:** `.oodatcaa/work/SPRINT_BACKLOG.md` → W005
+
+---
+
+**Estimated Effort:** 6 hours (8 steps × 45 min avg)  
+**Complexity:** Medium (systematic but extensive typing work)  
+**Risk Level:** Low-Medium (pragmatic approach reduces risk)  
+**Next Agent:** Builder (W005-B01)

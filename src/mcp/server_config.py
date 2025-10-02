@@ -44,7 +44,7 @@ class QdrantConfig:
     # Docker settings (for local mode)
     docker_image: str = "qdrant/qdrant:latest"
     container_name: str = "qdrant"
-    docker_ports: list = field(default_factory=lambda: ["6333:6333", "6334:6334"])
+    docker_ports: list[str] = field(default_factory=lambda: ["6333:6333", "6334:6334"])
 
     # Timeouts
     startup_timeout: int = 15
@@ -150,7 +150,7 @@ class ConfigManager:
         self._load_config()
         self._validate_config()
 
-    def _load_config(self):
+    def _load_config(self) -> None:
         """Load configuration from various sources with precedence."""
         # 1. Load default values (already set in ServerConfig)
 
@@ -161,8 +161,10 @@ class ConfigManager:
         # 3. Override with environment variables
         self._load_env_config()
 
-    def _load_yaml_config(self):
+    def _load_yaml_config(self) -> None:
         """Load configuration from YAML file."""
+        if not self.config_path:
+            return
         try:
             with open(self.config_path, encoding="utf-8") as f:
                 yaml_data = yaml.safe_load(f)
@@ -178,7 +180,7 @@ class ConfigManager:
             logging.getLogger(__name__).error(f"Failed to load config from {self.config_path}: {e}")
             raise
 
-    def _update_config_from_dict(self, data: dict[str, Any]):
+    def _update_config_from_dict(self, data: dict[str, Any]) -> None:
         """Update configuration from dictionary data."""
         # Update basic server settings
         if "server" in data:
@@ -225,43 +227,51 @@ class ConfigManager:
         # Update other component settings similarly...
         # (Additional sections can be added as needed)
 
-    def _load_env_config(self):
+    def _load_env_config(self) -> None:
         """Load configuration from environment variables."""
         # Server settings
-        if os.getenv("MCP_SERVER_NAME"):
-            self.config.name = os.getenv("MCP_SERVER_NAME")
+        server_name = os.getenv("MCP_SERVER_NAME")
+        if server_name:
+            self.config.name = server_name
 
         # Logging settings
-        if os.getenv("LOG_LEVEL"):
+        log_level = os.getenv("LOG_LEVEL")
+        if log_level:
             try:
-                self.config.log_level = LogLevel(os.getenv("LOG_LEVEL").upper())
+                self.config.log_level = LogLevel(log_level.upper())
             except ValueError:
                 pass
 
-        if os.getenv("LOG_FILE"):
-            self.config.log_file = os.getenv("LOG_FILE")
+        log_file = os.getenv("LOG_FILE")
+        if log_file:
+            self.config.log_file = log_file
 
         # Qdrant settings
-        if os.getenv("QDRANT_HOST"):
-            self.config.qdrant.host = os.getenv("QDRANT_HOST")
+        qdrant_host = os.getenv("QDRANT_HOST")
+        if qdrant_host:
+            self.config.qdrant.host = qdrant_host
 
-        if os.getenv("QDRANT_PORT"):
+        qdrant_port = os.getenv("QDRANT_PORT")
+        if qdrant_port:
             try:
-                self.config.qdrant.port = int(os.getenv("QDRANT_PORT"))
+                self.config.qdrant.port = int(qdrant_port)
             except ValueError:
                 pass
 
-        if os.getenv("QDRANT_API_KEY"):
-            self.config.qdrant.api_key = os.getenv("QDRANT_API_KEY")
+        qdrant_api_key = os.getenv("QDRANT_API_KEY")
+        if qdrant_api_key:
+            self.config.qdrant.api_key = qdrant_api_key
 
         # Embedding settings
-        if os.getenv("EMBEDDING_MODEL"):
-            self.config.embedding.model_name = os.getenv("EMBEDDING_MODEL")
+        embedding_model = os.getenv("EMBEDDING_MODEL")
+        if embedding_model:
+            self.config.embedding.model_name = embedding_model
 
-        if os.getenv("EMBEDDING_DEVICE"):
-            self.config.embedding.device = os.getenv("EMBEDDING_DEVICE")
+        embedding_device = os.getenv("EMBEDDING_DEVICE")
+        if embedding_device:
+            self.config.embedding.device = embedding_device
 
-    def _validate_config(self):
+    def _validate_config(self) -> None:
         """Validate configuration values."""
         errors = []
 
@@ -304,7 +314,7 @@ class ConfigManager:
         """Get the current configuration."""
         return self.config
 
-    def save_config(self, path: str | Path | None = None):
+    def save_config(self, path: str | Path | None = None) -> None:
         """Save current configuration to YAML file."""
         save_path = Path(path) if path else self.config_path
 

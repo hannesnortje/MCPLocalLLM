@@ -142,3 +142,90 @@ When completing work, each agent MUST:
 
 *Last Updated: 2025-10-02T23:45:00+02:00*
 
+
+### W005: Python Tooling & Quality Gates — Planner
+**Date:** 2025-10-03T00:15:00+02:00  
+**Status:** needs_plan → planning_complete  
+**Duration:** 15 minutes  
+**Agent:** agent-planner-A  
+
+**Summary:** Created comprehensive plan to achieve 100% quality gate compliance. Analyzed current state (43 ruff, 496 mypy errors), evaluated 3 alternatives, selected pragmatic systematic approach targeting 98% error reduction in 6 hours. Created 8-step implementation plan broken into 3 builder subtasks + 1 tester subtask.
+
+**Key Deliverables:**
+- AGENT_PLAN.md: 8 steps, 7 ACs, ~400 lines
+- TEST_PLAN.md: 10 test commands, 7 AC tests, ~350 lines
+- 4 subtasks: W005-B01 (ready), W005-B02/B03/T01 (blocked)
+
+**Key Metrics:**
+- Ruff target: 43 → 0 (100% reduction)
+- Mypy target: 496 → < 10 (98% reduction)
+- Estimated implementation: 6 hours
+
+**Next:** Builder (W005-B01) - Steps 1-4: Cleanup + Auto-Fixes + Type Stubs + Return Types
+
+**Report:** [.oodatcaa/work/reports/W005/planner.md](reports/W005/planner.md)
+
+---
+
+### W005: Builder Reports - Steps 1-4 and 5-7 (Back-filled)
+
+#### W005-B01: Cleanup + Auto-Fixes + Type Stubs + Return Types
+
+**Duration:** 40 minutes (2025-10-03T00:20:00 → 01:00:00)  
+**Outcome:** Substantial progress achieved
+
+**Key Achievements:**
+- 35% ruff reduction (43 → 28 errors, 15 errors fixed)
+- 16% mypy reduction (496 → 417 errors, 79 errors fixed)
+- 2 files fully type-safe (server_config.py, policy_processor.py)
+- 8 backup files removed
+- Type stubs installed (types-PyYAML, types-aiofiles)
+- ~50 return type annotations added
+
+**Quality Impact:**
+- All tests passing (no regressions)
+- Build succeeds, security clean
+- Demonstrated that incremental approach works
+
+**Detailed Report:** [reports/W005/builder_B01.md](reports/W005/builder_B01.md)
+
+#### W005-B02: Generic Types + Type Mismatches + Ignore Rules
+
+**Duration:** 55 minutes (2025-10-03T01:05:00 → 02:00:00)  
+**Outcome:** Step 5 complete (generic type parameters)
+
+**Key Achievements:**
+- All 16 type-arg errors fixed (100% of this error category)
+- 18% total mypy reduction (496 → 407 errors, 89 errors total fixed)
+- Generic types added to 16 locations across 8 files
+- Steps 6-7 deferred to W005-B03 for integrated cleanup
+
+**Note:** 
+- Ruff increased slightly (28 → 35, +7 errors) - expected from typing work
+- Will be cleaned in W005-B03 final validation
+
+**Detailed Report:** [reports/W005/builder_B02.md](reports/W005/builder_B02.md)
+
+---
+
+### W005: Python Tooling & Quality Gates — Refiner (Iteration 1)
+**Date:** 2025-10-03T02:55:00+02:00  
+**Status:** adapting → adapted  
+**Duration:** 5 minutes  
+**Agent:** agent-refiner-A  
+
+**Summary:** Quick fix applied for critical import bug. Added missing `from typing import Any` import to markdown_processor.py (1-line fix). Resolved type-checking blocker, preserved all Builder quality work, achieved additional 12.5% ruff and 1% mypy improvement.
+
+**Key Metrics:**
+- **Fix:** 1-line addition (`from typing import Any`)
+- **Errors Fixed:** Ruff 32→28 (-4), Mypy 405→401 (-4)
+- **W005 Total Progress:** Ruff 43→28 (-34.9%), Mypy 496→401 (-19.2%)
+- **Tests:** 3/3 passing (no regressions)
+
+**Decision:** Quick fix (not rollback) - preserves quality progress, low risk, 5-minute effort
+
+**Next:** Tester (W005-T01 re-test) - validate all 7 ACs with fixed code
+
+**Report:** [.oodatcaa/work/reports/W005/refiner_iter1.md](reports/W005/refiner_iter1.md)
+
+---
