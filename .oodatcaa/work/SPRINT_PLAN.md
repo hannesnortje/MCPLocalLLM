@@ -79,21 +79,26 @@
 - Result: ✅ All 10 acceptance criteria PASS, all critical protection checks PASS
 
 **Integrator → W002: Execute MCP Server Migration**
-- Status: Integrating (ready for PR and merge)
+- Status: Done (merged to main)
 - Assigned: 2025-10-02T14:00:00+02:00
-- Branch: feat/W002-step-01-copy-mcp-core
+- Completed: 2025-10-02T14:30:00+02:00
+- Branch: feat/W002-step-01-copy-mcp-core (merged)
 - Deliverables: 61 MCP files migrated (31 Python, 4 policy, 12 docs, infrastructure)
-- Next: Create PR, merge to main, tag, update CHANGELOG
+- Tag: W002-complete
 
-**Planner → W002: Execute MCP Server Migration**  
+**Planner → W003: Integrate MCP Dependencies**  
 - Status: Planning Complete (AGENT_PLAN.md and TEST_PLAN.md created)
-- Assigned: 2025-10-02T10:30:00+02:00  
-- Completed: 2025-10-02T10:30:00+02:00
+- Assigned: 2025-10-02T15:00:00+02:00
+- Completed: 2025-10-02T15:15:00+02:00
 - Artifacts: AGENT_PLAN.md, TEST_PLAN.md
-- Ready: W002-B01 (Steps 1-3: Setup + Core Copy)
+
+**Builder → W003-B01: Branch + pyproject.toml Updates**
+- Status: In Progress (first W003 task)
+- Assigned: 2025-10-02T15:30:00+02:00
+- Dependencies: None (W003 planning complete)
+- Next: W003-B02 will unblock upon B01 completion
 
 ### Pending Assignment (blocked by dependencies)
-- W003: Integrate MCP Dependencies (depends on W002)
 - W004: Adapt MCP for Training Use Case (depends on W002, W003)
 - W005: Python Tooling & Quality Gates (depends on W004)
 - W006: Basic Integration Testing (depends on W004)
@@ -150,6 +155,30 @@
 - Protection verified: `.oodatcaa/` and `src/mdnotes/` untouched
 
 **Exit Criteria:** All 10 ACs pass, existing tests pass, W003 unblocked
+
+---
+
+### W003: Integrate MCP Dependencies (Planning Complete)
+
+**Plan Version:** 1.0  
+**Branch:** `feat/W003-step-01-integrate-dependencies`  
+**Plan Document:** `.oodatcaa/work/AGENT_PLAN.md`  
+**Test Document:** `.oodatcaa/work/TEST_PLAN.md`
+
+**Implementation Steps:**
+1. **Step 1-5:** Branch setup + update pyproject.toml with MCP dependencies → W003-B01 (ready)
+2. **Step 6-8:** Install dependencies (~2.1GB) + verify imports + quality gates → W003-B02 (blocked by B01)
+3. **Step 9-10:** Commit changes + update documentation → W003-B03 (blocked by B02)
+4. **Testing:** Verify all 10 ACs and import checks → W003-T01 (blocked by B03)
+
+**Deliverables:**
+- Updated pyproject.toml with 10 MCP production deps + 2 dev deps
+- Tool configs updated (mypy, pytest, ruff)
+- Python version constraint: >=3.11,<3.13
+- All MCP dependencies installed and verified (~2.1GB)
+- Import verification complete (mcp, qdrant_client, sentence_transformers)
+
+**Exit Criteria:** All 10 ACs pass, imports work, existing tests pass, pip-audit clean, W004 unblocked
 
 ---
 
