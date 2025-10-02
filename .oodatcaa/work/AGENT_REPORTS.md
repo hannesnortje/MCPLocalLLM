@@ -51,7 +51,10 @@ This file contains executive summaries of all agent completion reports. For deta
 #### W007: Configuration & Environment Setup
 - [W007: Planning](reports/W007/planner.md) - ✅ Complete
 - [W007-B01: Configuration Files + Setup Scripts](reports/W007/builder_W007-B01.md) - ✅ Complete
-- [W007-B01: Refiner Adaptation](reports/W007/refiner_W007-B01.md) - ✅ Complete (awaiting re-test)
+- [W007-B01: First Test](reports/W007/tester_W007-T01.md) - ⚠️ 6/10 ACs (needs adapt)
+- [W007-B01: Refiner Adaptation](reports/W007/refiner_W007-B01.md) - ✅ Complete
+- [W007-B01: Re-Test](reports/W007/tester_W007-T01_retest.md) - ✅ 9/10 ACs (90%, APPROVED)
+- [W007-B01: Integration](reports/W007/integrator_W007-B01.md) - ✅ Complete
 
 ---
 
