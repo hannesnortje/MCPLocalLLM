@@ -261,3 +261,59 @@ When completing work, each agent MUST:
 **Report:** [.oodatcaa/work/reports/W005/integrator.md](reports/W005/integrator.md)
 
 ---
+
+### W006: Basic Integration Testing — Planner
+**Date:** 2025-10-03T04:10:00+02:00  
+**Status:** needs_plan → planning_complete  
+**Duration:** 10 minutes  
+**Agent:** agent-planner-A  
+
+**Summary:** Created comprehensive plan for basic MCP integration testing. Analyzed current state (no integration tests), evaluated 3 alternatives, selected comprehensive approach covering server initialization, memory CRUD, and policy system. Created 6-step implementation plan targeting 12 integration tests with ≥85% coverage in ~2.5 hours.
+
+**Key Deliverables:**
+- AGENT_PLAN.md: 6 steps, 10 ACs, comprehensive test strategy
+- TEST_PLAN.md: 10 AC validation procedures, quality gate commands
+- 3 subtasks: W006-B01 (ready), W006-B02/T01 (blocked)
+
+**Key Metrics:**
+- Target tests: 12 integration tests (4 server + 5 memory + 3 policy)
+- Coverage target: ≥85% on new test files
+- Performance target: <30 seconds test execution
+- Estimated implementation: ~2.5 hours
+
+**Next:** Builder (W006-B01) - Steps 1-3: Test Infrastructure + Server Tests + Memory CRUD Tests
+
+**Report:** [.oodatcaa/work/reports/W006/planner.md](reports/W006/planner.md)
+
+---
+
+### W006-B01: Test Infrastructure + Server Tests + Memory CRUD — Refiner (Adaptation)
+**Date:** 2025-10-03T10:25:00+00:00  
+**Status:** adapting → adapted (ready for builder)  
+**Duration:** 18 minutes  
+**Agent:** agent-refiner-A  
+
+**Summary:** Resolved critical import naming conflict blocking W006 integration tests. Executed architectural fix by renaming `src/mcp/` → `src/mcp_local/` to avoid collision with external mcp protocol library. Updated all imports (5 files), configuration (pyproject.toml), verified quality gates. Builder can now continue W006-B01 implementation.
+
+**Key Actions:**
+- Directory rename: `git mv src/mcp src/mcp_local` (43 files preserved with history)
+- Import updates: memory_server.py, 3 test files, pyproject.toml
+- Configuration: Updated isort and mypy configs
+- Verification: Import successful, smoke tests pass, black/ruff clean
+
+**Key Metrics:**
+- **Files Changed:** 53 files (43 renames + 10 modifications)
+- **Lines Changed:** +204/-39
+- **Quality:** ✅ Black pass, ⚠️ 3 pre-existing ruff errors (not new)
+- **Tests:** ✅ Smoke tests 2/2 passing
+- **Import:** ✅ `from mcp_local.mcp_server import MemoryMCPServer` works
+
+**Decision:** Architectural fix (Option A) chosen over workarounds. Completed in 18 minutes vs estimated 2-3 hours.
+
+**Impact:** W006-B01 UNBLOCKED - integration tests can now run without import conflicts
+
+**Next:** Builder should continue W006-B01 implementation or mark complete
+
+**Report:** [.oodatcaa/work/reports/W006-B01/refiner_1.md](reports/W006-B01/refiner_1.md)
+
+---
