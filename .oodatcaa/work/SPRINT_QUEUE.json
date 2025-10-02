@@ -28,7 +28,7 @@
       "title": "W001 Step 1-2: MCP Structure Analysis & Essential Components",
       "type": "Implementation",
       "complexity": "S",
-      "status": "in_progress",
+      "status": "awaiting_test",
       "priority": 1,
       "agent": "builder",
       "lease": null,
@@ -43,9 +43,9 @@
       "title": "W001 Step 3-4: Conflict Resolution & Dependencies",
       "type": "Implementation",
       "complexity": "S",
-      "status": "blocked",
+      "status": "ready",
       "priority": 1,
-      "agent": null,
+      "agent": "builder",
       "lease": null,
       "dependencies": ["W001-B01"],
       "objective": "OBJ-2025-002",
@@ -183,15 +183,16 @@
   ],
   "metadata": {
     "created": "2025-10-01T00:00:00Z",
-    "updated": "2025-10-02T00:00:00+02:00",
+    "updated": "2025-10-02T00:30:00+02:00",
     "sprint_goal": "MCP Server Foundation - Migrate and integrate MCP infrastructure",
     "total_tasks": 12,
     "story_tasks": 8,
     "builder_tasks": 3,
     "tester_tasks": 1,
     "completed_tasks": 0,
-    "ready_tasks": 0,
-    "blocked_tasks": 3,
-    "in_progress_tasks": 2
+    "ready_tasks": 1,
+    "blocked_tasks": 2,
+    "in_progress_tasks": 1,
+    "awaiting_test_tasks": 1
   }
 }
