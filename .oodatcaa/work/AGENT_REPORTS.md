@@ -207,3 +207,25 @@ When completing work, each agent MUST:
 **Detailed Report:** [reports/W005/builder_B02.md](reports/W005/builder_B02.md)
 
 ---
+
+### W005: Python Tooling & Quality Gates — Refiner (Iteration 1)
+**Date:** 2025-10-03T02:55:00+02:00  
+**Status:** adapting → adapted  
+**Duration:** 5 minutes  
+**Agent:** agent-refiner-A  
+
+**Summary:** Quick fix applied for critical import bug. Added missing `from typing import Any` import to markdown_processor.py (1-line fix). Resolved type-checking blocker, preserved all Builder quality work, achieved additional 12.5% ruff and 1% mypy improvement.
+
+**Key Metrics:**
+- **Fix:** 1-line addition (`from typing import Any`)
+- **Errors Fixed:** Ruff 32→28 (-4), Mypy 405→401 (-4)
+- **W005 Total Progress:** Ruff 43→28 (-34.9%), Mypy 496→401 (-19.2%)
+- **Tests:** 3/3 passing (no regressions)
+
+**Decision:** Quick fix (not rollback) - preserves quality progress, low risk, 5-minute effort
+
+**Next:** Tester (W005-T01 re-test) - validate all 7 ACs with fixed code
+
+**Report:** [.oodatcaa/work/reports/W005/refiner_iter1.md](reports/W005/refiner_iter1.md)
+
+---
