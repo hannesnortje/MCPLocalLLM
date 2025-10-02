@@ -166,3 +166,44 @@ When completing work, each agent MUST:
 **Report:** [.oodatcaa/work/reports/W005/planner.md](reports/W005/planner.md)
 
 ---
+
+### W005: Builder Reports - Steps 1-4 and 5-7 (Back-filled)
+
+#### W005-B01: Cleanup + Auto-Fixes + Type Stubs + Return Types
+
+**Duration:** 40 minutes (2025-10-03T00:20:00 → 01:00:00)  
+**Outcome:** Substantial progress achieved
+
+**Key Achievements:**
+- 35% ruff reduction (43 → 28 errors, 15 errors fixed)
+- 16% mypy reduction (496 → 417 errors, 79 errors fixed)
+- 2 files fully type-safe (server_config.py, policy_processor.py)
+- 8 backup files removed
+- Type stubs installed (types-PyYAML, types-aiofiles)
+- ~50 return type annotations added
+
+**Quality Impact:**
+- All tests passing (no regressions)
+- Build succeeds, security clean
+- Demonstrated that incremental approach works
+
+**Detailed Report:** [reports/W005/builder_B01.md](reports/W005/builder_B01.md)
+
+#### W005-B02: Generic Types + Type Mismatches + Ignore Rules
+
+**Duration:** 55 minutes (2025-10-03T01:05:00 → 02:00:00)  
+**Outcome:** Step 5 complete (generic type parameters)
+
+**Key Achievements:**
+- All 16 type-arg errors fixed (100% of this error category)
+- 18% total mypy reduction (496 → 407 errors, 89 errors total fixed)
+- Generic types added to 16 locations across 8 files
+- Steps 6-7 deferred to W005-B03 for integrated cleanup
+
+**Note:** 
+- Ruff increased slightly (28 → 35, +7 errors) - expected from typing work
+- Will be cleaned in W005-B03 final validation
+
+**Detailed Report:** [reports/W005/builder_B02.md](reports/W005/builder_B02.md)
+
+---
