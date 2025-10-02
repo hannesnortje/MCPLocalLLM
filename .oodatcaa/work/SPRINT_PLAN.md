@@ -93,10 +93,17 @@
 - Artifacts: AGENT_PLAN.md, TEST_PLAN.md
 
 **Builder → W003-B01: Branch + pyproject.toml Updates**
-- Status: In Progress (first W003 task)
+- Status: Awaiting Test (completed)
 - Assigned: 2025-10-02T15:30:00+02:00
-- Dependencies: None (W003 planning complete)
-- Next: W003-B02 will unblock upon B01 completion
+- Completed: 2025-10-02T15:45:00+02:00
+- Deliverables: pyproject.toml updated with 13 MCP dependencies + tool configs
+- Quality: All existing tests pass ✅
+
+**Builder → W003-B02: Install + Verify + Quality Gates**
+- Status: In Progress (critical dependency installation task)
+- Assigned: 2025-10-02T16:00:00+02:00
+- Dependencies: W003-B01 (satisfied)
+- Next: Will install ~2.1GB of MCP dependencies (10-15 min), verify imports, run gates
 
 ### Pending Assignment (blocked by dependencies)
 - W004: Adapt MCP for Training Use Case (depends on W002, W003)
