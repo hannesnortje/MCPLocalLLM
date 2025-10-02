@@ -338,7 +338,7 @@
       "title": "Python Tooling & Quality Gates",
       "type": "Quality",
       "complexity": "M",
-      "status": "ready_for_integrator",
+      "status": "done",
       "priority": 5,
       "agent": "integrator",
       "lease": null,
@@ -348,14 +348,17 @@
       "objective_link": "Quality & Performance → Code Quality",
       "test_failures": "NEGOTIATED: 7/9 ACs ACCEPTED. ✅AC1(28 ruff-ACCEPTED), ✅AC4(mypy-DEFERRED). All core ACs pass. Better than W004.",
       "adaptation_notes": "2 iterations: Import bug found→fixed. APPROVED: 7/9 ACs (78%), 28 ruff (-34.9%), 401 mypy (-19.2%), zero regressions, all MCP functional. Better than W004 baseline.",
-      "negotiation_decision": "APPROVED for integration. AC1: 28 errors acceptable (34.9% reduction, BETTER than W004's 43). AC4: Mypy deferred (consistent with W004). Rationale: All core functionality works, continuous improvement over W004, DoD alignment, pragmatic delivery."
+      "negotiation_decision": "APPROVED for integration. AC1: 28 errors acceptable (34.9% reduction, BETTER than W004's 43). AC4: Mypy deferred (consistent with W004). Rationale: All core functionality works, continuous improvement over W004, DoD alignment, pragmatic delivery.",
+      "completed_at": "2025-10-03T04:00:00+02:00",
+      "merged_commit": "3a12d59",
+      "tag": "W005-complete"
     },
        {
          "id": "W005-B01",
          "title": "W005 Steps 1-4: Cleanup + Auto-Fixes + Type Stubs + Return Types",
          "type": "Implementation",
          "complexity": "M",
-         "status": "ready_for_integrator",
+         "status": "done",
          "priority": 5,
          "agent": "builder",
          "lease": null,
@@ -364,14 +367,15 @@
          "sprint": "1",
          "parent_task": "W005",
          "plan_step": "1-4",
-         "notes": "Import issue fixed by Refiner. Quality work preserved."
+         "notes": "Import issue fixed by Refiner. Quality work preserved.",
+         "completed_at": "2025-10-03T04:00:00+02:00"
        },
         {
           "id": "W005-B02",
           "title": "W005 Steps 5-7: Generic Types + Type Mismatches + Ignore Rules",
           "type": "Implementation",
           "complexity": "M",
-          "status": "ready_for_integrator",
+          "status": "done",
           "priority": 5,
           "agent": "builder",
           "lease": null,
@@ -380,14 +384,15 @@
           "sprint": "1",
           "parent_task": "W005",
           "plan_step": "5-7",
-          "notes": "Import regression fixed by Refiner. Type work valid."
+          "notes": "Import regression fixed by Refiner. Type work valid.",
+          "completed_at": "2025-10-03T04:00:00+02:00"
         },
        {
          "id": "W005-B03",
          "title": "W005 Step 8: Validation + Quality Gates",
          "type": "Implementation",
          "complexity": "S",
-         "status": "ready_for_integrator",
+         "status": "done",
          "priority": 5,
          "agent": "builder",
          "lease": null,
@@ -396,14 +401,15 @@
          "sprint": "1",
          "parent_task": "W005",
          "plan_step": "8",
-         "notes": "Import issue resolved. Validated."
+         "notes": "Import issue resolved. Validated.",
+         "completed_at": "2025-10-03T04:00:00+02:00"
        },
         {
           "id": "W005-T01",
           "title": "W005 Testing: Verify All Quality Gates Pass",
           "type": "Testing",
           "complexity": "S",
-          "status": "ready_for_integrator",
+          "status": "done",
           "priority": 5,
           "agent": "tester",
           "lease": null,
@@ -411,7 +417,8 @@
           "objective": "OBJ-2025-002",
           "sprint": "1",
           "parent_task": "W005",
-          "notes": "NEGOTIATED & APPROVED: 7/9 ACs PASS (78%). ✅AC1(28 ruff-ACCEPTED), ✅AC4(mypy-DEFERRED). All core ACs pass. Better than W004."
+          "notes": "NEGOTIATED & APPROVED: 7/9 ACs PASS (78%). ✅AC1(28 ruff-ACCEPTED), ✅AC4(mypy-DEFERRED). All core ACs pass. Better than W004.",
+          "completed_at": "2025-10-03T04:00:00+02:00"
         },
     {
       "id": "W006",
@@ -458,13 +465,13 @@
   ],
                      "metadata": {
                        "created": "2025-10-01T00:00:00Z",
-                       "updated": "2025-10-03T03:20:00+02:00",
+                       "updated": "2025-10-03T04:00:00+02:00",
                        "sprint_goal": "MCP Server Foundation - Migrate and integrate MCP infrastructure",
                        "total_tasks": 28,
                        "story_tasks": 8,
                        "builder_tasks": 15,
                        "tester_tasks": 5,
-                       "completed_tasks": 20,
+                       "completed_tasks": 25,
                        "ready_tasks": 0,
                        "blocked_tasks": 0,
                        "in_progress_tasks": 0,
@@ -476,8 +483,8 @@
                        "needs_adapt_tasks": 0,
                        "adapting_tasks": 0,
                        "adapted_tasks": 0,
-                       "ready_for_integrator_tasks": 5,
+                       "ready_for_integrator_tasks": 0,
                        "integrating_tasks": 0,
-                       "done_tasks": 20
+                       "done_tasks": 25
                      }
 }
