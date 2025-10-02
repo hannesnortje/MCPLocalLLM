@@ -11,22 +11,21 @@ Provides shared test fixtures for:
 import logging
 import sys
 import uuid
-from collections.abc import Generator
+from collections.abc import AsyncGenerator
 from pathlib import Path
 from typing import Any
 
 import pytest
+import pytest_asyncio
 
 # Clear any cached mcp modules to avoid conflict with protocol library
 for key in list(sys.modules.keys()):
-    if key.startswith("mcp") and not key.startswith("mcp."):
-        # Don't remove the protocol library, just top-level mcp if it exists
-        pass
-    elif key.startswith("mcp.") and "site-packages" not in str(
-        getattr(sys.modules[key], "__file__", "")
-    ):
-        # Remove our local mcp modules if they were cached
-        del sys.modules[key]
+    if key.startswith("mcp_local"):
+        # Remove our local mcp_local modules if they were cached
+        try:
+            del sys.modules[key]
+        except KeyError:
+            pass
 
 # Add src directory to path to import local mcp module (not the protocol library)
 src_path = Path(__file__).absolute().parent.parent.parent / "src"
@@ -74,8 +73,8 @@ def test_collection_name() -> str:
     return f"test_collection_{uuid.uuid4().hex[:8]}"
 
 
-@pytest.fixture
-async def mcp_server(qdrant_available: bool) -> Generator[Any, None, None]:
+@pytest_asyncio.fixture
+async def mcp_server(qdrant_available: bool) -> AsyncGenerator[Any, None]:
     """
     Initialize a MemoryMCPServer instance for testing.
 
@@ -102,8 +101,8 @@ async def mcp_server(qdrant_available: bool) -> Generator[Any, None, None]:
     logger.info("Test server cleanup complete")
 
 
-@pytest.fixture
-async def cleanup_test_collections(qdrant_available: bool) -> Generator[list[str], None, None]:
+@pytest_asyncio.fixture
+async def cleanup_test_collections(qdrant_available: bool) -> AsyncGenerator[list[str], None]:
     """
     Track and cleanup test collections after tests.
 
@@ -116,7 +115,7 @@ async def cleanup_test_collections(qdrant_available: bool) -> Generator[list[str
     if not qdrant_available:
         pytest.skip("Qdrant is not available - skipping collection cleanup")
 
-    collections_to_cleanup = []
+    collections_to_cleanup: list[str] = []
 
     yield collections_to_cleanup
 
