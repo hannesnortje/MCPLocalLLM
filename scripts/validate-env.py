@@ -219,13 +219,10 @@ def main() -> int:
         return 0
     else:
         print_error(f"\n❌ Environment validation FAILED!")
-        print_error(
-            f"{required_total - required_passed} required checks failed\n"
-        )
+        print_error(f"{required_total - required_passed} required checks failed\n")
         print_status("Fix the issues above and run again: make validate-env\n")
         return 1
 
 
 if __name__ == "__main__":
     sys.exit(main())
-
