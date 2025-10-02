@@ -135,11 +135,18 @@
 - Analysis: 385 ruff errors (318 auto-fixable, 67 manual) + mypy type issues
 
 **Builder → W004-B01: Setup + Automated Fixes + Manual Fixes**
-- Status: In Progress (first W004 build task)
+- Status: Awaiting Test (completed)
 - Assigned: 2025-10-02T18:45:00+02:00
-- Dependencies: None (W004 planning complete)
-- Scope: Branch setup, ruff --fix (318 auto-fixes), manual fixes (67 errors)
-- Next: W004-B02 will unblock upon B01 completion
+- Completed: 2025-10-02T19:00:00+02:00
+- Deliverables: 92.6% error reduction (390→29), all tests pass
+- Quality: 362 automated fixes + manual cleanup ✅
+
+**Builder → W004-B02: Type Annotations + Remove UI**
+- Status: In Progress (second W004 build task)
+- Assigned: 2025-10-02T19:15:00+02:00
+- Dependencies: W004-B01 (satisfied)
+- Scope: Add return type annotations, generic type parameters, disable UI code
+- Next: W004-B03 will unblock upon B02 completion
 
 ### Pending Assignment (blocked by dependencies)
 - W005: Python Tooling & Quality Gates (depends on W004)
