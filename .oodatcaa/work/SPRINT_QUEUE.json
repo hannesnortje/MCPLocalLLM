@@ -43,7 +43,7 @@
       "title": "W001 Step 3-4: Conflict Resolution & Dependencies",
       "type": "Implementation",
       "complexity": "S",
-      "status": "ready",
+      "status": "awaiting_test",
       "priority": 1,
       "agent": "builder",
       "lease": null,
@@ -58,7 +58,7 @@
       "title": "W001 Step 5-6: Migration Checklist & Summary",
       "type": "Implementation",
       "complexity": "S",
-      "status": "blocked",
+      "status": "ready",
       "priority": 1,
       "agent": null,
       "lease": null,
@@ -183,7 +183,7 @@
   ],
   "metadata": {
     "created": "2025-10-01T00:00:00Z",
-    "updated": "2025-10-02T00:30:00+02:00",
+    "updated": "2025-10-02T01:15:00+02:00",
     "sprint_goal": "MCP Server Foundation - Migrate and integrate MCP infrastructure",
     "total_tasks": 12,
     "story_tasks": 8,
@@ -191,8 +191,8 @@
     "tester_tasks": 1,
     "completed_tasks": 0,
     "ready_tasks": 1,
-    "blocked_tasks": 2,
+    "blocked_tasks": 1,
     "in_progress_tasks": 1,
-    "awaiting_test_tasks": 1
+    "awaiting_test_tasks": 2
   }
 }
