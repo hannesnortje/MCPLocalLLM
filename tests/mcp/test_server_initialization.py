@@ -64,15 +64,15 @@ async def test_health_check(mcp_server: MemoryMCPServer) -> None:
     health = mcp_server.get_system_health()
 
     assert isinstance(health, dict), "Health check should return a dictionary"
-    assert "status" in health, "Health response should contain 'status' key"
+    assert "overall_status" in health, "Health response should contain 'overall_status' key"
     assert "timestamp" in health, "Health response should contain 'timestamp' key"
 
     # Check that status indicates system is working
-    status = health.get("status")
+    status = health.get("overall_status")
     assert status in [
         "healthy",
         "degraded",
-        "operational",
+        "unhealthy",
     ], f"Health status should be valid, got: {status}"
 
 

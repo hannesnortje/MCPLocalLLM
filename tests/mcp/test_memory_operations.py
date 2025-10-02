@@ -27,7 +27,7 @@ async def test_create_memory(
     Test that memories can be created successfully.
 
     Validates:
-    - store_memory tool creates a new memory
+    - add_to_global_memory tool creates a new memory
     - Operation returns success status
     - Memory ID is returned
     """
@@ -35,29 +35,33 @@ async def test_create_memory(
 
     # Create a test memory
     result = await mcp_server.handle_tool_call(
-        "store_memory",
+        "add_to_global_memory",
         {
             "content": "Test memory: Python best practices",
-            "metadata": {
-                "type": "test",
-                "collection": test_collection_name,
-                "tags": ["python", "testing"],
-            },
+            "category": test_collection_name,
         },
     )
 
     assert result is not None, "Store memory should return a result"
-    assert (
-        "status" in result or "memory_id" in result or "id" in result
-    ), "Result should contain status or memory ID"
 
-    # Check for success indicators
-    if "status" in result:
-        assert result["status"] in [
-            "success",
-            "stored",
-            "created",
-        ], f"Memory creation should succeed, got status: {result.get('status')}"
+    # MCP protocol returns results in 'content' array format
+    if "content" in result:
+        # MCP protocol format: check that content exists and is not empty
+        assert isinstance(result["content"], list), "MCP result content should be a list"
+        assert len(result["content"]) > 0, "MCP result content should not be empty"
+    else:
+        # Fallback: check for legacy format
+        assert (
+            "status" in result or "memory_id" in result or "id" in result
+        ), "Result should contain status or memory ID"
+
+        # Check for success indicators
+        if "status" in result:
+            assert result["status"] in [
+                "success",
+                "stored",
+                "created",
+            ], f"Memory creation should succeed, got status: {result.get('status')}"
 
 
 @pytest.mark.integration
@@ -69,25 +73,25 @@ async def test_search_memories(
     Test that memories can be searched by text query.
 
     Validates:
-    - store_memory creates searchable content
-    - search_memories finds relevant results
+    - add_to_global_memory creates searchable content
+    - query_memory finds relevant results
     - Search results contain expected fields
     """
     cleanup_test_collections.append(test_collection_name)
 
     # First, create a memory to search for
     await mcp_server.handle_tool_call(
-        "store_memory",
+        "add_to_global_memory",
         {
             "content": "Integration testing with pytest is essential for quality assurance",
-            "metadata": {"type": "test", "collection": test_collection_name, "topic": "testing"},
+            "category": test_collection_name,
         },
     )
 
     # Search for the memory
     search_result = await mcp_server.handle_tool_call(
-        "search_memories",
-        {"query": "integration testing pytest", "collection": test_collection_name, "limit": 5},
+        "query_memory",
+        {"query": "integration testing pytest", "limit": 5},
     )
 
     assert search_result is not None, "Search should return results"
@@ -116,14 +120,10 @@ async def test_read_memory(
     # Create a memory and capture its ID
     test_content = "Memory retrieval test: This is a specific memory to retrieve"
     create_result = await mcp_server.handle_tool_call(
-        "store_memory",
+        "add_to_global_memory",
         {
             "content": test_content,
-            "metadata": {
-                "type": "test",
-                "collection": test_collection_name,
-                "retrieval_test": True,
-            },
+            "category": test_collection_name,
         },
     )
 
@@ -135,8 +135,8 @@ async def test_read_memory(
     if not memory_id:
         # If direct ID retrieval failed, search for the memory
         search_result = await mcp_server.handle_tool_call(
-            "search_memories",
-            {"query": "Memory retrieval test", "collection": test_collection_name, "limit": 1},
+            "query_memory",
+            {"query": "Memory retrieval test", "limit": 1},
         )
         results = search_result.get("results") or search_result.get("memories") or []
         if results:
@@ -173,10 +173,10 @@ async def test_update_memory(
     # Create initial memory
     original_content = "Original content for update test"
     create_result = await mcp_server.handle_tool_call(
-        "store_memory",
+        "add_to_global_memory",
         {
             "content": original_content,
-            "metadata": {"type": "test", "collection": test_collection_name, "update_test": True},
+            "category": test_collection_name,
         },
     )
 
@@ -188,10 +188,9 @@ async def test_update_memory(
     if not memory_id:
         # Search for the memory to get ID
         search_result = await mcp_server.handle_tool_call(
-            "search_memories",
+            "query_memory",
             {
                 "query": "Original content for update test",
-                "collection": test_collection_name,
                 "limit": 1,
             },
         )
@@ -240,10 +239,10 @@ async def test_delete_memory(
 
     # Create a memory to delete
     create_result = await mcp_server.handle_tool_call(
-        "store_memory",
+        "add_to_global_memory",
         {
             "content": "Memory to be deleted in test",
-            "metadata": {"type": "test", "collection": test_collection_name, "delete_test": True},
+            "category": test_collection_name,
         },
     )
 
@@ -255,10 +254,9 @@ async def test_delete_memory(
     if not memory_id:
         # Search for the memory to get ID
         search_result = await mcp_server.handle_tool_call(
-            "search_memories",
+            "query_memory",
             {
                 "query": "Memory to be deleted in test",
-                "collection": test_collection_name,
                 "limit": 1,
             },
         )

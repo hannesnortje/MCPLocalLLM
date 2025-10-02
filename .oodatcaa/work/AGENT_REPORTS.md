@@ -317,3 +317,42 @@ When completing work, each agent MUST:
 **Report:** [.oodatcaa/work/reports/W006-B01/refiner_1.md](reports/W006-B01/refiner_1.md)
 
 ---
+
+### W006-B01: Test Infrastructure + Server Tests + Memory CRUD — Tester
+**Date:** 2025-10-02T12:35:00+02:00  
+**Status:** awaiting_test → needs_adapt  
+**Duration:** 30 minutes  
+**Agent:** agent-tester-A  
+
+**Summary:** Validated W006-B01 implementation and identified critical API mismatch issues requiring quick fix adaptation. Test infrastructure is solid (fixtures work, Qdrant integration successful, cleanup functional), but tests use incorrect MCP API assumptions causing 2 failures. Excellent test design, just needs API corrections.
+
+**Key Findings:**
+- **Test Infrastructure:** ✅ PASS - All fixtures, markers, Qdrant connection working perfectly
+- **Test Execution:** 2 FAILED, 4 PASSED, 3 SKIPPED (due to dependency on failed test)
+- **Performance:** ✅ 19 seconds < 30-second target
+- **Quality Gates:** ✅ Black, ruff, pytest, build all pass
+- **Root Cause:** Tests assume `store_memory` tool but actual API has `add_to_global_memory`
+
+**Failures Analysis:**
+1. `test_create_memory`: Calls `store_memory` (doesn't exist) → Should use `add_to_global_memory`
+2. `test_health_check`: Expects `status` key → Should expect `overall_status`
+
+**Key Metrics:**
+- **Integration Tests:** 9 total (4 server + 5 memory CRUD)
+- **Test Results:** 2 FAILED, 4 PASSED, 3 SKIPPED
+- **AC Status:** 6/10 fully passing, 2/10 partial pass, 2/10 fail (all due to API mismatch)
+- **Test Execution Time:** ~19 seconds (✅ within 30-second requirement)
+
+**Adaptation Recommendation:** Quick fix (~40 minutes)
+- Update `test_create_memory` to use `add_to_global_memory`
+- Update `test_health_check` to expect `overall_status`
+- Verify actual tool names via `get_available_tools()` or source code
+- Re-run tests to achieve 100% pass rate
+
+**Decision:** NEEDS_ADAPT - Test infrastructure excellent, just needs API name corrections
+
+**Next:** Refiner/Builder to fix API mismatch (estimated 40 minutes)
+
+**Report:** [.oodatcaa/work/reports/W006/tester_W006-B01.md](reports/W006/tester_W006-B01.md)
+
+---

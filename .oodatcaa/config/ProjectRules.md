@@ -24,6 +24,13 @@ Background Worker Defaults:
 - Heartbeat interval: 1m (Negotiator checks every minute)
 - Locks expire after 5m (may be broken with log note)
 
+Log Rotation Policy:
+- Threshold: 1,000 lines per log file (AGENT_LOG.md, SPRINT_LOG.md, SPRINT_PLAN.md)
+- During sprint: When threshold exceeded, archive oldest 50-60% to `.oodatcaa/work/archive/sprint_N/FILENAME_archive_NNN.md`
+- Sprint completion: Integrator archives ALL logs to `archive/sprint_N/` with `_final` suffix, starts new sprint with fresh logs
+- AGENT_REPORTS.md: Never archived (permanent index)
+- Archive documentation: See `.oodatcaa/work/archive/README.md`
+
 Start-Over Gate (trigger when):
 - Fundamental ACs unmet after two Adapt loops
 - Architectural dead-end (Planner+Refiner agree)
