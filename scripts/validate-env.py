@@ -4,10 +4,8 @@ MCP Local LLM - Environment Validation Script
 Validates development environment for small coder model training
 """
 
-import os
 import sys
 from pathlib import Path
-from typing import Any
 
 
 # Colors for terminal output
@@ -218,7 +216,7 @@ def main() -> int:
         print_status("You're ready to start development 🚀\n")
         return 0
     else:
-        print_error(f"\n❌ Environment validation FAILED!")
+        print_error("\n❌ Environment validation FAILED!")
         print_error(f"{required_total - required_passed} required checks failed\n")
         print_status("Fix the issues above and run again: make validate-env\n")
         return 1

@@ -1,12 +1,14 @@
-# Cursor OODATCAA Dev Pack — Python (Autonomous Mode)
+# MCPLocalLLM — Small Coder Model Training with MCP Integration
 
-A fully autonomous multi-agent development system for Python. **You define the objective, agents build the product.**
+A locally fine-tuned coding assistant with context preservation and daily learning capabilities, built on the Model Context Protocol (MCP).
 
-Built on the OODATCAA loop: Observe → Orient → Decide → Act → Test → Check → Adapt → Archive
+**Building a 7B parameter model optimized for M1 Max** that embeds procedural knowledge, custom definitions, and architectural patterns while providing dual-layer context preservation through MCP integration.
+
+Built with the OODATCAA autonomous development loop: Observe → Orient → Decide → Act → Test → Check → Adapt → Archive
 
 ---
 
-## ⚡ Quick Start (3 Steps)
+## ⚡ Quick Start
 
 ### 1. Install Dependencies
 ```bash
@@ -58,6 +60,163 @@ Click **Run in Background** ✨
 **That's it!** The Negotiator will coordinate everything and tell you when to launch other agents as work becomes available.
 
 📖 See `.oodatcaa/AGENT_MANAGEMENT.md` for detailed agent lifecycle management.
+
+---
+
+## 🛠 Setup & Installation
+
+Complete setup guide for the MCP Local LLM training system.
+
+### Prerequisites
+
+Before you begin, ensure you have:
+
+- **Python 3.11 or 3.12** (required)
+- **32GB RAM** (recommended for M1 Max)
+- **Docker Desktop** (optional, for Qdrant vector database)
+- **Git** (for version control)
+- **pip** (Python package manager)
+
+### Step 1: Clone and Navigate
+
+```bash
+git clone <repository-url>
+cd MCPLocalLLM
+```
+
+### Step 2: Run Automated Setup
+
+The setup script will create a virtual environment, install dependencies, and configure the project:
+
+```bash
+./scripts/setup-dev.sh
+```
+
+This script will:
+- ✅ Check Python version (3.11+)
+- ✅ Create virtual environment (`.venv/`)
+- ✅ Install Python dependencies
+- ✅ Create required directories (`data/`, `logs/`, `policy/`)
+- ✅ Copy configuration templates (`.env.example` → `.env`, `config.example.yaml` → `config.yaml`)
+- ✅ Verify Docker availability (optional)
+- ✅ Display setup summary
+
+### Step 3: Validate Environment
+
+Verify your environment is correctly configured:
+
+```bash
+make validate-env
+# or: python scripts/validate-env.py
+```
+
+This will check:
+- ✅ Python version compatibility
+- ✅ Virtual environment activated
+- ✅ Required directories exist
+- ✅ Configuration files present
+- ✅ Python dependencies installed
+- ⚠️ Docker availability (optional)
+- ⚠️ Qdrant connection (optional)
+
+### Step 4: Configure Environment Variables
+
+Edit `.env` to customize your setup:
+
+```bash
+# Qdrant Vector Database
+QDRANT_HOST=localhost
+QDRANT_PORT=6333
+QDRANT_MODE=local
+
+# Embedding Model
+EMBEDDING_MODEL=sentence-transformers/all-MiniLM-L6-v2
+EMBEDDING_DIMENSION=384
+EMBEDDING_DEVICE=cpu
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FILE=logs/mcp-server.log
+
+# Training-specific
+MARKDOWN_CHUNK_SIZE=1000
+MARKDOWN_CHUNK_OVERLAP=200
+```
+
+See `.env.example` for all available options and documentation.
+
+### Step 5: Start Qdrant (Optional)
+
+If using Docker for Qdrant:
+
+```bash
+docker-compose up -d qdrant
+```
+
+Verify Qdrant is running:
+```bash
+curl http://localhost:6333/health
+```
+
+### Configuration Files
+
+**`.env`** — Environment variables for runtime configuration
+- Qdrant connection settings
+- Embedding model configuration
+- Logging levels
+- Training parameters
+
+**`config.yaml`** — Application configuration
+- Server name and mode
+- Memory management settings
+- Policy system configuration
+- Search and retrieval parameters
+
+Both files are created from templates during setup. Customize as needed for your training workflow.
+
+### Troubleshooting
+
+#### Issue 1: Python Version Mismatch
+**Problem:** Setup script fails with "Python 3.11+ required"
+**Solution:** 
+```bash
+# Install Python 3.11+ using pyenv or system package manager
+pyenv install 3.11.9
+pyenv local 3.11.9
+```
+
+#### Issue 2: Virtual Environment Not Activated
+**Problem:** Dependencies not found or wrong Python version
+**Solution:**
+```bash
+source .venv/bin/activate  # On Linux/Mac
+# or
+.venv\Scripts\activate  # On Windows
+```
+
+#### Issue 3: Docker/Qdrant Connection Failed
+**Problem:** Validation fails with Qdrant connection error
+**Solution:** 
+- Docker is **optional** for development
+- Start Qdrant: `docker-compose up -d qdrant`
+- Or use Qdrant in memory mode (no Docker needed)
+
+#### Issue 4: Permission Denied on Setup Script
+**Problem:** `bash: ./scripts/setup-dev.sh: Permission denied`
+**Solution:**
+```bash
+chmod +x scripts/setup-dev.sh
+./scripts/setup-dev.sh
+```
+
+#### Issue 5: Missing Dependencies
+**Problem:** Import errors or missing packages
+**Solution:**
+```bash
+pip install -e ".[dev]"  # Reinstall all dependencies
+```
+
+For more troubleshooting, see `docs/mcp/TROUBLESHOOTING.md` or check the validation output for specific issues.
 
 ---
 
