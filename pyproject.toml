@@ -85,11 +85,11 @@ extend-select = [
 ignore = ["S101"]  # assert used in tests
 
 [tool.ruff.lint.isort]
-known-first-party = ["mdnotes", "mcp"]
+known-first-party = ["mdnotes", "mcp_local"]
 
 [tool.mypy]
 python_version = "3.11"
-packages = ["mdnotes", "mcp"]
+packages = ["mdnotes", "mcp_local"]
 strict = true
 warn_unused_configs = true
 warn_redundant_casts = true

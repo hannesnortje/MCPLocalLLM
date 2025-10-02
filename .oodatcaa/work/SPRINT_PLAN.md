@@ -297,13 +297,17 @@
 - Deliverables: AGENT_PLAN.md (6 steps), TEST_PLAN.md (10 ACs), 3 subtasks created
 - Completion Report: reports/W006/planner.md
 
-**Builder → W006-B01: Steps 1-3 - Test Infrastructure + Server Tests + Memory CRUD Tests**
-- Status: In Progress
-- Assigned: 2025-10-03T04:15:00+02:00
-- Dependencies: None (can start immediately)
+**Refiner → W006-B01: Steps 1-3 - Test Infrastructure + Server Tests + Memory CRUD Tests (ADAPTING)**
+- Status: 🔧 Adapting (import naming conflict)
+- Assigned: 2025-10-03T04:15:00+02:00 (Builder) → 2025-10-03T05:35:00+02:00 (Refiner)
+- Builder Completed: 2025-10-03T05:30:00+02:00
+- Dependencies: None
 - Plan Step: 1-3 (test infrastructure, server tests, memory CRUD tests)
-- Target: 12 integration tests created, test fixtures set up
-- Estimated Duration: ~70 minutes
+- Branch: `feat/W006-step-01-integration-tests` (commit: `7632f36`)
+- Blocker: Import naming conflict: `mcp` protocol library vs `src/mcp/` directory
+- Adaptation Decision: **Rename src/mcp/ to src/mcp_local/** (2-3h)
+- Rationale: Clean architectural solution, permanent fix, benefits entire project
+- Next: Refiner renames directory, updates ~76 imports, verifies tests pass
 
 ### Pending Assignment (dependencies satisfied)
 - W007: Configuration & Environment Setup (depends on W003 - satisfied ✅)

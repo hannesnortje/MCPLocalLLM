@@ -4372,3 +4372,67 @@ Naming conflict between `mcp` protocol library (site-packages) and `src/mcp/` di
 **Next Steps:** Negotiator should review `.oodatcaa/work/reports/W006/builder_W006-B01.md` and decide on resolution approach. Builder recommends Option 1 (rename src/mcp/) for clean, permanent solution.
 
 ---
+
+---
+
+## 2025-10-03T05:35:00+02:00 | NEGOTIATOR | W006-B01 Adaptation Decision - Import Naming Conflict
+
+**ACTION:** Negotiate W006-B01 Adaptation  
+**STATUS:** ⚠️ ADAPTATION REQUIRED → 🔧 ADAPTING  
+**WIP:** planner 0/1, builder 0/3, tester 0/2, refiner 1/1 (FULL), integrator 0/1
+
+### Context
+W006-B01 Builder implementation encountered **CRITICAL BLOCKER**:
+- **Problem:** Import naming conflict between `mcp` protocol library (pip package) and local `src/mcp/` directory
+- **Impact:** Python cannot distinguish `import mcp` (external) vs `from src.mcp import ...` (local)
+- **Blocks:** W006 integration test implementation and sprint completion
+
+### Options Analysis
+
+**Option A: Rename src/mcp/ to src/mcp_local/** (SELECTED ✅)
+- Effort: L (2-3 hours)
+- Risk: Medium (large refactor, straightforward)
+- Pros: Clean architecture, permanent solution, benefits entire project, no technical debt
+- Cons: Touches ~76 files
+
+**Option B: Import workaround (sys.path manipulation)**
+- Effort: S (30 minutes)
+- Risk: High (brittle, confusing, creates debt)
+- Pros: Fast
+- Cons: Technical debt, doesn't solve root problem
+
+**Option C: Defer W006**
+- Effort: None
+- Risk: Very High (blocks sprint completion, problem resurfaces)
+- Pros: No immediate work
+- Cons: Doesn't solve problem, blocks W008
+
+### Decision: Option A - Rename src/mcp/ to src/mcp_local/
+
+**Rationale:**
+1. **Architectural clarity:** Separates mcp protocol from mcp_local implementation
+2. **Long-term benefit:** One-time fix solves permanently
+3. **Avoids debt:** No brittle workarounds
+4. **Sprint completion:** Unblocks W006 and W008
+5. **Pragmatic:** 2-3h investment for permanent solution
+
+**Decision documented in:** `.oodatcaa/work/SPRINT_DISCUSS.md`
+
+### Action Taken
+✅ W006-B01 assigned to Refiner for adaptation  
+✅ Status: `needs_adapt` → `adapting`  
+✅ Agent: `builder` → `refiner`  
+✅ Adaptation decision recorded in SPRINT_QUEUE.json and SPRINT_DISCUSS.md
+
+### Implementation Plan
+1. Rename `src/mcp/` → `src/mcp_local/`
+2. Update all imports: `from src.mcp` → `from src.mcp_local`
+3. Update tests and pyproject.toml
+4. Verify all tests pass
+5. Commit with clear rationale
+
+**OUTCOME:** W006-B01 ready for Refiner execution. Refiner will resolve import conflict with clean architectural solution.
+
+**NEXT:** Launch Refiner to execute directory rename and import updates
+
+---

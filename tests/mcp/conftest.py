@@ -91,7 +91,7 @@ async def mcp_server(qdrant_available: bool) -> Generator[Any, None, None]:
     if not qdrant_available:
         pytest.skip("Qdrant is not available - skipping MCP server tests")
 
-    from mcp.mcp_server import MemoryMCPServer
+    from mcp_local.mcp_server import MemoryMCPServer
 
     # Initialize server
     server = MemoryMCPServer(server_mode="full")

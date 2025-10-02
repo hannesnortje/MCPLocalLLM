@@ -15,7 +15,7 @@ src_path = Path(__file__).absolute().parent.parent.parent / "src"
 if str(src_path) not in sys.path:
     sys.path.insert(0, str(src_path))
 
-from mcp.mcp_server import MemoryMCPServer  # noqa: E402
+from mcp_local.mcp_server import MemoryMCPServer  # noqa: E402
 
 
 @pytest.mark.integration
