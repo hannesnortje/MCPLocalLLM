@@ -3,12 +3,12 @@ System and collections handlers for MCP Memory Server.
 Handles system health monitoring and generic collection operations.
 """
 
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any
 
 try:
-    from ..server_config import get_logger
     from ..error_handler import error_handler
+    from ..server_config import get_logger
 except ImportError:
     # Fallback for standalone usage
     import logging
@@ -33,7 +33,7 @@ class SystemAndCollectionsHandlers:
         self.memory_manager = memory_manager
         self.markdown_processor = markdown_processor
 
-    def handle_system_health(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_system_health(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle system health check tool call."""
         try:
             # Get health information
@@ -102,7 +102,7 @@ class SystemAndCollectionsHandlers:
             # Format health info for display
             health_text = f"""# System Health Report
 
-**Status:** {status_text}  
+**Status:** {status_text}
 **Timestamp:** {health_info['timestamp']}
 
 ## Component Status
@@ -161,7 +161,7 @@ class SystemAndCollectionsHandlers:
             }
 
     # Generic Collection Tools
-    async def handle_create_collection(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_create_collection(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle create_collection tool call."""
         try:
             collection_name = arguments.get("collection_name")
@@ -175,7 +175,7 @@ class SystemAndCollectionsHandlers:
                 }
 
             # Use the GenericMemoryService to create the collection
-            result = await self.memory_manager.generic_service.create_collection(
+            await self.memory_manager.generic_service.create_collection(
                 collection_name, description, metadata
             )
 
@@ -191,7 +191,7 @@ class SystemAndCollectionsHandlers:
                 "content": [{"type": "text", "text": f"Failed to create collection: {str(e)}"}],
             }
 
-    async def handle_list_collections(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_list_collections(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle list_collections tool call."""
         try:
             include_stats = arguments.get("include_stats", True)
@@ -225,7 +225,7 @@ class SystemAndCollectionsHandlers:
                 "content": [{"type": "text", "text": f"Failed to list collections: {str(e)}"}],
             }
 
-    async def handle_add_to_collection(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_add_to_collection(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle add_to_collection tool call."""
         try:
             collection_name = arguments.get("collection_name")
@@ -264,7 +264,7 @@ class SystemAndCollectionsHandlers:
                 "content": [{"type": "text", "text": f"Failed to add to collection: {str(e)}"}],
             }
 
-    async def handle_query_collection(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_query_collection(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle query_collection tool call."""
         try:
             collection_name = arguments.get("collection_name")
@@ -309,7 +309,7 @@ class SystemAndCollectionsHandlers:
                 "content": [{"type": "text", "text": f"Failed to query collection: {str(e)}"}],
             }
 
-    async def handle_delete_collection(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_delete_collection(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle delete_collection tool call."""
         try:
             collection_name = arguments.get("collection_name")
@@ -356,7 +356,7 @@ class SystemAndCollectionsHandlers:
                 "content": [{"type": "text", "text": f"Failed to delete collection: {str(e)}"}],
             }
 
-    async def handle_get_collection_stats(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_get_collection_stats(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle get_collection_stats tool call."""
         try:
             collection_name = arguments.get("collection_name")

@@ -3,9 +3,9 @@ Core agent prompt handlers for MCP Memory Server.
 Handles agent startup, initialization, and role-specific prompts.
 """
 
-from datetime import datetime
-from typing import Dict, Any
 import uuid
+from datetime import datetime
+from typing import Any
 
 try:
     from ..server_config import get_logger
@@ -101,7 +101,7 @@ class CoreAgentPrompts:
             },
         ]
 
-    async def get_prompt(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def get_prompt(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Get a core agent prompt by name."""
         if name == "agent_startup":
             return await self._get_agent_startup_prompt(arguments)
@@ -115,7 +115,7 @@ class CoreAgentPrompts:
                 "content": [{"type": "text", "text": f"Unknown core agent prompt: {name}"}],
             }
 
-    async def _get_agent_startup_prompt(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def _get_agent_startup_prompt(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Generate comprehensive agent startup prompt."""
         try:
             # Extract and validate arguments
@@ -155,7 +155,7 @@ You now have access to a sophisticated **3-layer memory system**:
 - **Usage**: Query for established facts, procedures, and universal knowledge
 - **Best Practice**: Use for information that benefits all agents
 
-### 🧠 Learned Memory Layer  
+### 🧠 Learned Memory Layer
 - **Purpose**: Accumulated wisdom and lessons learned
 - **Content**: Patterns, insights, mistakes, solutions, experiences
 - **Usage**: Learn from past experiences and documented lessons
@@ -176,7 +176,7 @@ Your active memory layers: **{', '.join(layers)}**
 ```
 Use the memory tools to store information:
 - add_to_global_memory(content, title, memory_type)
-- add_to_learned_memory(content, title, memory_type) 
+- add_to_learned_memory(content, title, memory_type)
 - add_to_agent_memory(content, title, memory_type)
 ```
 
@@ -203,7 +203,7 @@ Search across your configured layers:
             elif agent_role.lower() == "testing":
                 startup_content += """
 - Focus on testing strategies, bug patterns, and quality assurance
-- Document test insights in learned memory  
+- Document test insights in learned memory
 - Track test results and coverage in agent memory
 - Reference testing frameworks from global memory
 """
@@ -286,8 +286,8 @@ Your operations are governed by the **MCP Memory Server Policy Framework**:
             }
 
     async def _get_development_agent_startup_prompt(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate development agent startup prompt (alias)."""
         # Set development-specific defaults
         dev_arguments = {
@@ -297,7 +297,7 @@ Your operations are governed by the **MCP Memory Server Policy Framework**:
         }
         return await self._get_agent_startup_prompt(dev_arguments)
 
-    async def _get_testing_agent_startup_prompt(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def _get_testing_agent_startup_prompt(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Generate testing agent startup prompt (alias)."""
         # Set testing-specific defaults
         test_arguments = {

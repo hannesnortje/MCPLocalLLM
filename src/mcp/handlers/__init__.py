@@ -13,9 +13,9 @@ Handler Modules:
 - system_and_collections_handlers: System health and generic collections
 """
 
+from .agent_management_handlers import AgentManagementHandlers
 from .core_memory_handlers import CoreMemoryHandlers
 from .markdown_processing_handlers import MarkdownProcessingHandlers
-from .agent_management_handlers import AgentManagementHandlers
 from .policy_and_guidance_handlers import PolicyAndGuidanceHandlers
 from .system_and_collections_handlers import SystemAndCollectionsHandlers
 

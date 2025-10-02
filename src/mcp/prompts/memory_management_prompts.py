@@ -4,7 +4,7 @@ Handles memory usage patterns, optimization, querying, and content management.
 """
 
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any
 
 try:
     from ..server_config import get_logger
@@ -70,7 +70,7 @@ class MemoryManagementPrompts:
             },
         ]
 
-    def get_prompt(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def get_prompt(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Get a memory management prompt by name."""
         method_map = {
             "agent_memory_usage_patterns": self._get_agent_memory_usage_patterns_prompt,
@@ -91,7 +91,7 @@ class MemoryManagementPrompts:
                 "content": [{"type": "text", "text": f"Unknown memory management prompt: {name}"}],
             }
 
-    def _get_agent_memory_usage_patterns_prompt(self) -> Dict[str, Any]:
+    def _get_agent_memory_usage_patterns_prompt(self) -> dict[str, Any]:
         """Guidance on effective memory usage patterns."""
         content = """# Agent Memory Usage Patterns
 
@@ -152,7 +152,7 @@ class MemoryManagementPrompts:
             },
         }
 
-    def _get_context_preservation_strategy_prompt(self) -> Dict[str, Any]:
+    def _get_context_preservation_strategy_prompt(self) -> dict[str, Any]:
         """Guidance on preserving context across sessions."""
         content = """# Context Preservation Strategy
 
@@ -229,7 +229,7 @@ work, and enables agents to build on previous interactions effectively.
             },
         }
 
-    def _get_memory_query_optimization_prompt(self) -> Dict[str, Any]:
+    def _get_memory_query_optimization_prompt(self) -> dict[str, Any]:
         """Guidance on optimizing memory queries."""
         content = """# Memory Query Optimization Best Practices
 
@@ -315,7 +315,7 @@ Specific Query: "Express.js JWT authentication implementation"
             },
         }
 
-    def _get_markdown_optimization_rules_prompt(self) -> Dict[str, Any]:
+    def _get_markdown_optimization_rules_prompt(self) -> dict[str, Any]:
         """Guidelines for processing markdown content."""
         content = """# Markdown Optimization Rules
 
@@ -418,7 +418,7 @@ After: ```javascript
             },
         }
 
-    def _get_memory_type_selection_criteria_prompt(self) -> Dict[str, Any]:
+    def _get_memory_type_selection_criteria_prompt(self) -> dict[str, Any]:
         """Criteria for selecting appropriate memory types."""
         content = """# Memory Type Selection Criteria
 
@@ -547,7 +547,7 @@ After: ```javascript
             },
         }
 
-    def _get_duplicate_detection_strategy_prompt(self) -> Dict[str, Any]:
+    def _get_duplicate_detection_strategy_prompt(self) -> dict[str, Any]:
         """Strategies for detecting and handling duplicates."""
         content = """# Duplicate Detection Strategy
 
@@ -654,7 +654,7 @@ After: ```javascript
             },
         }
 
-    def _get_directory_processing_best_practices_prompt(self) -> Dict[str, Any]:
+    def _get_directory_processing_best_practices_prompt(self) -> dict[str, Any]:
         """Best practices for batch processing directories."""
         content = """# Directory Processing Best Practices
 
@@ -781,7 +781,7 @@ After: ```javascript
             },
         }
 
-    def _get_memory_type_suggestion_guidelines_prompt(self) -> Dict[str, Any]:
+    def _get_memory_type_suggestion_guidelines_prompt(self) -> dict[str, Any]:
         """Guidelines for AI-powered memory type suggestions."""
         content = """# Memory Type Suggestion Guidelines
 
@@ -834,7 +834,7 @@ After: ```javascript
 def analyze_content(content, file_path=None):
     indicators = {
         'global': count_global_indicators(content),
-        'learned': count_learned_indicators(content), 
+        'learned': count_learned_indicators(content),
         'agent': count_agent_indicators(content)
     }
     return indicators
@@ -865,7 +865,7 @@ def calculate_confidence(content_indicators, context_indicators):
    - Extract semantic features and keywords
    - Identify document structure and patterns
 
-2. **Real-Time Suggestions**  
+2. **Real-Time Suggestions**
    - Provide suggestions during content ingestion
    - Update suggestions based on user feedback
    - Learn from user corrections and preferences

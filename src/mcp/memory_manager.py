@@ -8,23 +8,23 @@ Refactored from monolithic 1,106-line class for better maintainability.
 
 import logging
 import uuid
-from typing import Dict, Any, List, Optional
 from datetime import datetime
+from typing import Any
 
 from qdrant_client import QdrantClient
 from sentence_transformers import SentenceTransformer
 
-from src.config import Config
+from .config import Config
 from .error_handler import retry_qdrant_operation
 from .generic_memory_service import GenericMemoryService
 
 # Import specialized memory modules
 from .memory import (
-    VectorOperations,
     AgentRegistry,
-    FileMetadataManager,
-    EmbeddingService,
     CollectionManager,
+    EmbeddingService,
+    FileMetadataManager,
+    VectorOperations,
 )
 
 logger = logging.getLogger(__name__)
@@ -41,8 +41,8 @@ class QdrantMemoryManager:
     def __init__(self) -> None:
         """Initialize the Memory Manager Router."""
         # Legacy interface compatibility
-        self.client: Optional[QdrantClient] = None
-        self.embedding_model: Optional[SentenceTransformer] = None
+        self.client: QdrantClient | None = None
+        self.embedding_model: SentenceTransformer | None = None
         self.collections_initialized = False
         self.current_agent_id = None
         self.current_context = {}
@@ -51,11 +51,11 @@ class QdrantMemoryManager:
         self.generic_service = GenericMemoryService()
 
         # Specialized modules (initialized after client setup)
-        self.embedding_service: Optional[EmbeddingService] = None
-        self.collection_manager: Optional[CollectionManager] = None
-        self.vector_operations: Optional[VectorOperations] = None
-        self.agent_registry: Optional[AgentRegistry] = None
-        self.file_metadata_manager: Optional[FileMetadataManager] = None
+        self.embedding_service: EmbeddingService | None = None
+        self.collection_manager: CollectionManager | None = None
+        self.vector_operations: VectorOperations | None = None
+        self.agent_registry: AgentRegistry | None = None
+        self.file_metadata_manager: FileMetadataManager | None = None
 
         # Initialize synchronously for MCP server compatibility
         self._sync_initialize()
@@ -183,19 +183,19 @@ class QdrantMemoryManager:
 
     def add_to_global_memory(
         self, content: str, category: str = "general", importance: float = 0.5
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Add content to global memory via GenericMemoryService."""
         return self.generic_service.add_to_global_memory(content, category, importance)
 
     def add_to_learned_memory(
         self, content: str, pattern_type: str = "insight", confidence: float = 0.7
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Add learned patterns to memory via GenericMemoryService."""
         return self.generic_service.add_to_learned_memory(content, pattern_type, confidence)
 
     def add_to_agent_memory(
-        self, content: str, agent_id: Optional[str] = None, memory_type: str = "general"
-    ) -> Dict[str, Any]:
+        self, content: str, agent_id: str | None = None, memory_type: str = "general"
+    ) -> dict[str, Any]:
         """Add content to agent-specific memory via vector operations."""
         try:
             target_agent_id = agent_id or self.current_agent_id
@@ -227,14 +227,14 @@ class QdrantMemoryManager:
             return {"success": False, "error": str(e)}
 
     def query_memory(
-        self, query: str, memory_types: List[str] = None, limit: int = 10, min_score: float = 0.3
-    ) -> Dict[str, Any]:
+        self, query: str, memory_types: list[str] = None, limit: int = 10, min_score: float = 0.3
+    ) -> dict[str, Any]:
         """Query memory for relevant content via GenericMemoryService."""
         return self.generic_service.query_memory(query, memory_types, limit, min_score)
 
     def compare_against_learned_memory(
         self, situation: str, comparison_type: str = "pattern_match", limit: int = 5
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Compare situation against learned patterns via service."""
         return self.generic_service.compare_against_learned_memory(
             situation, comparison_type, limit
@@ -260,9 +260,9 @@ class QdrantMemoryManager:
         self,
         content: str,
         collection: str,
-        metadata: Optional[Dict[str, Any]] = None,
-        content_hash: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        metadata: dict[str, Any] | None = None,
+        content_hash: str | None = None,
+    ) -> dict[str, Any]:
         """Add content to specified memory collection."""
         if self.vector_operations:
             return self.vector_operations.async_add_to_memory(
@@ -276,8 +276,8 @@ class QdrantMemoryManager:
         collection: str,
         limit: int = 10,
         min_score: float = 0.3,
-        filters: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        filters: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Query memory collection for relevant content."""
         if self.vector_operations:
             return self.vector_operations.async_query_memory(
@@ -290,9 +290,9 @@ class QdrantMemoryManager:
         content: str,
         collection: str,
         similarity_threshold: float = 0.95,
-        metadata_filters: Optional[Dict[str, Any]] = None,
+        metadata_filters: dict[str, Any] | None = None,
         check_hash_first: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check for duplicate content using similarity search."""
         if self.vector_operations:
             return self.vector_operations.async_check_duplicate_with_similarity(
@@ -301,7 +301,7 @@ class QdrantMemoryManager:
         return {"is_duplicate": False, "error": "Vector operations not initialized"}
 
     def async_check_duplicate(
-        self, content: str, collection: str, metadata_filters: Optional[Dict[str, Any]] = None
+        self, content: str, collection: str, metadata_filters: dict[str, Any] | None = None
     ) -> bool:
         """Simple duplicate check by content hash."""
         if self.vector_operations:
@@ -310,15 +310,15 @@ class QdrantMemoryManager:
             )
         return False
 
-    def async_delete_content(self, content_hash: str, collection: str) -> Dict[str, Any]:
+    def async_delete_content(self, content_hash: str, collection: str) -> dict[str, Any]:
         """Delete content from collection by hash."""
         if self.vector_operations:
             return self.vector_operations.async_delete_content(content_hash, collection)
         return {"success": False, "error": "Vector operations not initialized"}
 
     def async_get_collection_info(
-        self, memory_type: str, agent_id: Optional[str] = None
-    ) -> Dict[str, Any]:
+        self, memory_type: str, agent_id: str | None = None
+    ) -> dict[str, Any]:
         """Get information about a collection."""
         collection = (
             Config.get_collection_name(memory_type, agent_id)
@@ -336,9 +336,9 @@ class QdrantMemoryManager:
         self,
         agent_id: str,
         agent_role: str = "general",
-        memory_layers: List[str] = None,
-        permissions: Dict[str, Any] = None,
-    ) -> Dict[str, Any]:
+        memory_layers: list[str] = None,
+        permissions: dict[str, Any] = None,
+    ) -> dict[str, Any]:
         """Register a new agent in the agent registry."""
         if self.agent_registry:
             return await self.agent_registry.register_agent(
@@ -346,21 +346,21 @@ class QdrantMemoryManager:
             )
         return {"success": False, "error": "Agent registry not initialized"}
 
-    async def get_agent(self, agent_id: str) -> Dict[str, Any]:
+    async def get_agent(self, agent_id: str) -> dict[str, Any]:
         """Get agent information from registry."""
         if self.agent_registry:
             return await self.agent_registry.get_agent(agent_id)
         return {"success": False, "error": "Agent registry not initialized"}
 
     async def update_agent_permissions(
-        self, agent_id: str, permissions: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, agent_id: str, permissions: dict[str, Any]
+    ) -> dict[str, Any]:
         """Update agent permissions."""
         if self.agent_registry:
             return await self.agent_registry.update_agent_permissions(agent_id, permissions)
         return {"success": False, "error": "Agent registry not initialized"}
 
-    async def list_agents(self) -> Dict[str, Any]:
+    async def list_agents(self) -> dict[str, Any]:
         """List all registered agents."""
         if self.agent_registry:
             return await self.agent_registry.list_agents()
@@ -376,10 +376,10 @@ class QdrantMemoryManager:
         self,
         agent_id: str,
         action: str,
-        context: Dict[str, Any],
+        context: dict[str, Any],
         outcome: str,
         store_as_learned: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Log an agent action and optionally store as learned memory."""
         if self.agent_registry:
             return await self.agent_registry.log_agent_action(
@@ -397,8 +397,8 @@ class QdrantMemoryManager:
         processing_status: str = "processed",
         chunks_created: int = 0,
         processing_time: float = 0.0,
-        additional_metadata: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        additional_metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Add file processing metadata to tracking collection."""
         if self.file_metadata_manager:
             return self.file_metadata_manager.add_file_metadata(
@@ -412,7 +412,7 @@ class QdrantMemoryManager:
             )
         return {"success": False, "error": "File metadata manager not initialized"}
 
-    def get_file_metadata(self, file_path: str) -> Optional[Dict[str, Any]]:
+    def get_file_metadata(self, file_path: str) -> dict[str, Any] | None:
         """Get file metadata by file path."""
         if self.file_metadata_manager:
             return self.file_metadata_manager.get_file_metadata(file_path)

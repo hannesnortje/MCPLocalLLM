@@ -33,9 +33,13 @@ Protocol:
    - Add fields: "objective": "OBJ-...", "sprint": "<number>".
 7) .oodatcaa/work/SPRINT_PLAN.md: reflect assignments/WIP.
 8) .oodatcaa/work/AGENT_LOG.md: concise entry (plan version, ticket, steps created).
-9) UNLOCK files.
+9) COMPLETION REPORT (REQUIRED):
+   - Create `.oodatcaa/work/reports/<TASK_ID>/planner.md` using template at `.oodatcaa/templates/AGENT_REPORT_TEMPLATE.md`
+   - Include: objective, actions, deliverables (AGENT_PLAN.md + TEST_PLAN.md), metrics (steps created, ACs defined, complexity), challenges, solutions, handoff notes for Builder
+   - Append executive summary to `.oodatcaa/work/AGENT_REPORTS.md` with link to detailed report
+10) UNLOCK files.
 
-Return diffs for: .oodatcaa/work/AGENT_PLAN.md, .oodatcaa/work/TEST_PLAN.md, .oodatcaa/work/SPRINT_QUEUE.json, .oodatcaa/work/SPRINT_PLAN.md, .oodatcaa/work/AGENT_LOG.md.
+Return diffs for: .oodatcaa/work/AGENT_PLAN.md, .oodatcaa/work/TEST_PLAN.md, .oodatcaa/work/SPRINT_QUEUE.json, .oodatcaa/work/SPRINT_PLAN.md, .oodatcaa/work/AGENT_LOG.md, completion report.
 
-10) At the end, follow the MANDATORY output format from @Cursor Rules (python.mdc) to tell user what to do next.
+11) At the end, follow the MANDATORY output format from @Cursor Rules (python.mdc) to tell user what to do next.
 

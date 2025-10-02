@@ -3,14 +3,14 @@ Enhanced Markdown processor for MCP Memory Server.
 Handles reading, cleaning, chunking, and optimizing markdown files with AI integration.
 """
 
+import hashlib
 import logging
 import re
-import hashlib
-from typing import Optional, List, Dict, Tuple, Union
 from pathlib import Path
+
 import aiofiles
-from bs4 import BeautifulSoup
 import markdown
+from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
@@ -40,10 +40,10 @@ class MarkdownProcessor:
             if not path.exists():
                 raise FileNotFoundError(f"File not found: {file_path}")
 
-            if not path.suffix.lower() in [".md", ".markdown"]:
+            if path.suffix.lower() not in [".md", ".markdown"]:
                 raise ValueError(f"Not a markdown file: {file_path}")
 
-            async with aiofiles.open(file_path, "r", encoding="utf-8") as file:
+            async with aiofiles.open(file_path, encoding="utf-8") as file:
                 content = await file.read()
 
             logger.info(f"📖 Read markdown file: {file_path} " f"({len(content)} chars)")
@@ -250,7 +250,7 @@ class MarkdownProcessor:
 
     async def scan_directory_for_markdown(
         self, directory: str = "./", recursive: bool = True
-    ) -> List[Dict[str, Union[str, int]]]:
+    ) -> list[dict[str, str | int]]:
         """Scan directory for markdown files.
 
         Args:
@@ -308,8 +308,8 @@ class MarkdownProcessor:
             raise
 
     def analyze_content_for_memory_type(
-        self, content: str, file_path: Optional[str] = None, suggest_memory_type: bool = True
-    ) -> Dict[str, Union[str, float, Dict, bool]]:
+        self, content: str, file_path: str | None = None, suggest_memory_type: bool = True
+    ) -> dict[str, str | float | dict | bool]:
         """Analyze markdown content and suggest appropriate memory type.
 
         This method provides AI integration hooks for Cursor AI to enhance
@@ -372,8 +372,8 @@ class MarkdownProcessor:
             }
 
     def _suggest_memory_type_heuristic(
-        self, content: str, file_path: Optional[str] = None
-    ) -> Tuple[str, float, str]:
+        self, content: str, file_path: str | None = None
+    ) -> tuple[str, float, str]:
         """Basic heuristic for memory type suggestion (AI can enhance this).
 
         Args:
@@ -433,8 +433,8 @@ class MarkdownProcessor:
         content: str,
         memory_type: str,
         ai_optimization: bool = True,
-        suggested_type: Optional[str] = None,
-    ) -> Dict[str, Union[str, bool, int]]:
+        suggested_type: str | None = None,
+    ) -> dict[str, str | bool | int]:
         """Optimize content for database storage with AI enhancement hooks.
 
         This method provides integration points for Cursor AI to enhance
@@ -517,7 +517,7 @@ class MarkdownProcessor:
 
     def chunk_content(
         self, content: str, preserve_headers: bool = True
-    ) -> List[Dict[str, Union[str, int]]]:
+    ) -> list[dict[str, str | int]]:
         """Chunk content into smaller pieces with AI-optimized boundaries.
 
         Args:
@@ -585,7 +585,7 @@ class MarkdownProcessor:
         """Rough estimation of token count (approximately 4 chars per token)."""
         return len(text) // 4
 
-    def _split_text_by_tokens(self, text: str) -> List[str]:
+    def _split_text_by_tokens(self, text: str) -> list[str]:
         """Split text into chunks based on estimated token count."""
         estimated_tokens = self._estimate_tokens(text)
 
@@ -638,7 +638,7 @@ class MarkdownProcessor:
 
     async def scan_policy_directory(
         self, directory: str = "./policy"
-    ) -> List[Dict[str, Union[str, int, List[str], bool]]]:
+    ) -> list[dict[str, str | int | list[str] | bool]]:
         """Scan policy directory for markdown files with rule validation.
 
         Args:
@@ -669,7 +669,7 @@ class MarkdownProcessor:
             logger.error(f"❌ Failed to scan policy directory {directory}: {e}")
             raise
 
-    def extract_policy_rules(self, content: str) -> List[Dict[str, str]]:
+    def extract_policy_rules(self, content: str) -> list[dict[str, str]]:
         """Extract rule IDs and content from policy markdown.
 
         Args:
@@ -730,8 +730,8 @@ class MarkdownProcessor:
         return "\n".join(context_lines).strip()
 
     def validate_policy_rules(
-        self, rules: List[Dict[str, str]], policy_version: Optional[str] = None
-    ) -> Dict[str, Union[bool, List[str], int, str]]:
+        self, rules: list[dict[str, str]], policy_version: str | None = None
+    ) -> dict[str, bool | list[str] | int | str]:
         """Validate policy rules for uniqueness and format compliance.
 
         Args:
@@ -790,7 +790,7 @@ class MarkdownProcessor:
                 "rule_count": len(rules) if rules else 0,
             }
 
-    def generate_policy_hash(self, rules: List[Dict[str, str]], policy_version: str) -> str:
+    def generate_policy_hash(self, rules: list[dict[str, str]], policy_version: str) -> str:
         """Generate SHA-256 hash for policy version.
 
         Args:
@@ -824,11 +824,11 @@ class MarkdownProcessor:
     async def process_directory_batch(
         self,
         directory: str = "./",
-        memory_type: Optional[str] = None,
+        memory_type: str | None = None,
         auto_suggest: bool = True,
         ai_enhance: bool = True,
         recursive: bool = True,
-    ) -> Dict[str, Union[List[Dict], int, str, Dict[str, int], bool]]:
+    ) -> dict[str, list[dict] | int | str | dict[str, int] | bool]:
         """Process entire directory with batch AI-enhanced analysis.
 
         Args:
@@ -918,7 +918,7 @@ class MarkdownProcessor:
 
     def get_file_metadata(
         self, file_path: str, content: str
-    ) -> Dict[str, Union[str, int, Optional[float]]]:
+    ) -> dict[str, str | int | float | None]:
         """Generate comprehensive file metadata.
 
         Args:

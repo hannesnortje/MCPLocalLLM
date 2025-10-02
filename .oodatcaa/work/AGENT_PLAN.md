@@ -1,299 +1,250 @@
-# Agent Plan — W003: Integrate MCP Dependencies
+# Agent Plan — W004: Adapt MCP for Training Use Case
 
-**Objective:** OBJ-2025-002 | **Epic:** MCP Integration | **Sprint:** 1 | **Work Item:** W003  
+**Objective:** OBJ-2025-002 | **Epic:** MCP Integration | **Sprint:** 1 | **Work Item:** W004  
 **Plan Version:** 1.0 | **Created:** 2025-10-02 | **Agent:** Planner
 
 ---
 
 ## Problem Statement
 
-Integrate MCP dependencies into `pyproject.toml` and install packages to enable MCP functionality. Add 10 production dependencies (mcp, qdrant-client, sentence-transformers, etc.) and 2 dev dependencies (pytest-asyncio, types-markdown) identified in W001 analysis. Update tool configurations (mypy, pytest, ruff) to support MCP code.
+Adapt and clean up the migrated MCP server code to pass all quality gates and work optimally for the training use case. Fix 385 ruff linting errors (primarily import sorting, type annotations, deprecated syntax) and resolve mypy type errors. Remove or disable UI-related code, simplify unnecessary features, and ensure core MCP functionality (memory management, vector search, policy system) remains intact.
 
-**Context:** W002 successfully migrated 61 MCP files. These files currently have import errors because dependencies (mcp, qdrant-client, sentence-transformers) are not installed. W001 analysis provided complete dependency list with version constraints and tool configuration updates.
+**Context:** W002 migrated 61 MCP files and W003 installed all dependencies. However, the MCP code has quality issues: 385 ruff errors (318 auto-fixable) and multiple mypy type errors. Most issues are mechanical (import sorting, type annotations using old syntax like `List[]` instead of `list[]`, `Optional[]` instead of `| None`). The code is functional but doesn't meet project quality standards.
 
 ---
 
 ## Constraints / Risks
 
 **Constraints:**
-- MUST maintain compatibility with Python >=3.11,<3.13
-- MUST preserve existing mdnotes dependencies (click, rich, whoosh)
-- Large installation size: ~2.1GB (sentence-transformers brings PyTorch)
-- MUST pass pip-audit security scan
-- Tool configurations must work for both mdnotes and mcp code
+- MUST preserve core MCP functionality (memory, vector search, policy system)
+- MUST NOT break existing mdnotes functionality
+- MUST pass all quality gates (black, ruff, mypy, pytest)
+- MCP SDK (`mcp` package) lacks type stubs - will need type: ignore comments
+- MUST maintain compatibility with installed dependencies
 
 **Key Risks & Mitigation:**
-- **Dependency conflicts (MEDIUM):** W001 analysis verified zero conflicts → Use exact versions from analysis
-- **Installation size (LOW):** ~2.1GB expected for ML training system → Document in README
-- **Import errors persist (MEDIUM):** Missing transitive dependencies → Install with verbose logging, verify all imports
-- **Tool configuration breaks (LOW):** Config updates minimal → Test incrementally
-- **Security vulnerabilities (MEDIUM):** Large dependency tree → Run pip-audit and document findings
+- **Breaking MCP functionality (HIGH):** Automated fixes could break code → Run tests after each fix batch
+- **Type annotation errors (MEDIUM):** Complex types may need manual fixes → Start with auto-fixes, then manual
+- **Import errors from changes (MEDIUM):** Refactoring could break imports → Test imports after changes
+- **Loss of needed functionality (LOW):** Removing code could break features → Only remove UI-specific code, keep core
 
 ---
 
 ## Definition of Done
 
 **Functional:**
-- [ ] **AC1:** pyproject.toml updated with 10 MCP production dependencies
-- [ ] **AC2:** pyproject.toml updated with 2 MCP dev dependencies
-- [ ] **AC3:** Python version constraint updated to `>=3.11,<3.13`
-- [ ] **AC4:** All dependencies install successfully: `pip install -e .[dev]`
-- [ ] **AC5:** MCP imports work: `import mcp`, `import qdrant_client`, `import sentence_transformers`
-- [ ] **AC6:** Existing mdnotes imports still work
-- [ ] **AC7:** Existing tests still pass after dependency installation
+- [ ] **AC1:** All ruff linting errors resolved (0 errors in `ruff check .`)
+- [ ] **AC2:** Import sorting corrected (all imports properly ordered)
+- [ ] **AC3:** Type annotations modernized (PEP 585/604: `list[]` not `List[]`, `| None` not `Optional[]`)
+- [ ] **AC4:** Mypy type checking passes on MCP code (with reasonable ignores for untyped libraries)
+- [ ] **AC5:** UI-related code identified and disabled/removed
+- [ ] **AC6:** Core MCP functionality preserved (memory, vector search, policy)
+- [ ] **AC7:** Existing tests still pass (no regressions)
 
 **Non-Functional:**
-- [ ] **AC8:** Tool configurations updated (mypy packages, pytest asyncio_mode, ruff known-first-party)
-- [ ] **AC9:** pip-audit clean (no high-severity vulnerabilities)
-- [ ] **AC10:** Build succeeds: `python -m build` creates wheel and sdist
+- [ ] **AC8:** Black formatting passes on all code
+- [ ] **AC9:** Build succeeds with cleaned code
+- [ ] **AC10:** No new security issues introduced
 
 ---
 
 ## Alternatives & Choice
 
-**Alternative 1:** Manual pip install → ❌ REJECTED (not reproducible, no version control)  
-**Alternative 2:** requirements.txt approach → ❌ REJECTED (pyproject.toml is standard for packages)  
-**Alternative 3:** Update pyproject.toml + pip install → ✅ **CHOSEN** (standard, reproducible, version-controlled)
+**Alternative 1:** Manual fixes for all issues → ❌ REJECTED (time-consuming, error-prone for 385 errors)  
+**Alternative 2:** Automated ruff --fix + targeted manual fixes → ✅ **CHOSEN** (fast, reliable, 318/385 auto-fixable)  
+**Alternative 3:** Disable type checking for MCP → ❌ REJECTED (defeats quality goals)
 
-**Rationale:** Alternative 3 follows Python packaging best practices, provides reproducible installations, and integrates cleanly with existing tooling.
+**Rationale:** Alternative 2 leverages automated tooling for mechanical fixes (85% of issues) and focuses manual effort on complex type annotations. This is efficient and maintains code quality.
 
 ---
 
 ## Implementation Plan
 
-### Step 1: Backup and Branch Setup
-**Branch:** `feat/W003-step-01-integrate-dependencies`  
+### Step 1: Branch Setup and Baseline
+**Branch:** `feat/W004-step-01-adapt-mcp-code`  
 **Actions:**
-1. Create baseline tag: `pre/W003-$(date -Iseconds)`
-2. Create and checkout integration branch
-3. Backup current pyproject.toml for rollback
+1. Create baseline tag: `pre/W004-$(date -Iseconds)`
+2. Create and checkout adaptation branch
+3. Run initial quality check to document baseline errors
 
-**Exit Gate:** Branch ready, backup created, baseline tag exists
+**Exit Gate:** Branch ready, baseline documented (385 ruff errors, multiple mypy errors)
 
 ---
 
-### Step 2: Update pyproject.toml - Core Metadata
+### Step 2: Automated Ruff Fixes (Batch 1)
 **Actions:**
-1. Update `requires-python = ">=3.11,<3.13"` (add upper bound)
-2. Update description to mention MCP integration (optional)
-3. Add MCP-related keywords: "mcp", "vector-database" (optional)
+1. Run `ruff check src/mcp --fix` to auto-fix 318 errors:
+   - Import sorting (36 errors)
+   - Type annotations: `List[]` → `list[]` (220 errors)
+   - Type annotations: `Optional[]` → `| None` (34 errors)
+   - Type annotations: `Union[]` → `|` (8 errors)
+   - F-string fixes (13 errors)
+   - Remove unused imports (5 errors)
+   - Other mechanical fixes (2 errors)
+2. Run black to format changed files
+3. Commit: `[refactor] W004: Apply automated ruff fixes to MCP code`
 
-**Expected Changes:** 1-3 lines modified  
-**Exit Gate:** Python version constraint updated
+**Expected Outcome:** ~318 errors fixed, ~67 errors remaining  
+**Exit Gate:** Ruff errors reduced significantly, code still compiles
 
 ---
 
-### Step 3: Add MCP Production Dependencies
+### Step 3: Manual Ruff Fixes (Batch 2)
 **Actions:**
-1. Add 10 MCP dependencies to `[project.dependencies]`:
+1. Fix remaining ~67 ruff errors that need manual attention:
+   - Trailing whitespace (9 errors)
+   - Line too long (7 errors)
+   - Security warnings (subprocess calls: 8 errors)
+   - Unused variables (4 errors)
+   - Other non-auto-fixable issues
+2. Run black to format
+3. Commit: `[refactor] W004: Fix remaining ruff issues in MCP code`
+
+**Expected Outcome:** 0 ruff errors  
+**Exit Gate:** `ruff check .` passes with 0 errors
+
+---
+
+### Step 4: Add Type Annotations for Mypy
+**Actions:**
+1. Add return type annotations to functions missing them
+2. Add type parameters to generic types (`dict` → `dict[str, Any]`, `list` → `list[str]`)
+3. Add `# type: ignore[import-untyped]` for mcp SDK imports (no type stubs available)
+4. Fix any complex type issues
+5. Create mypy configuration exclusions if needed for external libraries
+6. Commit: `[refactor] W004: Add type annotations for mypy compliance`
+
+**Expected Outcome:** Mypy errors significantly reduced  
+**Exit Gate:** Mypy passes on MCP code (with documented ignores for untyped libraries)
+
+---
+
+### Step 5: Remove/Disable UI Components
+**Actions:**
+1. Identify UI-related code (already excluded src/ui/ directory in W002)
+2. Check for UI imports in remaining code (PySide6, websockets references)
+3. Comment out or remove UI-specific code blocks
+4. Verify no UI dependencies remain
+5. Commit: `[refactor] W004: Remove UI-related code references`
+
+**Expected Outcome:** Zero UI dependencies in code  
+**Exit Gate:** No references to PySide6, websockets, or UI-specific code
+
+---
+
+### Step 6: Verify Core Functionality
+**Actions:**
+1. Test MCP core imports:
    ```python
-   # MCP Core - Memory & Vector Search
-   "mcp>=1.13.1,<2.0.0",
-   "qdrant-client>=1.7.0,<2.0.0",
-   "sentence-transformers>=2.5.1,<3.0.0",
-   
-   # Data Processing
-   "numpy>=1.26.0,<2.0.0",
-   "markdown>=3.5.0,<4.0.0",
-   "beautifulsoup4>=4.12.0,<5.0.0",
-   
-   # Configuration & Async Utilities
-   "python-dotenv>=1.0.0,<2.0.0",
-   "pyyaml>=6.0.0,<7.0.0",
-   "aiofiles>=24.1.0,<25.0.0",
-   "aiohttp>=3.9.1,<4.0.0",
+   from mcp import memory_manager
+   from mcp import qdrant_manager
+   from mcp import mcp_server
    ```
-2. Maintain existing dependencies (click, rich, whoosh)
-3. Group dependencies with comments for clarity
+2. Verify memory management imports work
+3. Verify policy system imports work
+4. Verify tools and handlers import correctly
+5. Document any disabled features
 
-**Expected Changes:** ~10 lines added  
-**Exit Gate:** Dependencies section complete, TOML syntax valid
-
----
-
-### Step 4: Add MCP Dev Dependencies
-**Actions:**
-1. Add 2 MCP dev dependencies to `[project.optional-dependencies.dev]`:
-   ```python
-   "pytest-asyncio>=1.1.0,<2.0.0",
-   "types-markdown>=3.5.0,<4.0.0",
-   ```
-2. Maintain existing dev dependencies
-3. Maintain alphabetical order (optional but recommended)
-
-**Expected Changes:** ~2 lines added  
-**Exit Gate:** Dev dependencies updated, TOML syntax valid
+**Exit Gate:** All core MCP modules import without errors
 
 ---
 
-### Step 5: Update Tool Configurations
+### Step 7: Run All Quality Gates
 **Actions:**
-1. **Ruff:** Add "mcp" to `[tool.ruff.lint.isort] known-first-party`
-2. **Mypy:** Add "mcp" to `[tool.mypy] packages` list
-3. **Pytest:** Add `asyncio_mode = "auto"` to `[tool.pytest.ini_options]`
-4. Verify TOML syntax: `python -c "import tomllib; tomllib.load(open('pyproject.toml', 'rb'))"`
+1. Run `black --check .` → must pass
+2. Run `ruff check .` → must pass (0 errors)
+3. Run `mypy src/mcp` → must pass (with documented ignores)
+4. Run `mypy src/mdnotes` → must pass
+5. Run `pytest -q tests/test_smoke.py` → must pass (critical)
+6. Run `pytest -q tests/acceptance` → must pass
+7. Run `python -m build` → must pass
 
-**Expected Changes:** 3 lines modified  
-**Exit Gate:** Tool configurations updated, TOML valid
+**Exit Gate:** All quality gates pass
 
 ---
 
-### Step 6: Install Dependencies
+### Step 8: Commit, Push, and Document
 **Actions:**
-1. Upgrade pip: `pip install --upgrade pip`
-2. Install project with dev dependencies: `pip install -e .[dev]`
-3. Monitor installation (may take 5-10 minutes for sentence-transformers + PyTorch)
-4. Capture installation log for troubleshooting
+1. Stage all changes
+2. Create comprehensive commit message with stats
+3. Push branch to origin
+4. Update SPRINT_QUEUE.json: W004 status → awaiting_test
+5. Update AGENT_LOG.md with W004 completion summary
+6. Release locks
 
-**Expected Outcome:** ~2.1GB dependencies installed, no errors  
-**Exit Gate:** Installation completes successfully, no error messages
-
----
-
-### Step 7: Verify Imports
-**Actions:**
-1. **Verify MCP core imports:**
-   ```bash
-   python -c "import mcp; print('✅ mcp imported')"
-   python -c "import qdrant_client; print('✅ qdrant_client imported')"
-   python -c "import sentence_transformers; print('✅ sentence_transformers imported')"
-   ```
-2. **Verify supporting imports:**
-   ```bash
-   python -c "import numpy, markdown, beautifulsoup4, aiohttp"
-   ```
-3. **Verify existing mdnotes imports:**
-   ```bash
-   python -c "from mdnotes import core; print('✅ mdnotes still works')"
-   ```
-
-**Expected Outcome:** All imports successful  
-**Exit Gate:** Zero import errors
-
----
-
-### Step 8: Run Quality Gates
-**Actions:**
-1. Run black: `black --check .` (should already pass)
-2. Run ruff: `ruff check .` (expect MCP code issues, defer to W004)
-3. Run mypy on mdnotes: `mypy src/mdnotes` (should pass)
-4. Run existing tests: `pytest -q tests/test_smoke.py` (must pass)
-5. Run pip-audit: `pip-audit` (check for vulnerabilities)
-6. Run build: `python -m build` (verify package builds)
-
-**Expected Outcome:** Existing code quality maintained, MCP issues deferred  
-**Exit Gate:** Smoke tests pass, build succeeds, no high-severity security issues
-
----
-
-### Step 9: Commit and Push
-**Actions:**
-1. Stage pyproject.toml: `git add pyproject.toml`
-2. Commit with descriptive message:
-   ```bash
-   git commit -m "[impl] W003: Integrate MCP dependencies into pyproject.toml
-   
-   - Add 10 MCP production dependencies (mcp, qdrant-client, sentence-transformers, etc.)
-   - Add 2 MCP dev dependencies (pytest-asyncio, types-markdown)
-   - Update Python version constraint to >=3.11,<3.13
-   - Update tool configurations (mypy, pytest, ruff)
-   - Verified all imports work successfully"
-   ```
-3. Push branch: `git push origin feat/W003-step-01-integrate-dependencies`
-
-**Exit Gate:** Changes committed and pushed
-
----
-
-### Step 10: Update Documentation
-**Actions:**
-1. Update SPRINT_QUEUE.json: W003 status → awaiting_test
-2. Update AGENT_LOG.md with dependency integration summary
-3. Release locks
-
-**Exit Gate:** Documentation updated, ready for tester
+**Exit Gate:** Branch pushed, documentation updated
 
 ---
 
 ## Testing Strategy
 
-See TEST_PLAN.md. Summary: Import verification, existing tests pass, pip-audit clean, tool configurations work.
+See TEST_PLAN.md. Summary: Quality gate validation, import verification, core functionality testing, no regressions.
 
 **Rollback Triggers:**
-- Dependency installation fails with conflicts
-- Critical imports fail (mcp, qdrant_client, sentence_transformers)
-- Existing tests fail after installation
-- High-severity security vulnerabilities found
+- Core MCP functionality breaks (imports fail)
+- Existing tests fail
+- Build fails
+- Cannot resolve type errors reasonably
 
 ---
 
 ## Rollback Plan
 
-**Baseline:** `pre/W003-<timestamp>` (created in Step 1)  
-**Trigger Conditions:** Any critical verification failure in Steps 6-8  
+**Baseline:** `pre/W004-<timestamp>` (created in Step 1)  
+**Trigger Conditions:** Critical functionality breaks, tests fail, insurmountable type errors  
 **Steps:**
 ```bash
-# Restore pyproject.toml
-git checkout HEAD -- pyproject.toml
-
-# Uninstall MCP dependencies
-pip uninstall -y mcp qdrant-client sentence-transformers numpy markdown \
-  beautifulsoup4 python-dotenv pyyaml aiofiles aiohttp pytest-asyncio types-markdown
-
-# Reinstall original environment
-pip install -e .[dev]
-
-# Verify rollback
-pytest -q
-
-# Document failure
-echo "W003 aborted: <reason>" >> .oodatcaa/work/SPRINT_DISCUSS.md
+git reset --hard pre/W004-<timestamp>
+git push origin feat/W004-step-01-adapt-mcp-code --force-with-lease
+echo "W004 aborted: <reason>" >> .oodatcaa/work/SPRINT_DISCUSS.md
 ```
 
 ---
 
 ## Branch & Commits
 
-**Branch:** `feat/W003-step-01-integrate-dependencies`  
-**Commit Labels:** `[impl]` for pyproject.toml updates  
-**PR:** Single PR after all verification passes  
+**Branch:** `feat/W004-step-01-adapt-mcp-code`  
+**Commit Labels:** `[refactor]` for code quality improvements  
+**PR:** Single PR after all quality gates pass  
 **Merge Strategy:** No-FF merge to preserve feature branch history
 
 ---
 
 ## Dependencies
 
-**Upstream:** W002 (COMPLETE - MCP files migrated)  
-**Downstream:** W004 (Adapt MCP for Training), W005 (Python Tooling & Quality Gates)
+**Upstream:** W002 (COMPLETE - MCP files migrated), W003 (COMPLETE - dependencies installed)  
+**Downstream:** W005 (Python Tooling), W006 (Integration Testing), W007 (Configuration), W008 (Documentation)
 
-**Artifacts Required from W001:**
-- `.oodatcaa/work/analysis/W001/dependencies.md` ✅
-- `.oodatcaa/work/analysis/W001/pyproject_toml_updates.md` ✅
+**Artifacts from Previous Work:**
+- W002: 61 MCP files in `src/mcp/`, `policy/`, `docs/mcp/`
+- W003: 12 dependencies installed, tools configured
 
 ---
 
 ## Effort Estimate
 
-**Complexity:** M (Medium) | **Time:** 1-2 hours  
+**Complexity:** M (Medium) | **Time:** 3-4 hours  
 - Step 1 (Setup): 5 min
-- Steps 2-5 (pyproject.toml updates): 20 min
-- Step 6 (Install dependencies): 10-15 min (large download)
-- Step 7 (Verify imports): 10 min
-- Step 8 (Quality gates): 15 min
-- Steps 9-10 (Commit & docs): 10 min
+- Step 2 (Auto ruff fixes): 15 min
+- Step 3 (Manual ruff fixes): 45 min
+- Step 4 (Type annotations): 90 min
+- Step 5 (Remove UI): 15 min
+- Step 6 (Verify functionality): 15 min
+- Step 7 (Quality gates): 20 min
+- Step 8 (Commit & docs): 15 min
 
-**Risk Level:** LOW (W001 verified zero conflicts, exact versions provided)
+**Risk Level:** MEDIUM (automated fixes are safe, but type annotations need care)
 
 ---
 
 ## Builder Task Breakdown
 
-**W003-B01:** Steps 1-5 (Branch + pyproject.toml updates)  
-**W003-B02:** Steps 6-8 (Install + Verify + Quality gates)  
-**W003-B03:** Steps 9-10 (Commit + Documentation)
+**W004-B01:** Steps 1-3 (Setup + Automated Fixes + Manual Fixes)  
+**W004-B02:** Steps 4-5 (Type Annotations + Remove UI)  
+**W004-B03:** Steps 6-8 (Verify + Quality Gates + Commit)
 
 **Tester Task:**  
-**W003-T01:** Verify all 10 ACs, validate imports, check security
+**W004-T01:** Verify all 10 ACs, validate quality gates, test core functionality
 
 ---
 

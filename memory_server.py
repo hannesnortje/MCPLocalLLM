@@ -12,19 +12,18 @@ Supports three server modes:
 Can also launch a UI for memory visualization and management.
 """
 
-import sys
-import asyncio
 import argparse
-import os
-import subprocess
+import asyncio
 import atexit
-import signal
 import json
+import os
+import signal
+import subprocess
+import sys
 import tempfile
-from pathlib import Path
 
-from src.server_config import get_logger
 from src.mcp_server import run_mcp_server
+from src.server_config import get_logger
 
 logger = get_logger("memory-server")
 

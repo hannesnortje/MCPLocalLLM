@@ -3,13 +3,13 @@ Markdown processing handlers for MCP Memory Server.
 Handles markdown file scanning, analysis, optimization, and batch processing.
 """
 
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any
 
 try:
-    from ..server_config import get_logger
-    from ..markdown_processor import MarkdownProcessor
     from ..error_handler import error_handler
+    from ..markdown_processor import MarkdownProcessor
+    from ..server_config import get_logger
 except ImportError:
     # Fallback for standalone usage
     import logging
@@ -47,7 +47,7 @@ class MarkdownProcessingHandlers:
         self.memory_manager = memory_manager
         self.markdown_processor = markdown_processor or MarkdownProcessor()
 
-    async def handle_scan_workspace_markdown(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_scan_workspace_markdown(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle scan_workspace_markdown tool call."""
         try:
             directory = arguments.get("directory", "./")
@@ -76,7 +76,7 @@ class MarkdownProcessingHandlers:
                 "content": [{"type": "text", "text": f"Failed to scan directory: {str(e)}"}],
             }
 
-    async def handle_analyze_markdown_content(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_analyze_markdown_content(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle analyze_markdown_content tool call."""
         try:
             content = arguments.get("content", "")
@@ -112,7 +112,7 @@ class MarkdownProcessingHandlers:
                 )
 
             if ai_enhance:
-                response_text += f"\nAI Enhancement: Ready for integration"
+                response_text += "\nAI Enhancement: Ready for integration"
 
             return {"content": [{"type": "text", "text": response_text}]}
 
@@ -124,8 +124,8 @@ class MarkdownProcessingHandlers:
             }
 
     async def handle_optimize_content_for_storage(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Handle optimize_content_for_storage tool call."""
         try:
             content = arguments.get("content", "")
@@ -153,7 +153,7 @@ class MarkdownProcessingHandlers:
             )
 
             if optimization.get("suggested_type_override"):
-                response_text += f"• Note: User override of suggested type\n"
+                response_text += "• Note: User override of suggested type\n"
 
             response_text += (
                 f"\nOptimized content ready for storage in " f"{memory_type} memory layer."
@@ -168,7 +168,7 @@ class MarkdownProcessingHandlers:
                 "content": [{"type": "text", "text": f"Failed to optimize content: {str(e)}"}],
             }
 
-    async def handle_process_markdown_directory(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_process_markdown_directory(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle process_markdown_directory tool call.
 
         Note: This function is maintained for backward compatibility.
@@ -188,7 +188,7 @@ class MarkdownProcessingHandlers:
                 "content": [{"type": "text", "text": f"Failed to process directory: {str(e)}"}],
             }
 
-    async def handle_validate_and_deduplicate(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_validate_and_deduplicate(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle validate_and_deduplicate tool call."""
         try:
             content = arguments.get("content", "")
@@ -221,26 +221,26 @@ class MarkdownProcessingHandlers:
             response_text += f"Collection: {result.get('collection', 'unknown')}\n\n"
 
             if result.get("is_duplicate"):
-                response_text += f"🔍 DUPLICATE DETECTED\n"
+                response_text += "🔍 DUPLICATE DETECTED\n"
                 response_text += f"Similarity Score: " f"{result.get('similarity_score', 0):.3f}\n"
                 response_text += f"Matched Content: " f"{result.get('matched_content', 'N/A')}\n"
-                response_text += f"Recommendation: Content already exists, " f"consider skipping.\n"
+                response_text += "Recommendation: Content already exists, " "consider skipping.\n"
             elif result.get("is_near_miss"):
-                response_text += f"⚠️ NEAR-MISS DETECTED\n"
+                response_text += "⚠️ NEAR-MISS DETECTED\n"
                 response_text += f"Similarity Score: " f"{result.get('similarity_score', 0):.3f}\n"
                 response_text += f"Matched Content: " f"{result.get('matched_content', 'N/A')}\n"
                 response_text += (
-                    f"Recommendation: Review for potential similarity " f"before adding.\n"
+                    "Recommendation: Review for potential similarity " "before adding.\n"
                 )
             else:
-                response_text += f"✅ NO DUPLICATE FOUND\n"
+                response_text += "✅ NO DUPLICATE FOUND\n"
                 response_text += f"Similarity Score: " f"{result.get('similarity_score', 0):.3f}\n"
-                response_text += f"Recommendation: Safe to add to memory.\n"
+                response_text += "Recommendation: Safe to add to memory.\n"
 
             # Add diagnostics if available
             if result.get("diagnostics") and enable_near_miss:
                 diag = result["diagnostics"]
-                response_text += f"\nDiagnostics:\n"
+                response_text += "\nDiagnostics:\n"
                 response_text += (
                     f"• Duplicate threshold: " f"{diag.get('duplicate_threshold', 'N/A')}\n"
                 )
@@ -250,7 +250,7 @@ class MarkdownProcessingHandlers:
                 response_text += f"• Total matches found: " f"{diag.get('total_matches', 0)}\n"
 
                 if diag.get("top_similarities"):
-                    response_text += f"• Top similarities:\n"
+                    response_text += "• Top similarities:\n"
                     for i, sim in enumerate(diag["top_similarities"][:3]):
                         response_text += (
                             f"  {i+1}. Score: {sim.get('score', 0):.3f} - "
@@ -268,7 +268,7 @@ class MarkdownProcessingHandlers:
                 ],
             }
 
-    async def handle_process_markdown_file(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_process_markdown_file(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle process_markdown_file tool call - complete end-to-end pipeline."""
         try:
             file_path = arguments.get("path", "")
@@ -421,7 +421,7 @@ class MarkdownProcessingHandlers:
             if agent_id:
                 response_text += f"• Agent Context: {agent_id}\n"
 
-            response_text += f"\n📊 Chunk Processing Details:\n"
+            response_text += "\n📊 Chunk Processing Details:\n"
             for result in chunk_results:
                 action_emoji = {
                     "stored": "✅",
@@ -446,8 +446,8 @@ class MarkdownProcessingHandlers:
             }
 
     async def handle_batch_process_markdown_files(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Handle batch processing of specific markdown files."""
         try:
             file_assignments = arguments.get("file_assignments", [])
@@ -561,7 +561,7 @@ class MarkdownProcessingHandlers:
                 "content": [{"type": "text", "text": f"Failed to batch process files: {str(e)}"}],
             }
 
-    async def handle_batch_process_directory(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_batch_process_directory(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle complete directory processing with end-to-end pipeline."""
         try:
             directory = arguments.get("directory", "./")
@@ -627,7 +627,7 @@ class MarkdownProcessingHandlers:
                             if agent_id:
                                 metadata["agent_id"] = agent_id
 
-                            chunk_id = self.memory_manager.async_add_to_memory(
+                            self.memory_manager.async_add_to_memory(
                                 content=chunk_text,
                                 memory_type=memory_type,
                                 agent_id=agent_id,

@@ -23,7 +23,11 @@ Protocol:
    - `pip-audit` (and `bandit -r src -ll` if enabled)
 6) LOG: lock .oodatcaa/work/AGENT_LOG.md; append timestamp, ticket/step, branch, summary, gate results, coverage.
 7) STATUS: if all gates pass → "awaiting_test"; else one Adapt loop; if still failing → "needs_adapt".
-8) PUSH + RELEASE lease.
+8) COMPLETION REPORT (REQUIRED):
+   - Create `.oodatcaa/work/reports/<TASK_ID>/builder_<subtask>.md` using template at `.oodatcaa/templates/AGENT_REPORT_TEMPLATE.md`
+   - Include: objective, actions, deliverables (code/tests), metrics (files changed, lines +/-, errors before/after, test count), quality gates (all results), challenges, solutions, handoff notes for Tester
+   - Append executive summary to `.oodatcaa/work/AGENT_REPORTS.md` with link to detailed report
+9) PUSH + RELEASE lease.
 
-Return diffs: code/tests + .oodatcaa/work/AGENT_LOG.md + .oodatcaa/work/SPRINT_QUEUE.json.
+Return diffs: code/tests + .oodatcaa/work/AGENT_LOG.md + .oodatcaa/work/SPRINT_QUEUE.json + completion report.
 

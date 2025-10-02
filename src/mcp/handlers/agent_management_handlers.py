@@ -3,12 +3,12 @@ Agent management handlers for MCP Memory Server.
 Handles agent lifecycle, permissions, memory queries, and action logging.
 """
 
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any
 
 try:
-    from ..server_config import get_logger
     from ..error_handler import error_handler
+    from ..server_config import get_logger
 except ImportError:
     # Fallback for standalone usage
     import logging
@@ -32,7 +32,7 @@ class AgentManagementHandlers:
         """Initialize with a memory manager instance."""
         self.memory_manager = memory_manager
 
-    async def handle_initialize_new_agent(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_initialize_new_agent(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Initialize a new agent with enhanced functionality from agent_startup."""
         try:
             # Extract parameters with defaults matching agent_startup prompt
@@ -126,11 +126,9 @@ class AgentManagementHandlers:
 
             # Determine overall status
             if errors:
-                status = "error"
                 status_icon = "❌"
                 status_text = "FAILED"
             else:
-                status = "success"
                 status_icon = "✅"
                 status_text = "SUCCESS"
 
@@ -196,8 +194,8 @@ class AgentManagementHandlers:
             }
 
     async def handle_initialize_development_agent(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Initialize a development agent with developer-optimized defaults."""
         dev_arguments = {
             "agent_id": arguments.get("agent_id"),
@@ -208,7 +206,7 @@ class AgentManagementHandlers:
         }
         return await self.handle_initialize_new_agent(dev_arguments)
 
-    async def handle_initialize_testing_agent(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_initialize_testing_agent(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Initialize a testing agent with testing-optimized defaults."""
         test_arguments = {
             "agent_id": arguments.get("agent_id"),
@@ -219,7 +217,7 @@ class AgentManagementHandlers:
         }
         return await self.handle_initialize_new_agent(test_arguments)
 
-    async def handle_configure_agent_permissions(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_configure_agent_permissions(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Configure agent permissions for memory layer access."""
         try:
             agent_id = arguments.get("agent_id")
@@ -263,7 +261,7 @@ class AgentManagementHandlers:
                 "content": [{"type": "text", "text": f"Error configuring permissions: {str(e)}"}],
             }
 
-    async def handle_query_memory_for_agent(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_query_memory_for_agent(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Query memory for an agent with permission-based access control."""
         try:
             agent_id = arguments.get("agent_id")
@@ -340,7 +338,7 @@ class AgentManagementHandlers:
                 "content": [{"type": "text", "text": f"Error querying memory: {str(e)}"}],
             }
 
-    async def handle_store_agent_action(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_store_agent_action(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Store an agent action with optional learned memory integration."""
         try:
             agent_id = arguments.get("agent_id")

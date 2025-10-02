@@ -6,14 +6,14 @@ violation tracking, and compliance management operations.
 Extracted from monolithic tool_definitions.py for better maintainability.
 """
 
-from typing import Dict, Any, List
+from typing import Any
 
 
 class PolicyTools:
     """Policy management and compliance tools."""
 
     @staticmethod
-    def get_tools() -> List[Dict[str, Any]]:
+    def get_tools() -> list[dict[str, Any]]:
         """Get policy management tool definitions."""
         return [
             {

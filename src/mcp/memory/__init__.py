@@ -7,11 +7,11 @@ for better maintainability and separation of concerns.
 """
 
 try:
-    from .vector_operations import VectorOperations
     from .agent_registry import AgentRegistry
-    from .file_metadata_manager import FileMetadataManager
-    from .embedding_service import EmbeddingService
     from .collection_manager import CollectionManager
+    from .embedding_service import EmbeddingService
+    from .file_metadata_manager import FileMetadataManager
+    from .vector_operations import VectorOperations
 
     __all__ = [
         "VectorOperations",
