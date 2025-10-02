@@ -1,322 +1,388 @@
-# W006 Test Plan — Basic Integration Testing
+# W007: Configuration & Environment Setup — TEST PLAN
 
-**Planner:** agent-planner-A  
+**Task ID:** W007  
 **Test Plan Version:** 1.0  
-**Created:** 2025-10-03T04:05:00+02:00  
-**Story:** W006 - Basic Integration Testing
+**Created:** 2025-10-03T15:50:00+00:00  
+**Tester:** TBD (W007-T01)  
 
 ---
 
-## Test Strategy
+## Test Objectives
 
-**Scope:** Integration tests for MCP server initialization, memory operations, and policy system  
-**Approach:** Pytest with async support, Qdrant dependency handling, test isolation  
-**Coverage Target:** ≥85% line coverage on new test files
+Verify that W007 Configuration & Environment Setup delivers a complete, functional setup experience for developers starting with the MCPLocalLLM project for training use case.
+
+**Primary Goal:** Ensure fresh environment setup is successful and well-documented  
+**Secondary Goal:** Verify zero regressions in existing MCP functionality  
+**Quality Goal:** All configuration files valid and properly documented  
 
 ---
 
-## Quality Gate Commands
+## Test Commands
 
-### 1. Format Check
+### Format Check
 ```bash
-black tests/mcp/
-black --check tests/mcp/
+black --check .
 ```
-**Expected:** All files formatted, no changes needed
+**Expected:** All files formatted correctly OR minimal formatting changes
 
----
-
-### 2. Lint Check
+### Lint Check
 ```bash
-ruff check tests/mcp/
+ruff check .
 ```
-**Expected:** 0 errors, 0 warnings
+**Expected:** Pass OR ≤28 errors (W005 baseline)
 
----
-
-### 3. Type Check (Optional for Tests)
+### Type Check
 ```bash
-mypy tests/mcp/ || echo "Type checking tests is optional"
+mypy .
 ```
-**Expected:** Clean or acceptable errors (tests excluded from strict mypy)
+**Expected:** Pass OR ≤401 errors (W005 baseline)
 
----
-
-### 4. Unit Tests (Existing)
+### Unit Tests
 ```bash
-pytest tests/test_smoke.py -v
+pytest -q
 ```
-**Expected:** 2/2 tests pass (test_greets, test_package_import)
+**Expected:** All tests pass (smoke + integration)
 
----
-
-### 5. Integration Tests (New)
+### Integration Tests
 ```bash
-pytest tests/mcp/ -v -m integration
+pytest -q tests/mcp/
 ```
-**Expected:** 12 tests pass (4 server + 5 memory + 3 policy)
+**Expected:** 10 passed, 3 skipped (W006 baseline maintained)
 
----
-
-### 6. Full Test Suite
-```bash
-pytest tests/ -v
-```
-**Expected:** 14 tests pass total (2 smoke + 12 integration), 0 failures
-
----
-
-### 7. Coverage Check
-```bash
-pytest --cov=tests/mcp --cov-report=term-missing --cov-fail-under=85
-```
-**Expected:** ≥85% line coverage on tests/mcp/
-
----
-
-### 8. Build Check
+### Build Test
 ```bash
 python -m build
 ```
-**Expected:** Successfully builds wheel and sdist in dist/
+**Expected:** Successfully built mdnotes-0.1.0 (wheel + sdist)
 
----
-
-### 9. Security Audit
+### Security Audit
 ```bash
 pip-audit
 ```
-**Expected:** 0 high-severity vulnerabilities
+**Expected:** No high-severity vulnerabilities
 
----
-
-## Acceptance Criteria Validation
-
-### AC1: MCP Server Initialization ✅
-**Test File:** `tests/mcp/test_server_initialization.py`  
-**Tests:**
-- `test_server_can_initialize`: Creates MemoryMCPServer instance
-- `test_memory_manager_available`: Verifies memory_manager is not None
-- `test_health_check`: Calls get_system_health(), validates response
-- `test_available_tools`: Calls get_available_tools(), checks tool list
-
-**Validation Command:**
+### Environment Validation
 ```bash
-pytest tests/mcp/test_server_initialization.py -v
+make validate-env
 ```
-**Expected:** 4/4 tests pass
+**Expected:** All checks pass OR clear actionable error messages
 
-**AC Pass Criteria:** ✅ All 4 server initialization tests pass
-
----
-
-### AC2: Memory CRUD Operations ✅
-**Test File:** `tests/mcp/test_memory_operations.py`  
-**Tests:**
-- `test_create_memory`: Stores a memory, verifies creation
-- `test_read_memory`: Retrieves memory by ID
-- `test_search_memories`: Searches memories by text query
-- `test_update_memory`: Modifies existing memory
-- `test_delete_memory`: Removes memory, verifies deletion
-
-**Validation Command:**
+### Setup Script Test
 ```bash
-pytest tests/mcp/test_memory_operations.py -v
+./scripts/setup-dev.sh
 ```
-**Expected:** 5/5 tests pass
-
-**AC Pass Criteria:** ✅ All 5 memory CRUD tests pass
+**Expected:** Setup completes successfully, creates venv, dirs, .env
 
 ---
 
-### AC3: Policy System ✅
-**Test File:** `tests/mcp/test_policy_system.py`  
-**Tests:**
-- `test_policy_initialization`: Verifies PolicyProcessor loads
-- `test_preservation_levels`: Checks strict/moderate/flexible levels
-- `test_rule_compliance`: Validates rule compliance markers
+## Acceptance Criteria Testing
 
-**Validation Command:**
-```bash
-pytest tests/mcp/test_policy_system.py -v
-```
-**Expected:** 3/3 tests pass
+### AC1: `.env.example` File Created
+**Test Steps:**
+1. Verify file exists: `ls -la .env.example`
+2. Check file contents: `cat .env.example`
+3. Verify all config.py env vars present:
+   - QDRANT_HOST, QDRANT_PORT, QDRANT_API_KEY
+   - EMBEDDING_MODEL, EMBEDDING_DIMENSION
+   - CHUNK_SIZE, CHUNK_OVERLAP
+   - SIMILARITY_THRESHOLD, MAX_RESULTS
+   - DEFAULT_AGENT_ID, LOG_LEVEL
+   - POLICY_DIRECTORY
+4. Verify inline comments present for each variable
+5. Verify example values (not real secrets)
+6. Verify header comment explains purpose
 
-**AC Pass Criteria:** ✅ All 3 policy system tests pass
-
----
-
-### AC4: No Regressions ✅
-**Test File:** `tests/test_smoke.py` (existing)
-
-**Validation Command:**
-```bash
-pytest tests/test_smoke.py -v
-```
-**Expected:** 2/2 tests pass (test_greets, test_package_import)
-
-**AC Pass Criteria:** ✅ All existing tests still pass, zero regressions
+**Pass Criteria:**
+- ✅ File exists at project root
+- ✅ All 11+ environment variables present
+- ✅ Each variable has inline comment
+- ✅ Example values appropriate (no secrets)
+- ✅ Header comment clear
 
 ---
 
-### AC5: Test Organization ✅
-**Expected Structure:**
-```
-tests/
-├── mcp/
-│   ├── __init__.py (empty)
-│   ├── conftest.py (fixtures)
-│   ├── test_server_initialization.py
-│   ├── test_memory_operations.py
-│   └── test_policy_system.py
-├── test_smoke.py (existing)
-└── acceptance/ (existing)
-```
+### AC2: Docker Configuration Validated
+**Test Steps:**
+1. Review docker-compose.yml: `cat docker-compose.yml`
+2. Verify Qdrant service:
+   - Image: `qdrant/qdrant:latest`
+   - Ports: 6333, 6334
+   - Volume: `qdrant_data:/qdrant/storage`
+   - Health check present
+3. Verify comments for training mode present
+4. Test docker-compose syntax: `docker-compose config`
 
-**Validation Command:**
-```bash
-ls -la tests/mcp/
-pytest --collect-only tests/mcp/
-```
-**Expected:** 4 test files in tests/mcp/, pytest discovers 12 tests
-
-**AC Pass Criteria:** ✅ Tests organized in tests/mcp/ with clear structure
+**Pass Criteria:**
+- ✅ Qdrant service configured correctly
+- ✅ Volume mounts include ./data, ./logs, ./policy
+- ✅ Health checks working
+- ✅ Container names appropriate
+- ✅ Comments explain training mode
+- ✅ `docker-compose config` passes
 
 ---
 
-### AC6: Performance ⚡
-**Validation Command:**
-```bash
-time pytest tests/mcp/ -v
+### AC3: Config Files Adapted for Training
+**Test Steps:**
+1. Review config.example.yaml: `cat config.example.yaml`
+2. Verify training-specific settings:
+   - `server.name: "mcp-local-llm-training"` OR similar
+   - `qdrant.mode: "local"`
+   - `embedding.device: "cpu"`
+   - `markdown.chunk_size: 1000`
+   - `logging.level: "INFO"`
+3. Verify comments explain training choices
+4. Validate YAML syntax: `python -c "import yaml; yaml.safe_load(open('config.example.yaml'))"`
+
+**Pass Criteria:**
+- ✅ Training-specific defaults present
+- ✅ CPU inference configured
+- ✅ Local Qdrant mode
+- ✅ Comments explain choices
+- ✅ YAML syntax valid
+
+---
+
+### AC4: Setup Script Functional
+**Test Steps:**
+1. Verify script exists and executable: `ls -la scripts/setup-dev.sh`
+2. Review script contents: `cat scripts/setup-dev.sh`
+3. Test script (dry-run or fresh clone):
+   ```bash
+   ./scripts/setup-dev.sh
+   ```
+4. Verify script actions:
+   - Creates venv directory
+   - Installs dependencies
+   - Creates data/, logs/ directories
+   - Copies .env.example → .env (if not exists)
+   - Checks Docker availability
+5. Verify clear output and next steps provided
+
+**Pass Criteria:**
+- ✅ Script exists and executable (`chmod +x`)
+- ✅ Script completes successfully
+- ✅ Venv created and dependencies installed
+- ✅ Directories created (data/, logs/)
+- ✅ .env copied if missing
+- ✅ Clear success message and next steps
+
+---
+
+### AC5: Environment Validation Tool
+**Test Steps:**
+1. Verify Makefile target: `grep validate-env Makefile`
+2. Verify script exists: `ls -la scripts/validate-env.py`
+3. Run validation: `make validate-env` OR `python scripts/validate-env.py`
+4. Verify checks performed:
+   - Python version (3.11-3.12)
+   - .env file exists
+   - Required directories exist (data/, logs/, policy/)
+   - Docker available (optional warning)
+   - Dependencies installed (optional)
+5. Verify clear success/failure output
+
+**Pass Criteria:**
+- ✅ Makefile has `validate-env` target
+- ✅ Script exists and executable
+- ✅ Validation checks 5+ prerequisites
+- ✅ Clear success message if all pass
+- ✅ Actionable error messages if fail
+
+---
+
+### AC6: All Tests Pass (CRITICAL)
+**Test Steps:**
+1. Run smoke tests: `pytest tests/test_smoke.py -v`
+2. Run integration tests: `pytest tests/mcp/ -v`
+3. Run full test suite: `pytest -v`
+4. Verify W006 baseline maintained:
+   - 13 passed, 3 skipped
+   - Performance < 30s
+
+**Pass Criteria:**
+- ✅ Smoke tests: 2/2 passing
+- ✅ Integration tests: 10 passed, 3 skipped
+- ✅ Full suite: 13 passed, 3 skipped
+- ✅ Zero test failures
+- ✅ Zero test regressions
+- ✅ Performance maintained
+
+**CRITICAL:** If any test fails, W007 MUST be marked needs_adapt
+
+---
+
+### AC7: Quality Gates Pass
+**Test Steps:**
+1. Run black: `black --check .`
+2. Run ruff: `ruff check .`
+3. Run mypy: `mypy .`
+4. Run build: `python -m build`
+5. Run security: `pip-audit`
+
+**Pass Criteria:**
+- ✅ Black: Pass OR minimal changes
+- ✅ Ruff: Pass OR ≤28 errors (W005 baseline)
+- ✅ Mypy: Pass OR ≤401 errors (W005 baseline)
+- ✅ Build: Success (wheel + sdist)
+- ✅ Security: No high-severity issues
+
+**Note:** Negotiation allowed if ruff/mypy within W005 baseline
+
+---
+
+### AC8: Documentation Updated (CRITICAL)
+**Test Steps:**
+1. Review README.md: Search for "Setup" section
+2. Verify prerequisites listed (Python 3.11+, Docker optional)
+3. Verify step-by-step instructions (5-10 steps)
+4. Verify configuration section explains .env and config.yaml
+5. Verify troubleshooting section with common issues
+6. Verify instructions are clear and actionable
+
+**Pass Criteria:**
+- ✅ README has "Setup & Installation" section
+- ✅ Prerequisites clearly listed
+- ✅ Step-by-step instructions (1-5 steps minimum)
+- ✅ Configuration section present
+- ✅ Troubleshooting section with 2+ common issues
+- ✅ Instructions clear and actionable
+
+---
+
+### AC9: No Secrets Committed
+**Test Steps:**
+1. Verify .gitignore includes .env: `grep "^\.env$" .gitignore`
+2. Check .env.example for secrets:
+   ```bash
+   rg -i "api[_-]?key.*[a-zA-Z0-9]{32,}" .env.example
+   rg -i "password.*[a-zA-Z0-9]{8,}" .env.example
+   ```
+3. Check config.example.yaml for secrets:
+   ```bash
+   rg -i "api[_-]?key.*[a-zA-Z0-9]{32,}" config.example.yaml
+   ```
+4. Review docker-compose.yml for hardcoded secrets
+
+**Pass Criteria:**
+- ✅ .gitignore includes `.env` pattern
+- ✅ No real API keys in .env.example
+- ✅ No real secrets in config.example.yaml
+- ✅ No hardcoded secrets in docker-compose.yml
+- ✅ Security audit clean
+
+---
+
+### AC10: Clean Repository State
+**Test Steps:**
+1. Check git status: `git status`
+2. Verify no temporary files: `find . -name "*.tmp" -o -name "*.bak"`
+3. Verify no pycache committed: `git status | grep __pycache__`
+4. Verify intended files only:
+   - .env.example
+   - config.example.yaml (modified)
+   - docker-compose.yml (modified)
+   - scripts/setup-dev.sh
+   - scripts/validate-env.py
+   - Makefile (modified)
+   - README.md (modified)
+
+**Pass Criteria:**
+- ✅ Only intended files staged/committed
+- ✅ No temporary files in git
+- ✅ No __pycache__ committed
+- ✅ All configuration files properly formatted
+- ✅ Git status clean after commit
+
+---
+
+## Test Execution Summary Template
+
 ```
-**Expected:** Total time <30 seconds
+W007 Test Results
+=================
 
-**AC Pass Criteria:** ✅ Integration tests complete in <30 seconds
+Tester: [Name]
+Date: [ISO 8601]
+Duration: [X minutes]
 
----
+Acceptance Criteria:
+- AC1 (.env.example):        ✅ PASS / ❌ FAIL
+- AC2 (Docker config):       ✅ PASS / ❌ FAIL
+- AC3 (Config adapted):      ✅ PASS / ❌ FAIL
+- AC4 (Setup script):        ✅ PASS / ❌ FAIL
+- AC5 (Validation tool):     ✅ PASS / ❌ FAIL
+- AC6 (All tests):           ✅ PASS / ❌ FAIL (CRITICAL)
+- AC7 (Quality gates):       ✅ PASS / ❌ FAIL
+- AC8 (Documentation):       ✅ PASS / ❌ FAIL (CRITICAL)
+- AC9 (No secrets):          ✅ PASS / ❌ FAIL
+- AC10 (Clean repo):         ✅ PASS / ❌ FAIL
 
-### AC7: Quality Gates 🛡️
-**Validation Commands:**
-```bash
-black --check tests/mcp/
-ruff check tests/mcp/
-pytest tests/ -v
-python -m build
-pip-audit
-```
-**Expected:** All commands pass with 0 errors
+Quality Gates:
+- Black:     ✅ PASS / ❌ FAIL
+- Ruff:      ✅ PASS / ⚠️ [X] errors (baseline ≤28)
+- Mypy:      ✅ PASS / ⚠️ [X] errors (baseline ≤401)
+- Pytest:    ✅ [X/Y] PASS / ❌ FAIL
+- Build:     ✅ PASS / ❌ FAIL
+- Security:  ✅ PASS / ❌ FAIL
 
-**AC Pass Criteria:** ✅ All quality gates (black, ruff, pytest, build, security) pass
+Overall Result: ✅ PASS (X/10 ACs) / ❌ FAIL (needs_adapt)
 
----
+Notes:
+[Any issues, warnings, or observations]
 
-### AC8: Coverage 📊
-**Validation Command:**
-```bash
-pytest --cov=tests/mcp --cov-report=term-missing --cov-fail-under=85
-```
-**Expected:** ≥85% line coverage on tests/mcp/
-
-**AC Pass Criteria:** ✅ Test files have ≥85% line coverage
-
----
-
-### AC9: Isolation 🔒
-**Validation Commands:**
-```bash
-# Run tests in random order
-pytest tests/mcp/ --random-order -v
-# Run tests in parallel
-pytest tests/mcp/ -n auto -v
-```
-**Expected:** All tests pass regardless of execution order
-
-**AC Pass Criteria:** ✅ Tests can run independently or in any order
-
----
-
-### AC10: Documentation 📝
-**Expected:** Each test file has:
-- Module docstring explaining purpose
-- Test function docstrings explaining what is validated
-- Clear assertions with helpful failure messages
-
-**Validation Command:**
-```bash
-# Check docstrings exist
-python -c "import tests.mcp.test_server_initialization; print(tests.mcp.test_server_initialization.__doc__)"
-```
-**Expected:** Non-None docstring returned
-
-**AC Pass Criteria:** ✅ Docstrings present explaining test purpose
-
----
-
-## Test Execution Summary
-
-**Full Validation Sequence:**
-```bash
-# 1. Format
-black tests/mcp/
-black --check tests/mcp/
-
-# 2. Lint
-ruff check tests/mcp/
-
-# 3. Run existing tests (regression check)
-pytest tests/test_smoke.py -v
-
-# 4. Run new integration tests
-pytest tests/mcp/ -v
-
-# 5. Run full test suite
-pytest tests/ -v
-
-# 6. Check coverage
-pytest --cov=tests/mcp --cov-report=term-missing --cov-fail-under=85
-
-# 7. Build
-python -m build
-
-# 8. Security
-pip-audit
+Recommendation:
+[ready_for_integrator / needs_adapt / Start-Over Gate]
 ```
 
-**Expected Final Results:**
-- ✅ 14 tests pass (2 smoke + 12 integration)
-- ✅ 0 failures, 0 errors
-- ✅ ≥85% coverage on tests/mcp/
-- ✅ All quality gates pass
-- ✅ Build succeeds
-- ✅ No high-severity vulnerabilities
+---
+
+## Rollback Triggers
+
+**W007 MUST be marked needs_adapt if:**
+1. ❌ AC6 fails — Any test regression detected
+2. ❌ AC8 fails — Documentation insufficient/unclear
+3. ❌ AC4 fails — Setup script doesn't work
+4. ❌ ≥3 critical ACs fail — Fundamental issues
+
+**Start-Over Gate (highly unlikely for W007):**
+- Configuration completely breaks existing functionality
+- Fundamental architectural issue discovered
+- After 2 Adapt loops, ACs still unmet
 
 ---
 
-## Acceptance Tests to Add
+## Test Environment
 
-**New Integration Test Files:**
-1. `tests/mcp/conftest.py` - Pytest fixtures (qdrant_available, mcp_server, test_collection, cleanup_test_data)
-2. `tests/mcp/test_server_initialization.py` - 4 tests for server initialization
-3. `tests/mcp/test_memory_operations.py` - 5 tests for memory CRUD
-4. `tests/mcp/test_policy_system.py` - 3 tests for policy system
+**Prerequisites:**
+- Fresh clone of repository (or reset to W007 branch)
+- Python 3.11 or 3.12 installed
+- Docker Desktop available (optional)
+- No existing .env file
+- No existing venv directory
 
-**Total New Tests:** 12 integration tests
-
----
-
-## Performance/Benchmark Setup
-
-**Target:** Integration tests complete in <30 seconds
-
-**Measurement:**
-```bash
-time pytest tests/mcp/ -v
-```
-
-**Acceptable Range:** 5-30 seconds (depending on Qdrant startup time)
+**Test Execution:**
+1. Clone repository
+2. Checkout W007 branch
+3. Run setup script: `./scripts/setup-dev.sh`
+4. Run validation: `make validate-env`
+5. Execute all test commands
+6. Verify all 10 ACs
+7. Document results
 
 ---
 
-## Test Plan Complete
+## Success Criteria
 
-Tester (W006-T01) should validate all 10 acceptance criteria using the commands above. All ACs must pass before W006 can be marked "ready for integrator".
+W007 is approved for integration when:
+- ✅ **All 10 acceptance criteria PASS**
+- ✅ **All W006 integration tests pass** (zero regressions)
+- ✅ **Fresh setup successful** (validated in clean environment)
+- ✅ **Quality gates pass** (or within W005 baseline)
+- ✅ **Documentation clear and actionable**
+
+---
+
+**Test Plan Status:** COMPLETE  
+**Ready for:** Tester (W007-T01) after Builder completes W007-B01 + W007-B02  
+**Estimated Test Duration:** 15-20 minutes
