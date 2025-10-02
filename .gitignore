@@ -24,3 +24,8 @@ htmlcov/
 # .oodatcaa/work/*.md
 # .oodatcaa/work/*.json
 
+
+# MCP specific
+qdrant_storage/
+.env
+policy/*.lock

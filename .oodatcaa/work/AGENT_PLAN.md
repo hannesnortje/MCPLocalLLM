@@ -1,205 +1,233 @@
-# Agent Plan — W001: Analyze MCP Source Structure
+# Agent Plan — W002: Execute MCP Server Migration
 
-**Objective:** OBJ-2025-002 | **Epic:** MCP Integration | **Sprint:** 1 | **Work Item:** W001  
-**Plan Version:** 1.0 | **Created:** 2025-10-01 | **Agent:** Planner
+**Objective:** OBJ-2025-002 | **Epic:** MCP Integration | **Sprint:** 1 | **Work Item:** W002  
+**Plan Version:** 1.0 | **Created:** 2025-10-02 | **Agent:** Planner
 
 ---
 
 ## Problem Statement
-Analyze MCP server source at `/media/hannesn/storage/Code/MCP/` to prepare for migration. Identify essential components (memory, policy, vector storage), unnecessary components (UI, multi-user features), file conflicts, and dependencies.
 
-**Context:** Migrate complete MCP server to enable context preservation for small coder model training, while preserving OODATCAA framework and existing `mdnotes` module.
+Execute the MCP server migration from `/media/hannesn/storage/Code/MCP/` to this project, following the comprehensive analysis and migration checklist created in W001. Copy 67 essential MCP files (core server, memory, handlers, tools, policy) while preserving OODATCAA framework and existing `mdnotes` module.
+
+**Context:** W001 analysis complete with LOW risk assessment. Migration checklist provides 24 step-by-step instructions. Selective copy approach minimizes risk of conflicts.
 
 ---
 
 ## Constraints / Risks
 
 **Constraints:**
-- MUST preserve `.oodatcaa/` directory (no overwrites)
-- MUST keep `src/mdnotes/` module working
-- Python >=3.11 (MCP uses ^3.10,<3.13 — compatible)
-- Convert Poetry → setuptools dependency format
+- MUST preserve `.oodatcaa/` directory (verified in Steps 14, rollback trigger if violated)
+- MUST keep `src/mdnotes/` module working (verified in Step 15)
+- MUST exclude UI components: `src/ui/`, PySide6, websockets dependencies
+- MUST use selective copy (NOT `cp -r /source/* /dest/`)
+- Python >=3.11,<3.13 (compatibility verified in W001)
 
-**Key Risks:**
-- File conflicts overwrite OODATCAA system (HIGH impact) → Explicit exclusion list
-- UI dependencies bloat project (MEDIUM) → Exclude PySide6, websockets
-- Incomplete migration (HIGH) → Systematic checklist of all components
+**Key Risks & Mitigation:**
+- **OODATCAA overwrite (HIGH impact):** Verification step 14, rollback trigger if any changes detected
+- **mdnotes module break (HIGH):** Verification step 15, smoke test in step 22
+- **UI files accidentally copied (MEDIUM):** Explicit exclusion in commands, verification in step 17
+- **Incomplete migration (MEDIUM):** File count verification in step 21 (~67 expected files)
+- **Syntax errors in copied files (LOW):** Python syntax check in step 20
 
 ---
 
 ## Definition of Done
 
 **Functional:**
-- [ ] AC1: Complete inventory of MCP files with categorization (essential/optional/exclude)
-- [ ] AC2: Documented list of files to copy with target paths
-- [ ] AC3: Documented list of files to exclude (UI, examples, redundant tests)
-- [ ] AC4: File conflict resolution strategy for each conflict
-- [ ] AC5: Complete dependency list with version compatibility notes
-- [ ] AC6: Migration checklist covering all essential MCP components
-- [ ] AC7: OODATCAA preservation strategy verified
+- [ ] **AC1:** All 67 essential MCP files copied to correct locations (src/mcp/, policy/, docs/mcp/)
+- [ ] **AC2:** No UI files copied (src/ui/ excluded, verified in step 17)
+- [ ] **AC3:** Infrastructure files copied: docker-compose.yml, .env.example, server.py
+- [ ] **AC4:** .gitignore merged with MCP-specific entries (qdrant_storage/, .env)
+- [ ] **AC5:** `.oodatcaa/` directory untouched (step 14 verification)
+- [ ] **AC6:** `src/mdnotes/` module preserved (step 15 verification)
+- [ ] **AC7:** Existing tests still pass (step 22 smoke test)
 
 **Non-Functional:**
-- [ ] AC8: Documentation clear for Builder agent execution
-- [ ] AC9: Analysis covers: src/, tests/, docs/, scripts/, policy/
-- [ ] AC10: Risk mitigation strategies defined
+- [ ] **AC8:** File count ~60-70 files (step 21, matches W001 analysis)
+- [ ] **AC9:** No Python syntax errors in copied files (step 20)
+- [ ] **AC10:** Git history clean with descriptive commit (step 19)
 
 ---
 
 ## Alternatives & Choice
 
-**Alternative 1:** Full copy + manual cleanup → ❌ HIGH RISK (OODATCAA overwrite)  
-**Alternative 2:** Selective copy with explicit inclusion list → ✅ **CHOSEN** (safe, traceable)  
-**Alternative 3:** Git subtree/submodule → ❌ Overcomplicated (OBJECTIVE requires "copy and adapt")
+**Alternative 1:** Bulk copy with cleanup → ❌ REJECTED (High risk of OODATCAA overwrite)  
+**Alternative 2:** Selective copy per W001 migration checklist → ✅ **CHOSEN** (Low risk, traceable)  
+**Alternative 3:** Git submodule → ❌ REJECTED (OBJECTIVE requires "copy and adapt")
 
-**Rationale:** Alternative 2 minimizes risk, provides clear traceability, and aligns with OBJECTIVE.md requirements.
+**Rationale:** Alternative 2 was validated in W001 analysis (LOW risk), provides step-by-step verification, and aligns with OBJECTIVE.md requirements.
 
 ---
 
 ## Implementation Plan
 
-### Step 1: Analyze MCP Source Structure
-**Branch:** `feat/W001-step-01-analyze-source`  
+### Step 1: Pre-Migration Setup & Baseline
+**Branch:** `feat/W002-step-01-copy-mcp-core`  
+**Migration Checklist:** Steps 1-3  
 **Actions:**
-1. Capture complete structure: `tree -L 3 /media/hannesn/storage/Code/MCP/`
-2. Read key files: `pyproject.toml`, `README.md`, `docker-compose.yml`
-3. Categorize directories: ESSENTIAL / OPTIONAL / EXCLUDE
-4. Create `analysis/mcp_structure_inventory.md`
+1. Create baseline tag: `pre/W002-$(date -Iseconds)`
+2. Create and checkout migration branch
+3. Verify MCP source exists and is accessible
 
-**Exit:** Complete tree captured, all directories categorized
+**Exit Gate:** Baseline tag created, branch ready, source verified
 
 ---
 
-### Step 2: Identify Essential Components
+### Step 2: Copy Core MCP Source Files
+**Migration Checklist:** Steps 4-6  
 **Actions:**
-1. **Include:**
-   - `src/` core: `mcp_server.py`, `memory_manager.py`, `qdrant_manager.py`
-   - `src/handlers/`, `src/memory/`, `src/prompts/`, `src/tools/` (NOT `ui/`)
-   - `policy/` (all markdown files)
-   - `docs/` (architecture, API)
-   - `scripts/` (setup, deployment)
-   - `docker-compose.yml`, `Dockerfile`
-   - `config.example.yaml`, `launcher.py`, `memory_server.py`
+1. Create target directory structure (src/mcp/, tests/mcp/, docs/mcp/)
+2. Copy 6 core MCP server files (mcp_server.py, memory_manager.py, qdrant_manager.py, markdown_processor.py, config.py, __init__.py)
+3. Copy 4 subdirectories: handlers/, memory/, prompts/, tools/ (EXCLUDE ui/)
 
-2. **Exclude:**
-   - `src/ui/` (entire directory)
-   - UI dependencies: PySide6, websockets
-   - Example files, redundant tests
-
-3. Create `analysis/essential_components.md`
-
-**Exit:** Inclusion list complete with justifications
+**Expected Files:** ~40+ Python files in src/mcp/  
+**Exit Gate:** Core modules copied, no ui/ directory present
 
 ---
 
-### Step 3: Identify File Conflicts
+### Step 3: Copy Supporting Files & Infrastructure
+**Migration Checklist:** Steps 7-12  
 **Actions:**
-1. Root file conflicts:
-   - `pyproject.toml` → **MERGE** (combine deps, keep metadata)
-   - `README.md` → **MERGE** (add MCP section)
-   - `docker-compose.yml` → **COPY** (new file)
-   - `.gitignore` → **MERGE** (union)
+1. Copy policy/ governance documents (~4 markdown files)
+2. Copy docs/mcp/ documentation
+3. Copy scripts/ directory
+4. Copy server entry points: server.py, launcher.py, memory_server.py
+5. Copy docker-compose.yml for Qdrant setup
+6. Copy .env.example and config.example.yaml
 
-2. Directory conflicts:
-   - `src/` → **COEXIST** (MCP alongside `mdnotes/`)
-   - `tests/` → **MERGE** (add MCP tests)
-   - `docs/` → **MERGE** (add MCP docs)
-
-3. `.oodatcaa/` → **NEVER TOUCH** (explicit exclusion)
-
-4. Create `analysis/conflict_resolution.md`
-
-**Exit:** All conflicts documented with resolution strategy
+**Expected Files:** ~20 additional files  
+**Exit Gate:** Infrastructure ready, documentation copied
 
 ---
 
-### Step 4: Extract Dependencies
+### Step 4: Merge Configuration Files
+**Migration Checklist:** Step 13  
 **Actions:**
-1. Extract from MCP `pyproject.toml`:
-   - Core: `mcp ^1.13.1`, `qdrant-client ^1.7.0`, `sentence-transformers ^2.5.1`
-   - Utils: `python-dotenv`, `markdown`, `beautifulsoup4`, `aiofiles`, `pyyaml`
-   - Dev: `pytest-asyncio`, `types-markdown`
-   - **Exclude:** `PySide6`, `websockets` (UI only)
+1. Merge .gitignore with MCP-specific entries:
+   - qdrant_storage/
+   - .env
+   - policy/*.lock
 
-2. Check compatibility with current deps (click, rich, whoosh)
-3. Convert to setuptools format (use `>=` instead of `^`)
-4. Create `analysis/dependencies.md` and `analysis/pyproject_toml_updates.md`
-
-**Exit:** Complete dependency list, version conflicts identified
+**Exit Gate:** .gitignore updated without removing existing entries
 
 ---
 
-### Step 5: Create Migration Checklist
+### Step 5: Critical Verification & Protection Checks
+**Migration Checklist:** Steps 14-17  
 **Actions:**
-1. Organize into executable steps:
-   - [ ] Copy core `src/` modules (exclude `ui/`)
-   - [ ] Copy subdirs: `handlers/`, `memory/`, `prompts/`, `tools/`
-   - [ ] Copy `policy/`, `docs/`, `scripts/`
-   - [ ] Copy infrastructure: Docker, configs
-   - [ ] Merge `pyproject.toml`, `README.md`
-   - [ ] Update package name: "mcp-memory-server" → "mcp-local-llm"
-   - [ ] Verify OODATCAA untouched, `mdnotes` intact
+1. **CRITICAL:** Verify `.oodatcaa/` untouched → `git status .oodatcaa/` → NO changes
+2. **CRITICAL:** Verify `src/mdnotes/` preserved → `git status src/mdnotes/` → NO changes
+3. Verify MCP files copied: ~40+ Python files, ~4 policy files, ~5 docs
+4. Verify NO UI files present: `find src/mcp -name '*ui*'` → NO results
 
-2. Create `analysis/migration_checklist.md`
-
-**Exit:** Checklist ready for W002 execution
+**Exit Gate:** All protection checks PASS, rollback if any critical check fails
 
 ---
 
-### Step 6: Analysis Summary
+### Step 6: Commit Migration Work
+**Migration Checklist:** Steps 18-19  
 **Actions:**
-1. Create `analysis/W001_ANALYSIS_SUMMARY.md`:
-   - Essential components count
-   - Excluded components count
-   - File conflicts and resolutions
-   - Dependency summary
-   - Recommendations for W002-W004
+1. Stage all copied files (src/mcp/, policy/, docs/mcp/, scripts/, server.py, etc.)
+2. Commit with `[impl]` label and descriptive message
+3. Include file counts and exclusions in commit message
 
-**Exit:** Executive summary complete
+**Exit Gate:** Clean git commit with full migration recorded
 
 ---
 
-### Step 7: Update Sprint Documentation
+### Step 7: Post-Migration Validation
+**Migration Checklist:** Steps 20-22  
 **Actions:**
-1. Update `.oodatcaa/work/SPRINT_QUEUE.json`:
-   - Mark W001 "completed"
-   - Unblock W002 (needs_plan → ready)
+1. Run Python syntax check on all src/mcp/*.py files
+2. Verify file count: ~60-70 files total (matches W001 analysis)
+3. **CRITICAL:** Run existing tests: `pytest -q tests/test_smoke.py` → MUST PASS
 
-2. Add entry to `.oodatcaa/work/AGENT_LOG.md`
-3. Organize artifacts: `mkdir -p .oodatcaa/work/analysis/W001/`
+**Exit Gate:** No syntax errors, file count correct, existing tests pass
 
-**Exit:** Documentation updated, artifacts organized
+---
+
+### Step 8: Push & Update Documentation
+**Migration Checklist:** Steps 23-24  
+**Actions:**
+1. Push migration branch to origin
+2. Update SPRINT_QUEUE.json: W002 status → awaiting_test
+3. Update AGENT_LOG.md with migration summary
+4. Release locks
+
+**Exit Gate:** Work pushed, documentation updated, ready for tester
 
 ---
 
 ## Testing Strategy
-See TEST_PLAN.md. Summary: Manual verification of artifact completeness, checklist review, OODATCAA protection validation.
+
+See TEST_PLAN.md. Summary: Critical protection checks (OODATCAA, mdnotes), file count verification, syntax validation, existing tests smoke test.
+
+**Rollback Triggers:**
+- ANY modifications to `.oodatcaa/`
+- ANY modifications to `src/mdnotes/`
+- Critical MCP files missing (>10% of expected 67 files)
+- Existing tests fail
 
 ---
 
-## Rollback
-**Baseline:** `pre/W001-<timestamp>`  
-**Trigger:** Migration infeasible, unresolvable conflicts  
-**Steps:** `git reset --hard <baseline>`, document in SPRINT_DISCUSS.md
+## Rollback Plan
+
+**Baseline:** `pre/W002-<timestamp>` (created in Step 1)  
+**Trigger Conditions:** Any critical verification failure in Step 5 or Step 7  
+**Steps:**
+```bash
+git reset --hard pre/W002-<timestamp>
+git push origin feat/W002-step-01-copy-mcp-core --force-with-lease
+echo "Migration aborted: <reason>" >> .oodatcaa/work/SPRINT_DISCUSS.md
+```
 
 ---
 
 ## Branch & Commits
-**Branch:** `feat/W001-step-01-analyze-source`  
-**Labels:** `[plan]`, `[impl]`, `[docs]`  
-**PR:** Single PR after all analysis complete
+
+**Branch:** `feat/W002-step-01-copy-mcp-core`  
+**Commit Labels:** `[impl]` for migration execution  
+**PR:** Single PR after all verification passes  
+**Merge Strategy:** No-FF merge to preserve feature branch history
 
 ---
 
 ## Dependencies
-**Upstream:** None  
-**Downstream:** W002 (depends on this analysis)
+
+**Upstream:** W001 (COMPLETE - analysis ready)  
+**Downstream:** W003 (Integrate MCP Dependencies), W004 (Adapt MCP for Training)
+
+**Artifacts Required from W001:**
+- `.oodatcaa/work/analysis/W001/migration_checklist.md` ✅
+- `.oodatcaa/work/analysis/W001/essential_components.md` ✅
+- `.oodatcaa/work/analysis/W001/conflict_resolution.md` ✅
 
 ---
 
-## Effort
-**Complexity:** S | **Time:** 2-4 hours  
-- Steps 1-2: 1h | Steps 3-4: 1h | Steps 5-6: 1h | Step 7: 30m
+## Effort Estimate
+
+**Complexity:** M (Medium) | **Time:** 2-3 hours  
+- Step 1 (Setup): 15 min
+- Steps 2-3 (Copy files): 45 min
+- Step 4 (Config merge): 15 min
+- Step 5 (Verification): 20 min
+- Step 6 (Commit): 10 min
+- Step 7 (Validation): 20 min
+- Step 8 (Push & docs): 15 min
+
+**Risk Level:** LOW (per W001 analysis, comprehensive verification in place)
 
 ---
 
-**Status:** ✅ APPROVED | **Ready for:** Builder Agent
+## Builder Task Breakdown
+
+**W002-B01:** Steps 1-3 (Setup + Core Copy)  
+**W002-B02:** Steps 4-6 (Config + Verification + Commit)  
+**W002-B03:** Steps 7-8 (Validation + Push)
+
+**Tester Task:**  
+**W002-T01:** Verify all 10 ACs, run standard CI gates
+
+---
+
+**Status:** ✅ APPROVED | **Ready for:** Builder Agent Execution
