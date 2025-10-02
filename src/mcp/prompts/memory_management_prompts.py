@@ -25,7 +25,7 @@ class MemoryManagementPrompts:
         """Initialize memory management prompts handler."""
         pass
 
-    def get_prompt_definitions(self) -> list[dict]:
+    def get_prompt_definitions(self) -> list[dict[str, Any]]:
         """Get definitions for memory management prompts."""
         return [
             {

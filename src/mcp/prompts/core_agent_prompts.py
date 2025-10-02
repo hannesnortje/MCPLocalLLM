@@ -34,7 +34,7 @@ class CoreAgentPrompts:
             self.policy_processor = None
             logger.warning("PolicyProcessor not available")
 
-    def get_prompt_definitions(self) -> list[dict]:
+    def get_prompt_definitions(self) -> list[dict[str, Any]]:
         """Get definitions for core agent prompts."""
         return [
             {

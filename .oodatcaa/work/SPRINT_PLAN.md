@@ -221,12 +221,20 @@
 - Completion Report: reports/W005/planner.md
 
 **Builder → W005-B01: Steps 1-4 - Cleanup + Auto-Fixes + Type Stubs + Return Types**
-- Status: In Progress
+- Status: Awaiting Test ✅
 - Assigned: 2025-10-03T00:20:00+02:00
-- Dependencies: None (can start immediately)
-- Plan Step: 1-4 (cleanup backup files, auto-fixes, type stubs, return types)
-- Target: 43 ruff errors → ~35, ~180 mypy errors → ~250 fixed
-- Estimated Duration: ~120 minutes
+- Completed: 2025-10-03T01:00:00+02:00
+- Achievement: 35% ruff reduction (43→28), 16% mypy reduction (496→417), 2 files fully type-safe
+- Deliverables: Backup files removed, auto-fixes applied, type stubs installed, return types added
+- Next: W005-B02 ready (dependencies satisfied)
+
+**Builder → W005-B02: Steps 5-7 - Generic Types + Type Mismatches + Ignore Rules**
+- Status: In Progress
+- Assigned: 2025-10-03T01:05:00+02:00
+- Dependencies: W005-B01 (satisfied ✅)
+- Plan Step: 5-7 (add generic type parameters, fix type mismatches, pragmatic ignore rules)
+- Target: 28 ruff errors → ~10, 417 mypy errors → <50
+- Estimated Duration: ~180 minutes
 
 ### Pending Assignment (dependencies satisfied)
 - W006: Basic Integration Testing (depends on W004 - satisfied ✅)

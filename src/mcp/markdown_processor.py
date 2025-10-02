@@ -130,7 +130,7 @@ class MarkdownProcessor:
 
         return content
 
-    def extract_metadata(self, content: str) -> tuple[str, dict]:
+    def extract_metadata(self, content: str) -> tuple[str, dict[str, Any]]:
         """Extract YAML front matter if present."""
         metadata = {}
 
@@ -152,7 +152,7 @@ class MarkdownProcessor:
 
         return content, metadata
 
-    def extract_sections(self, content: str) -> list[dict]:
+    def extract_sections(self, content: str) -> list[dict[str, Any]]:
         """Extract sections from markdown content."""
         sections = []
 
@@ -309,7 +309,7 @@ class MarkdownProcessor:
 
     def analyze_content_for_memory_type(
         self, content: str, file_path: str | None = None, suggest_memory_type: bool = True
-    ) -> dict[str, str | float | dict | bool]:
+    ) -> dict[str, str | float | dict[str, Any] | bool]:
         """Analyze markdown content and suggest appropriate memory type.
 
         This method provides AI integration hooks for Cursor AI to enhance
@@ -828,7 +828,7 @@ class MarkdownProcessor:
         auto_suggest: bool = True,
         ai_enhance: bool = True,
         recursive: bool = True,
-    ) -> dict[str, list[dict] | int | str | dict[str, int] | bool]:
+    ) -> dict[str, list[dict[str, Any]] | int | str | dict[str, int] | bool]:
         """Process entire directory with batch AI-enhanced analysis.
 
         Args:

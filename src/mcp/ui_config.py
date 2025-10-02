@@ -98,7 +98,7 @@ class ConfigManager:
         except Exception as e:
             print(f"Warning: Failed to save config to {self.config_path}: {e}")
 
-    def _dict_to_config(self, data: dict) -> MCPConfig:
+    def _dict_to_config(self, data: dict[str, Any]) -> MCPConfig:
         """Convert dictionary to configuration object."""
         ui_data = data.get("ui", {})
         server_data = data.get("server", {})
@@ -132,7 +132,7 @@ class ConfigManager:
 
         return MCPConfig(ui=ui_config, server=server_config, project_root=project_root)
 
-    def _config_to_dict(self, config: MCPConfig) -> dict:
+    def _config_to_dict(self, config: MCPConfig) -> dict[str, Any]:
         """Convert configuration object to dictionary."""
         # Ensure config has ui and server (should be set by __post_init__)
         assert config.ui is not None, "UI config should not be None"
