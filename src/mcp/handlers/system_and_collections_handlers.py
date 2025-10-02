@@ -102,7 +102,7 @@ class SystemAndCollectionsHandlers:
             # Format health info for display
             health_text = f"""# System Health Report
 
-**Status:** {status_text}  
+**Status:** {status_text}
 **Timestamp:** {health_info['timestamp']}
 
 ## Component Status

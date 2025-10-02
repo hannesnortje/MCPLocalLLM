@@ -865,7 +865,7 @@ def calculate_confidence(content_indicators, context_indicators):
    - Extract semantic features and keywords
    - Identify document structure and patterns
 
-2. **Real-Time Suggestions**  
+2. **Real-Time Suggestions**
    - Provide suggestions during content ingestion
    - Update suggestions based on user feedback
    - Learn from user corrections and preferences

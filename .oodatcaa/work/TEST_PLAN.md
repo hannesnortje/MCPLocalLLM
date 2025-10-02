@@ -1,6 +1,6 @@
-# Test Plan — W003: Integrate MCP Dependencies
+# Test Plan — W004: Adapt MCP for Training Use Case
 
-**Work Item:** W003 | **Sprint:** 1 | **Created:** 2025-10-02
+**Work Item:** W004 | **Sprint:** 1 | **Created:** 2025-10-02
 
 ---
 
@@ -10,25 +10,34 @@
 ```bash
 black --check .
 ```
-**Expected:** PASS (no formatting issues in pyproject.toml or existing code)
+**Expected:** PASS (all code formatted correctly)
 
 ---
 
-### Lint Check
+### Lint Check (CRITICAL)
 ```bash
 ruff check .
 ```
-**Expected:** Warnings/errors in MCP code are OK (defer to W004)  
-**Expected:** No new errors in mdnotes code
+**Expected:** PASS with 0 errors  
+**ROLLBACK TRIGGER:** Any errors remaining after W004 completion
 
 ---
 
-### Type Check (mdnotes only)
+### Type Check - MCP Code
+```bash
+mypy src/mcp
+```
+**Expected:** PASS (with documented # type: ignore comments for untyped libraries)  
+**Note:** Some ignores expected for mcp SDK (no type stubs)
+
+---
+
+### Type Check - mdnotes Code
 ```bash
 mypy src/mdnotes
 ```
-**Expected:** PASS (existing mdnotes code type checks)  
-**Note:** MCP type errors expected until W004 (code adaptation)
+**Expected:** PASS (existing code should remain clean)  
+**ROLLBACK TRIGGER:** Any new type errors in mdnotes
 
 ---
 
@@ -37,7 +46,7 @@ mypy src/mdnotes
 pytest -q tests/test_smoke.py
 ```
 **Expected:** PASS (2/2 tests)  
-**CRITICAL:** This is a rollback trigger if it fails
+**ROLLBACK TRIGGER:** Any test failures
 
 ---
 
@@ -45,16 +54,15 @@ pytest -q tests/test_smoke.py
 ```bash
 pytest -q tests/acceptance
 ```
-**Expected:** PASS (existing tests unaffected by dependency installation)
+**Expected:** PASS (existing tests unaffected)
 
 ---
 
-### Coverage Check (mdnotes only)
+### Coverage Check
 ```bash
-pytest --cov=src/mdnotes --cov-report=term-missing --cov-fail-under=85
+pytest --cov=src --cov-report=term-missing --cov-fail-under=85
 ```
-**Expected:** PASS (mdnotes coverage maintained)  
-**Note:** MCP code coverage will be tested in W006
+**Expected:** PASS (coverage maintained)
 
 ---
 
@@ -62,8 +70,7 @@ pytest --cov=src/mdnotes --cov-report=term-missing --cov-fail-under=85
 ```bash
 python -m build
 ```
-**Expected:** PASS (wheel and sdist created)  
-**Note:** Should include MCP modules in package
+**Expected:** PASS (package builds with cleaned MCP code)
 
 ---
 
@@ -71,299 +78,263 @@ python -m build
 ```bash
 pip-audit
 ```
-**Expected:** No high-severity vulnerabilities  
-**Note:** May have informational warnings about large dependency tree
-
----
-
-### Dependency Installation Test
-```bash
-pip install -e .[dev]
-```
-**Expected:** Completes successfully, ~2.1GB installed  
-**Time:** 5-15 minutes depending on network and CPU
+**Expected:** No new vulnerabilities introduced
 
 ---
 
 ## Acceptance Testing
 
-### AC1: pyproject.toml Updated with MCP Production Dependencies
+### AC1: All Ruff Linting Errors Resolved (CRITICAL)
 **Test:**
 ```bash
-python -c "
-import tomllib
-config = tomllib.load(open('pyproject.toml', 'rb'))
-deps = config['project']['dependencies']
-required = ['mcp>=1.13.1,<2.0.0', 'qdrant-client>=1.7.0,<2.0.0', 
-            'sentence-transformers>=2.5.1,<3.0.0', 'numpy>=1.26.0,<2.0.0',
-            'markdown>=3.5.0,<4.0.0', 'beautifulsoup4>=4.12.0,<5.0.0',
-            'python-dotenv>=1.0.0,<2.0.0', 'pyyaml>=6.0.0,<7.0.0',
-            'aiofiles>=24.1.0,<25.0.0', 'aiohttp>=3.9.1,<4.0.0']
-missing = [r for r in required if r not in deps]
-print(f'Missing: {missing}' if missing else '✅ All 10 MCP deps present')
-"
-```
-**Pass Criteria:** Output shows "✅ All 10 MCP deps present"
-
----
-
-### AC2: pyproject.toml Updated with MCP Dev Dependencies
-**Test:**
-```bash
-python -c "
-import tomllib
-config = tomllib.load(open('pyproject.toml', 'rb'))
-dev_deps = config['project']['optional-dependencies']['dev']
-required = ['pytest-asyncio>=1.1.0,<2.0.0', 'types-markdown>=3.5.0,<4.0.0']
-missing = [r for r in required if r not in dev_deps]
-print(f'Missing: {missing}' if missing else '✅ Both MCP dev deps present')
-"
-```
-**Pass Criteria:** Output shows "✅ Both MCP dev deps present"
-
----
-
-### AC3: Python Version Constraint Updated
-**Test:**
-```bash
-python -c "
-import tomllib
-config = tomllib.load(open('pyproject.toml', 'rb'))
-python_req = config['project']['requires-python']
-print(f'Python constraint: {python_req}')
-assert python_req == '>=3.11,<3.13', 'Wrong Python constraint'
-print('✅ Python version constraint correct')
-"
-```
-**Pass Criteria:** Output shows "✅ Python version constraint correct"
-
----
-
-### AC4: All Dependencies Install Successfully
-**Test:**
-```bash
-pip install -e .[dev] 2>&1 | tee install.log
+source .venv/bin/activate
+ruff check . --statistics
 echo "Exit code: $?"
 ```
-**Pass Criteria:** Exit code 0, no error messages in install.log
+**Pass Criteria:** Exit code 0, output shows "All checks passed!" or "Found 0 errors."  
+**ROLLBACK TRIGGER:** Any errors remaining
 
 ---
 
-### AC5: MCP Imports Work (CRITICAL)
+### AC2: Import Sorting Corrected
 **Test:**
 ```bash
-# Test core MCP imports
-python -c "import mcp; print('✅ mcp imported successfully')"
-python -c "import qdrant_client; print('✅ qdrant_client imported successfully')"
-python -c "import sentence_transformers; print('✅ sentence_transformers imported successfully')"
+source .venv/bin/activate
+ruff check . --select I001 --statistics
+```
+**Pass Criteria:** 0 unsorted-imports errors
 
-# Test supporting imports
-python -c "import numpy; print('✅ numpy imported')"
-python -c "import markdown; print('✅ markdown imported')"
-python -c "import bs4; print('✅ beautifulsoup4 imported')"
-python -c "import dotenv; print('✅ python-dotenv imported')"
-python -c "import yaml; print('✅ pyyaml imported')"
-python -c "import aiofiles; print('✅ aiofiles imported')"
-python -c "import aiohttp; print('✅ aiohttp imported')"
+---
+
+### AC3: Type Annotations Modernized
+**Test:**
+```bash
+source .venv/bin/activate
+# Check for old-style type annotations
+ruff check . --select UP006,UP007,UP035,UP045 --statistics
+```
+**Pass Criteria:** 0 errors for:
+- UP006 (non-pep585-annotation: `List[]` vs `list[]`)
+- UP007 (non-pep604-annotation-union: `Union[]` vs `|`)
+- UP035 (deprecated-import)
+- UP045 (non-pep604-annotation-optional: `Optional[]` vs `| None`)
+
+---
+
+### AC4: Mypy Type Checking Passes on MCP Code
+**Test:**
+```bash
+source .venv/bin/activate
+mypy src/mcp 2>&1 | tee mypy-mcp.log
+echo "Exit code: $?"
+
+# Count errors (excluding acceptable ignores)
+grep "error:" mypy-mcp.log | grep -v "import-untyped" | wc -l
+```
+**Pass Criteria:** 
+- Exit code 0 OR
+- Only "import-untyped" errors with appropriate `# type: ignore[import-untyped]` comments
+- No "no-untyped-def", "type-arg", or other fixable errors
+
+---
+
+### AC5: UI-Related Code Disabled/Removed
+**Test:**
+```bash
+# Check for UI imports
+grep -r "PySide6\|QApplication\|QWidget" src/mcp/ || echo "✅ No UI imports"
+grep -r "websockets" src/mcp/ --include="*.py" || echo "✅ No websockets imports"
+
+# Verify UI directory not present
+test ! -d "src/mcp/ui" && echo "✅ No UI directory"
+```
+**Pass Criteria:** All searches return "✅" messages (no matches found)
+
+---
+
+### AC6: Core MCP Functionality Preserved (CRITICAL)
+**Test:**
+```bash
+source .venv/bin/activate
+
+# Test core imports
+python -c "from mcp import memory_manager; print('✅ memory_manager imports')"
+python -c "from mcp import qdrant_manager; print('✅ qdrant_manager imports')"
+python -c "from mcp import mcp_server; print('✅ mcp_server imports')"
+python -c "from mcp import config; print('✅ config imports')"
+
+# Test handlers
+python -c "from mcp.handlers import core_memory_handlers; print('✅ core_memory_handlers imports')"
+python -c "from mcp.handlers import policy_and_guidance_handlers; print('✅ policy_and_guidance_handlers imports')"
+
+# Test memory subsystem
+python -c "from mcp.memory import embedding_service; print('✅ embedding_service imports')"
+python -c "from mcp.memory import vector_operations; print('✅ vector_operations imports')"
+
+# Test tools
+python -c "from mcp.tools import core_memory_tools; print('✅ core_memory_tools imports')"
+python -c "from mcp.tools import policy_tools; print('✅ policy_tools imports')"
 ```
 **Pass Criteria:** All 10 imports succeed  
-**ROLLBACK TRIGGER:** Any critical import fails (mcp, qdrant_client, sentence_transformers)
-
----
-
-### AC6: Existing mdnotes Imports Still Work (CRITICAL)
-**Test:**
-```bash
-python -c "from mdnotes import core; print('✅ mdnotes.core imported')"
-python -c "import click, rich, whoosh; print('✅ mdnotes dependencies work')"
-```
-**Pass Criteria:** All imports succeed  
-**ROLLBACK TRIGGER:** Any existing import fails
+**ROLLBACK TRIGGER:** Any core import fails
 
 ---
 
 ### AC7: Existing Tests Still Pass (CRITICAL)
 **Test:**
 ```bash
-pytest -q tests/test_smoke.py
+source .venv/bin/activate
+pytest -q tests/test_smoke.py -v
 ```
 **Pass Criteria:** 2/2 tests pass  
 **ROLLBACK TRIGGER:** Any test failures
 
 ---
 
-### AC8: Tool Configurations Updated
+### AC8: Black Formatting Passes
 **Test:**
 ```bash
-# Check mypy packages
-python -c "
-import tomllib
-config = tomllib.load(open('pyproject.toml', 'rb'))
-packages = config['tool']['mypy']['packages']
-print(f'Mypy packages: {packages}')
-assert 'mcp' in packages, 'mcp not in mypy packages'
-print('✅ mypy configured for MCP')
-"
-
-# Check pytest asyncio mode
-python -c "
-import tomllib
-config = tomllib.load(open('pyproject.toml', 'rb'))
-mode = config['tool']['pytest']['ini_options'].get('asyncio_mode')
-print(f'Asyncio mode: {mode}')
-assert mode == 'auto', 'asyncio_mode not set to auto'
-print('✅ pytest configured for async tests')
-"
-
-# Check ruff known-first-party
-python -c "
-import tomllib
-config = tomllib.load(open('pyproject.toml', 'rb'))
-known_first_party = config['tool']['ruff']['lint']['isort']['known-first-party']
-print(f'Known first-party: {known_first_party}')
-assert 'mcp' in known_first_party, 'mcp not in known-first-party'
-print('✅ ruff configured for MCP')
-"
+source .venv/bin/activate
+black --check . 2>&1 | tee black-check.log
+echo "Exit code: $?"
 ```
-**Pass Criteria:** All 3 checks pass
+**Pass Criteria:** Exit code 0, "All checks passed!" or "would be left unchanged"
 
 ---
 
-### AC9: pip-audit Clean
+### AC9: Build Succeeds
 **Test:**
 ```bash
-pip-audit 2>&1 | tee audit.log
-# Count high/critical severity issues
-grep -i "CRITICAL\|HIGH" audit.log || echo "✅ No high-severity issues"
-```
-**Pass Criteria:** No HIGH or CRITICAL severity vulnerabilities  
-**Note:** Informational/LOW/MEDIUM may be acceptable
-
----
-
-### AC10: Build Succeeds
-**Test:**
-```bash
-python -m build
+source .venv/bin/activate
+python -m build 2>&1 | tee build.log
 ls -lh dist/
 ```
 **Pass Criteria:** 
 - Build completes without errors
-- dist/ contains wheel (.whl) and sdist (.tar.gz)
+- dist/ contains wheel and sdist
+- Both mdnotes and mcp modules included in package
+
+---
+
+### AC10: No New Security Issues
+**Test:**
+```bash
+source .venv/bin/activate
+pip-audit 2>&1 | tee audit.log
+# Check for HIGH/CRITICAL issues
+grep -i "HIGH\|CRITICAL" audit.log && echo "⚠️ Security issues found" || echo "✅ No high-severity issues"
+```
+**Pass Criteria:** No HIGH or CRITICAL security issues introduced
 
 ---
 
 ## Critical Verification Checks
 
-### Verification 1: TOML Syntax Valid
+### Verification 1: Ruff Error Count Progression
 **Test:**
 ```bash
-python -c "import tomllib; tomllib.load(open('pyproject.toml', 'rb')); print('✅ TOML syntax valid')"
+# Document error reduction
+echo "Baseline: 385 errors (from W003 completion)"
+source .venv/bin/activate
+ruff check . --statistics | grep "Found"
+```
+**Expected:** "Found 0 errors" or "All checks passed!"
+
+---
+
+### Verification 2: Code Still Compiles
+**Test:**
+```bash
+source .venv/bin/activate
+python -m py_compile src/mcp/*.py
+python -m py_compile src/mcp/handlers/*.py
+python -m py_compile src/mcp/memory/*.py
+python -m py_compile src/mcp/prompts/*.py
+python -m py_compile src/mcp/tools/*.py
 ```
 **Expected:** No syntax errors
 
 ---
 
-### Verification 2: Dependency Version Constraints
+### Verification 3: Import Structure Intact
 **Test:**
 ```bash
-python -c "
-import tomllib
-config = tomllib.load(open('pyproject.toml', 'rb'))
-deps = config['project']['dependencies']
-# Check all MCP deps have upper bounds
-mcp_deps = [d for d in deps if any(pkg in d for pkg in ['mcp', 'qdrant', 'sentence-transformers', 'numpy', 'markdown', 'beautifulsoup4', 'dotenv', 'pyyaml', 'aiofiles', 'aiohttp'])]
-for dep in mcp_deps:
-    assert '<' in dep, f'{dep} missing upper bound'
-print('✅ All MCP deps have version upper bounds')
-"
+source .venv/bin/activate
+python -c "import sys; sys.path.insert(0, 'src'); import mcp; print(dir(mcp))"
 ```
-**Expected:** All MCP dependencies have version constraints
-
----
-
-### Verification 3: Installation Size
-**Test:**
-```bash
-du -sh .venv/lib/python3.*/site-packages/ | awk '{print "Installed size: "$1}'
-```
-**Expected:** ~2-3GB (sentence-transformers + PyTorch are large)
+**Expected:** Lists mcp module contents without errors
 
 ---
 
 ## Performance Tests
 
-**Not applicable for W003** (dependency installation task, no code performance impact)
+**Not applicable for W004** (code quality task, no performance impact expected)
 
 ---
 
 ## Integration Tests to Add
 
-**Not applicable for W003** (MCP code integration tests deferred to W006)
+**Deferred to W006** (Basic Integration Testing)
+
+Future tests will verify:
+- MCP server initialization
+- Memory CRUD operations
+- Policy system functionality
+- Vector search operations
 
 ---
 
 ## Test Execution Order
 
-### Phase 1: Pre-Test Validation
-1. Verify branch checked out: `feat/W003-step-01-integrate-dependencies`
-2. Verify baseline tag exists: `git tag | grep pre/W003`
+### Phase 1: Pre-Test Baseline
+1. Verify branch: `feat/W004-step-01-adapt-mcp-code`
+2. Verify baseline tag exists
+3. Document initial error counts (385 ruff, multiple mypy)
 
-### Phase 2: TOML Validation
-3. **AC3:** Python version constraint updated
-4. **AC1:** 10 MCP production deps present
-5. **AC2:** 2 MCP dev deps present
-6. **AC8:** Tool configurations updated
-7. **Verification 1:** TOML syntax valid
+### Phase 2: Post-Automated-Fixes Verification
+4. **AC1:** Ruff errors reduced significantly (expect ~67 remaining)
+5. **AC2:** Import sorting fixed
+6. **AC3:** Type annotations modernized
+7. **AC8:** Black formatting passes
 
-### Phase 3: Dependency Installation (CRITICAL)
-8. **AC4:** `pip install -e .[dev]` succeeds → ROLLBACK if fails
+### Phase 3: Post-Manual-Fixes Verification
+8. **AC1:** Ruff errors = 0 (CRITICAL)
+9. **AC4:** Mypy passes on MCP code
 
-### Phase 4: Import Verification (CRITICAL)
-9. **AC5:** MCP imports work → ROLLBACK if critical imports fail
-10. **AC6:** mdnotes imports work → ROLLBACK if fails
-
-### Phase 5: Quality & Security Checks
+### Phase 4: Functionality Verification (CRITICAL)
+10. **AC6:** Core MCP imports work → ROLLBACK if fails
 11. **AC7:** Existing tests pass → ROLLBACK if fails
-12. **AC9:** pip-audit clean (no high-severity)
-13. **AC10:** Build succeeds
 
-### Phase 6: Tool Configuration Validation
-14. **AC8:** mypy, pytest, ruff configs work
+### Phase 5: Final Quality Checks
+12. **AC5:** UI code removed
+13. **AC9:** Build succeeds
+14. **AC10:** Security audit clean
 
 ---
 
 ## Rollback Procedure
 
 **Trigger Conditions:**
-1. AC4 fails (dependency installation fails)
-2. AC5 fails (critical MCP imports fail: mcp, qdrant_client, sentence_transformers)
-3. AC6 fails (existing mdnotes imports fail)
-4. AC7 fails (existing tests fail)
-5. AC9 fails (high-severity security vulnerabilities found)
+1. AC1 fails (ruff errors remain after all attempts)
+2. AC6 fails (core MCP functionality breaks)
+3. AC7 fails (existing tests fail)
+4. AC4 fails (insurmountable mypy errors)
+5. Build fails after changes
 
 **Rollback Steps:**
 ```bash
 cd /media/hannesn/storage/Code/MCPLocalLLM
 
-# Restore pyproject.toml
-git checkout HEAD -- pyproject.toml
-
-# Uninstall MCP dependencies
-pip uninstall -y mcp qdrant-client sentence-transformers numpy markdown \
-  beautifulsoup4 python-dotenv pyyaml aiofiles aiohttp pytest-asyncio types-markdown
-
-# Clean up any partial installations
-pip cache purge
-
-# Reinstall original environment
-pip install -e .[dev]
+# Restore from baseline
+git reset --hard pre/W004-<timestamp>
+git push origin feat/W004-step-01-adapt-mcp-code --force-with-lease
 
 # Verify rollback
+source .venv/bin/activate
 pytest -q tests/test_smoke.py
 
 # Document failure
-echo "W003 aborted: <reason>" >> .oodatcaa/work/SPRINT_DISCUSS.md
+echo "W004 aborted: <reason>" >> .oodatcaa/work/SPRINT_DISCUSS.md
 ```
 
 ---
@@ -371,50 +342,52 @@ echo "W003 aborted: <reason>" >> .oodatcaa/work/SPRINT_DISCUSS.md
 ## Exit Criteria
 
 - [ ] All 10 acceptance criteria (AC1-AC10) verified and documented
-- [ ] All 3 critical import checks pass (AC5: MCP, AC6: mdnotes, AC7: tests)
-- [ ] TOML syntax valid
-- [ ] Dependencies install without errors (~2.1GB)
-- [ ] No high-severity security vulnerabilities
-- [ ] Tool configurations work (mypy, pytest, ruff)
-- [ ] Build succeeds (wheel + sdist)
+- [ ] All 3 critical checks pass (AC1: ruff, AC6: imports, AC7: tests)
+- [ ] Ruff errors reduced from 385 to 0
+- [ ] Mypy errors resolved (with documented ignores)
+- [ ] Black formatting passes
+- [ ] Build succeeds
+- [ ] No regressions in existing functionality
 - [ ] Branch pushed to origin
-- [ ] Ready for W004 (Adapt MCP for Training Use Case)
+- [ ] Ready for W005 (if needed) and W006 (Integration Testing)
 
 ---
 
 ## Test Artifacts
 
-**Pre-Integration:**
-- Baseline tag: `pre/W003-<timestamp>`
-- Current pyproject.toml backup
+**Pre-Adaptation:**
+- Baseline tag: `pre/W004-<timestamp>`
+- Initial ruff report: 385 errors
+- Initial mypy report: multiple type errors
 
-**Post-Integration:**
-- Updated pyproject.toml
-- Installation log (install.log)
-- pip-audit report (audit.log)
-- Import verification output
-- Build artifacts (dist/*.whl, dist/*.tar.gz)
+**Post-Adaptation:**
+- Final ruff report: 0 errors
+- Final mypy report: pass (with documented ignores)
+- Black check: pass
+- Test results: all pass
+- Build artifacts: wheel + sdist
 
 ---
 
 ## Success Metrics
 
 **Functional Success:**
-- 10 MCP production dependencies installed
-- 2 MCP dev dependencies installed
-- All imports work (12 total: 10 MCP + 2 mdnotes checks)
+- 385 ruff errors → 0 errors (100% fixed)
+- Mypy type errors resolved
+- All core MCP imports work (10/10)
 - Zero test regressions
 
 **Quality Success:**
-- TOML syntax valid
-- No high-severity security issues
-- Build succeeds
-- Tool configurations functional
+- Black formatting: 100% pass
+- Ruff linting: 100% pass  
+- Mypy type checking: pass (with reasonable ignores)
+- Build: success
+- Security: no new high-severity issues
 
 **Risk Mitigation Success:**
 - All rollback triggers monitored
-- Critical imports verified
-- Existing functionality preserved
+- Core functionality verified
+- Existing tests protected
 
 ---
 

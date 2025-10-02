@@ -627,7 +627,7 @@ class MarkdownProcessingHandlers:
                             if agent_id:
                                 metadata["agent_id"] = agent_id
 
-                            chunk_id = self.memory_manager.async_add_to_memory(
+                            self.memory_manager.async_add_to_memory(
                                 content=chunk_text,
                                 memory_type=memory_type,
                                 agent_id=agent_id,

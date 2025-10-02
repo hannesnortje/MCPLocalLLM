@@ -155,7 +155,7 @@ You now have access to a sophisticated **3-layer memory system**:
 - **Usage**: Query for established facts, procedures, and universal knowledge
 - **Best Practice**: Use for information that benefits all agents
 
-### 🧠 Learned Memory Layer  
+### 🧠 Learned Memory Layer
 - **Purpose**: Accumulated wisdom and lessons learned
 - **Content**: Patterns, insights, mistakes, solutions, experiences
 - **Usage**: Learn from past experiences and documented lessons
@@ -203,7 +203,7 @@ Search across your configured layers:
             elif agent_role.lower() == "testing":
                 startup_content += """
 - Focus on testing strategies, bug patterns, and quality assurance
-- Document test insights in learned memory  
+- Document test insights in learned memory
 - Track test results and coverage in agent memory
 - Reference testing frameworks from global memory
 """

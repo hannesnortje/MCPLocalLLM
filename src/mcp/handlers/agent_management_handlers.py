@@ -130,7 +130,6 @@ class AgentManagementHandlers:
                 status_icon = "❌"
                 status_text = "FAILED"
             else:
-                status = "success"
                 status_icon = "✅"
                 status_text = "SUCCESS"
 

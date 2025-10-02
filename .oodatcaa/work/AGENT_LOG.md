@@ -1556,6 +1556,74 @@ W003-B03 completed final documentation and status updates for MCP dependency int
 - Migration success: 61 files migrated (W002) + 12 dependencies installed (W003) = MCP server fully operational
 
 **Status:** ✅ COMPLETE - W003 SHIPPED | **Sprint Progress:** 50% (3 of 8 stories complete)
+
+### 2025-10-02T18:15:00+02:00 | Negotiator | Work Coordination Cycle
+**Action:** Phase 1 coordination - W004 planning activation  
+**Outcome:** W004 story assigned to Planner agent  
+- **Task:** W004 - Adapt MCP for Training Use Case (Story)
+- **Agent:** Planner (detailed planning phase)
+- **Status:** needs_plan → planning
+- **WIP Status:** planner 1/1 (FULL), builder 0/3, tester 0/2, integrator 0/1
+- **Dependencies:** W002, W003 satisfied (both complete and integrated)
+- **Remaining Ready:** 0 tasks
+- **Blocked:** 4 stories (W005-W008 by W004 dependency chain)  
+**Rationale:** W003 successfully integrated! 🎉 MCP dependencies fully operational (12 dependencies, 83 packages, ~7GB). All imports verified, zero regressions. W004 is now the critical path story for Sprint 1 continuation. W004 will adapt the 61 migrated MCP files for training workflow integration by: (1) fixing ~1,068 ruff linting errors (import sorting, type annotations), (2) resolving mypy type errors in MCP modules, (3) adapting MCP server code for local training use case, (4) ensuring MCP code follows project standards. Upon W004 completion, W005-W008 will unblock.  
+**Files Updated:**
+- `.oodatcaa/work/SPRINT_QUEUE.json` → W004 status → planning, agent assigned, metadata updated
+- `.oodatcaa/work/SPRINT_PLAN.md` → W004 planning assignment recorded
+- `.oodatcaa/work/AGENT_LOG.md` → This entry
+- `.oodatcaa/work/SPRINT_LOG.md` → Heartbeat added  
+**Next Steps:** Planner agent will analyze W004 requirements and create AGENT_PLAN.md and TEST_PLAN.md for MCP code adaptation (fix linting, types, adapt for training)
+
+### 2025-10-02T18:30:00+02:00 | Planner | W004 Planning Complete
+**Action:** Created detailed implementation plan for W004 (Adapt MCP for Training Use Case)  
+**Outcome:** AGENT_PLAN.md and TEST_PLAN.md completed
+- **Plan Version:** 1.0
+- **Implementation Steps:** 8 steps organized into 3 builder tasks (B01, B02, B03) + 1 tester task (T01)
+- **Primary Goal:** Fix code quality issues to pass all quality gates
+- **Scope Analysis:**
+  - **Ruff errors:** 385 total (318 auto-fixable with --fix, 67 manual)
+  - **Error categories:** 220 UP006 (List→list), 38 UP035 (deprecated imports), 36 I001 (import sorting), 34 UP045 (Optional→|None), plus others
+  - **Mypy errors:** Multiple type annotation issues, missing return types, missing type parameters
+  - **Auto-fixable:** ~85% of issues can be fixed automatically with ruff --fix
+- **Key Approach:**
+  - **Step 1-3 (W004-B01):** Branch setup + run `ruff check --fix` (318 auto-fixes) + manually fix remaining 67 errors
+  - **Step 4-5 (W004-B02):** Add type annotations for mypy compliance + remove/disable UI code references
+  - **Step 6-8 (W004-B03):** Verify core MCP functionality + run all quality gates + commit
+- **Acceptance Criteria:** 10 ACs defined (7 functional + 3 non-functional)
+- **Risk Assessment:** MEDIUM (automated fixes safe, but type annotations need careful manual work)
+- **Rollback Plan:** Baseline tag with 5 trigger conditions (ruff errors remain, core functionality breaks, tests fail, insurmountable type errors, build fails)
+- **Critical Verifications:** 
+  - All core MCP imports work (memory_manager, qdrant_manager, mcp_server, handlers, memory subsystem, tools)
+  - Existing tests still pass (rollback trigger)
+  - Build succeeds
+- **Branch:** `feat/W004-step-01-adapt-mcp-code`  
+**Rationale:** W003 dependency integration complete, but MCP code quality issues prevent passing quality gates. 385 ruff errors are mostly mechanical (old-style type annotations, import sorting). Automated ruff --fix will resolve 318 errors (85%), leaving 67 for manual fixes. Type annotation work for mypy is straightforward (add return types, generic type parameters). UI components already excluded in W002 migration. This work is essential to unblock W005 (Python Tooling & Quality Gates) and subsequent stories.  
+**Files Updated:**
+- `.oodatcaa/work/AGENT_PLAN.md` → Detailed 8-step implementation plan with 3 builder tasks
+- `.oodatcaa/work/TEST_PLAN.md` → Test strategy with 10 ACs and comprehensive quality gate validation
+- `.oodatcaa/work/SPRINT_QUEUE.json` → Added W004-B01 (ready), W004-B02 (blocked), W004-B03 (blocked), W004-T01 (blocked)
+- `.oodatcaa/work/SPRINT_PLAN.md` → Updated with W004 implementation plan and next steps
+- `.oodatcaa/work/AGENT_LOG.md` → This entry  
+**Next Steps:** Negotiator should assign W004-B01 to Builder agent for execution of Steps 1-3 (automated ruff fixes + manual cleanup)
+
+### 2025-10-02T18:45:00+02:00 | Negotiator | Work Coordination Cycle
+**Action:** Phase 2 coordination - W004 execution activation  
+**Outcome:** W004-B01 activated for Builder agent  
+- **Task:** W004-B01 - Setup + Automated Fixes + Manual Fixes (Steps 1-3)
+- **Agent:** Builder (first W004 implementation task)
+- **Status:** ready → in_progress
+- **WIP Status:** builder 1/3, tester 0/2, planner 0/1, integrator 0/1
+- **Dependencies:** None (W004 planning complete)
+- **Remaining Ready:** 0 tasks
+- **Blocked:** 3 tasks (W004-B02, B03, T01 by dependency chain)  
+**Rationale:** W004 planning complete! Planner analyzed 385 ruff errors (318 auto-fixable, 67 manual) and mypy type issues. W004-B01 will execute Steps 1-3: (1) Create branch feat/W004-step-01-adapt-mcp-code with baseline tag, (2) Run automated fixes (ruff check --fix → 318 auto-fixes, black formatting), (3) Manual fixes for remaining 67 errors (import organization, unused imports, line length). This is the first of 3 builder tasks that will adapt MCP code for training workflow and pass all quality gates.  
+**Files Updated:**
+- `.oodatcaa/work/SPRINT_QUEUE.json` → W004-B01 status → in_progress, W004 story → in_progress, metadata updated
+- `.oodatcaa/work/SPRINT_PLAN.md` → B01 assignment recorded
+- `.oodatcaa/work/AGENT_LOG.md` → This entry
+- `.oodatcaa/work/SPRINT_LOG.md` → Heartbeat added  
+**Next Steps:** Builder agent will execute W004-B01 per AGENT_PLAN.md (branch setup + ruff --fix for 318 auto-fixes + manual fixes for 67 remaining errors)
   
 ---
 
