@@ -440,15 +440,10 @@
        "title": "W006 Steps 1-3: Test Infrastructure + Server Tests + Memory CRUD Tests",
        "type": "Implementation",
        "complexity": "M",
-       "status": "integrating",
+       "status": "done",
        "priority": 6,
        "agent": "integrator",
-       "lease": {
-         "agent": "integrator",
-         "acquired": "2025-10-03T13:55:00+00:00",
-         "ttl": 30,
-         "last_heartbeat": "2025-10-03T13:55:00+00:00"
-       },
+       "lease": null,
        "dependencies": [],
        "objective": "OBJ-2025-002",
        "sprint": "1",
@@ -465,8 +460,10 @@
        "test_result": "8/10 ACs PASS (AC3 N/A, AC8 not tested). 6/6 testable features pass (100% success). 3 tests skip gracefully. Zero regressions. Performance 19.21s < 30s. All quality gates pass.",
        "adaptation_notes": "Iteration 1: Import conflict (RESOLVED: 46e32a3). Iteration 2: API mismatches (RESOLVED: 5f051aa). 10 API corrections applied: store_memory→add_to_global_memory (5×), search_memories→query_memory (4×), status→overall_status (1×). Tests 6/9 PASS, 3/9 SKIP.",
        "branch": "feat/W006-step-01-integration-tests",
-       "notes": "Builder completed Steps 1-3. Refiner completed 2 adaptation iterations (import conflict + API fixes). Tester validated iteration 2: 8/10 ACs pass, 100% test success rate, zero regressions, all quality gates pass. APPROVED for completion.",
-       "completed_at": "2025-10-03T13:50:00+00:00",
+       "notes": "Builder completed Steps 1-3. Refiner completed 2 adaptation iterations (import conflict + API fixes). Tester validated iteration 2: 8/10 ACs pass, 100% test success rate, zero regressions, all quality gates pass. Integrator merged to main: bc33b70, tag W006-B01-complete, CHANGELOG +130 lines.",
+       "completed_at": "2025-10-03T14:30:00+00:00",
+       "merged_commit": "bc33b70",
+       "tag": "W006-B01-complete",
        "commit": "5f051aa"
      },
     {
@@ -474,20 +471,26 @@
       "title": "W006 Steps 4-6: Policy Tests + Regression Validation + Quality Gates",
       "type": "Implementation",
       "complexity": "S",
-      "status": "in_progress",
+      "status": "integrating",
       "priority": 6,
-      "agent": "builder",
+      "agent": "integrator",
       "lease": {
-        "agent": "builder",
-        "acquired": "2025-10-03T13:55:00+00:00",
-        "ttl": 90,
-        "last_heartbeat": "2025-10-03T13:55:00+00:00"
+        "agent": "integrator",
+        "acquired": "2025-10-03T14:55:00+00:00",
+        "ttl": 30,
+        "last_heartbeat": "2025-10-03T14:55:00+00:00"
       },
       "dependencies": ["W006-B01"],
       "objective": "OBJ-2025-002",
       "sprint": "1",
       "parent_task": "W006",
-      "plan_step": "4-6"
+      "plan_step": "4-6",
+      "branch": "feat/W006-step-01-integration-tests",
+      "completed_at": "2025-10-03T14:15:00+00:00",
+      "commit": "aca31e3",
+      "notes": "Builder completed Steps 4-6: Policy tests (4 tests), regression validation (13 passed, 0 failed), quality gates (black, ruff, build all pass). All tests pass, zero regressions. Ready for Tester validation.",
+      "test_result": "9/10 ACs PASS (90% success). All critical ACs pass: AC3 (4 policy tests), AC4 (zero regressions), AC5-7 (organization, performance, quality gates), AC9-10 (isolation, docs). AC8 (coverage) optional. 13/16 tests pass (3 skip expected). Performance 19.92s/18.32s < 30s. Zero issues found. APPROVED for integration.",
+      "test_completed_at": "2025-10-03T14:50:00+00:00"
     },
     {
       "id": "W006-T01",
@@ -534,16 +537,16 @@
   ],
                            "metadata": {
                              "created": "2025-10-01T00:00:00Z",
-                             "updated": "2025-10-03T13:55:00+00:00",
+                             "updated": "2025-10-03T14:55:00+00:00",
                              "sprint_goal": "MCP Server Foundation - Migrate and integrate MCP infrastructure",
                              "total_tasks": 31,
                              "story_tasks": 8,
                              "builder_tasks": 17,
                              "tester_tasks": 6,
-                             "completed_tasks": 26,
+                             "completed_tasks": 27,
                              "ready_tasks": 0,
                              "blocked_tasks": 1,
-                             "in_progress_tasks": 2,
+                             "in_progress_tasks": 1,
                              "planning_tasks": 0,
                              "planning_complete_tasks": 1,
                              "needs_plan_tasks": 2,
@@ -554,6 +557,6 @@
                              "adapted_tasks": 2,
                              "ready_for_integrator_tasks": 0,
                              "integrating_tasks": 1,
-                             "done_tasks": 25
+                             "done_tasks": 26
                            }
 }
