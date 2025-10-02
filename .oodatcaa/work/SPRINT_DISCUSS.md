@@ -134,3 +134,78 @@
 **Next:** W005 → Integrator (PR + merge + tag + CHANGELOG)
 
 ---
+
+## W006-B01 Adaptation - Import Naming Conflict (2025-10-03)
+
+### Context
+W006-B01 implementation encountered critical blocker: import naming conflict between `mcp` protocol library (pip package) and local `src/mcp/` directory.
+
+**Problem:** Python import system cannot distinguish between:
+- `import mcp` (protocol library - external dependency)
+- `from src.mcp import ...` (local MCP implementation)
+
+This blocks W006 integration test implementation.
+
+### Alternatives Considered
+
+**Option A: Rename src/mcp/ to src/mcp_local/** (SELECTED)
+- **Pros:** 
+  - Clean architectural solution
+  - Eliminates ambiguity permanently
+  - Maintains code clarity (mcp = protocol, mcp_local = our implementation)
+  - Benefits entire project (not just W006)
+  - No brittle workarounds
+- **Cons:** 
+  - 2-3h work (rename directory, update all imports, update tests, update docs)
+  - Touches many files (~76 files in src/mcp/)
+- **Effort:** L (2-3 hours)
+- **Risk:** Medium (large refactor, but straightforward)
+
+**Option B: Import workaround (sys.path manipulation)**
+- **Pros:** 
+  - Fast (30 minutes)
+  - Minimal changes
+- **Cons:** 
+  - Brittle solution
+  - Confusing for future developers
+  - Technical debt
+  - Doesn't solve root problem
+  - May break in different contexts
+- **Effort:** S (30 minutes)
+- **Risk:** High (brittle, confusing, creates debt)
+
+**Option C: Defer W006 (postpone integration tests)**
+- **Pros:** 
+  - No immediate work
+  - Could address in future sprint
+- **Cons:** 
+  - Doesn't solve problem
+  - Blocks W008 (documentation depends on W006)
+  - Leaves sprint incomplete
+  - Problem will resurface
+- **Effort:** None (defer)
+- **Risk:** Very High (blocks sprint completion)
+
+### Decision: Rename src/mcp/ to src/mcp_local/ (Option A)
+
+**Rationale:**
+1. **Architectural clarity:** Separates concerns cleanly (mcp = protocol, mcp_local = implementation)
+2. **Long-term benefit:** One-time fix solves problem permanently for entire project
+3. **Avoids technical debt:** No brittle workarounds or confusion
+4. **Sprint completion:** Unblocks W006 and W008, enables sprint completion
+5. **Code quality:** Improves naming clarity throughout codebase
+6. **Pragmatic:** 2-3h investment for permanent solution is worthwhile
+
+**Implementation Plan:**
+1. Rename `src/mcp/` → `src/mcp_local/`
+2. Update all imports: `from src.mcp` → `from src.mcp_local`
+3. Update tests: Any references to `src.mcp` → `src.mcp_local`
+4. Update pyproject.toml: Package name adjustments
+5. Verify all tests pass
+6. Commit with clear message explaining rename rationale
+
+**Decision Made By:** Negotiator  
+**Decision Date:** 2025-10-03T05:35:00+02:00  
+**Status:** Assigned to Refiner for execution
+
+---

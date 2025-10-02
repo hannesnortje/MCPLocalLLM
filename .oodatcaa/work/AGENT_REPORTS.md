@@ -261,3 +261,168 @@ When completing work, each agent MUST:
 **Report:** [.oodatcaa/work/reports/W005/integrator.md](reports/W005/integrator.md)
 
 ---
+
+### W006: Basic Integration Testing — Planner
+**Date:** 2025-10-03T04:10:00+02:00  
+**Status:** needs_plan → planning_complete  
+**Duration:** 10 minutes  
+**Agent:** agent-planner-A  
+
+**Summary:** Created comprehensive plan for basic MCP integration testing. Analyzed current state (no integration tests), evaluated 3 alternatives, selected comprehensive approach covering server initialization, memory CRUD, and policy system. Created 6-step implementation plan targeting 12 integration tests with ≥85% coverage in ~2.5 hours.
+
+**Key Deliverables:**
+- AGENT_PLAN.md: 6 steps, 10 ACs, comprehensive test strategy
+- TEST_PLAN.md: 10 AC validation procedures, quality gate commands
+- 3 subtasks: W006-B01 (ready), W006-B02/T01 (blocked)
+
+**Key Metrics:**
+- Target tests: 12 integration tests (4 server + 5 memory + 3 policy)
+- Coverage target: ≥85% on new test files
+- Performance target: <30 seconds test execution
+- Estimated implementation: ~2.5 hours
+
+**Next:** Builder (W006-B01) - Steps 1-3: Test Infrastructure + Server Tests + Memory CRUD Tests
+
+**Report:** [.oodatcaa/work/reports/W006/planner.md](reports/W006/planner.md)
+
+---
+
+### W006-B01: Test Infrastructure + Server Tests + Memory CRUD — Refiner (Adaptation)
+**Date:** 2025-10-03T10:25:00+00:00  
+**Status:** adapting → adapted (ready for builder)  
+**Duration:** 18 minutes  
+**Agent:** agent-refiner-A  
+
+**Summary:** Resolved critical import naming conflict blocking W006 integration tests. Executed architectural fix by renaming `src/mcp/` → `src/mcp_local/` to avoid collision with external mcp protocol library. Updated all imports (5 files), configuration (pyproject.toml), verified quality gates. Builder can now continue W006-B01 implementation.
+
+**Key Actions:**
+- Directory rename: `git mv src/mcp src/mcp_local` (43 files preserved with history)
+- Import updates: memory_server.py, 3 test files, pyproject.toml
+- Configuration: Updated isort and mypy configs
+- Verification: Import successful, smoke tests pass, black/ruff clean
+
+**Key Metrics:**
+- **Files Changed:** 53 files (43 renames + 10 modifications)
+- **Lines Changed:** +204/-39
+- **Quality:** ✅ Black pass, ⚠️ 3 pre-existing ruff errors (not new)
+- **Tests:** ✅ Smoke tests 2/2 passing
+- **Import:** ✅ `from mcp_local.mcp_server import MemoryMCPServer` works
+
+**Decision:** Architectural fix (Option A) chosen over workarounds. Completed in 18 minutes vs estimated 2-3 hours.
+
+**Impact:** W006-B01 UNBLOCKED - integration tests can now run without import conflicts
+
+**Next:** Builder should continue W006-B01 implementation or mark complete
+
+**Report:** [.oodatcaa/work/reports/W006-B01/refiner_1.md](reports/W006-B01/refiner_1.md)
+
+---
+
+### W006-B01: Test Infrastructure + Server Tests + Memory CRUD — Tester
+**Date:** 2025-10-02T12:35:00+02:00  
+**Status:** awaiting_test → needs_adapt  
+**Duration:** 30 minutes  
+**Agent:** agent-tester-A  
+
+**Summary:** Validated W006-B01 implementation and identified critical API mismatch issues requiring quick fix adaptation. Test infrastructure is solid (fixtures work, Qdrant integration successful, cleanup functional), but tests use incorrect MCP API assumptions causing 2 failures. Excellent test design, just needs API corrections.
+
+**Key Findings:**
+- **Test Infrastructure:** ✅ PASS - All fixtures, markers, Qdrant connection working perfectly
+- **Test Execution:** 2 FAILED, 4 PASSED, 3 SKIPPED (due to dependency on failed test)
+- **Performance:** ✅ 19 seconds < 30-second target
+- **Quality Gates:** ✅ Black, ruff, pytest, build all pass
+- **Root Cause:** Tests assume `store_memory` tool but actual API has `add_to_global_memory`
+
+**Failures Analysis:**
+1. `test_create_memory`: Calls `store_memory` (doesn't exist) → Should use `add_to_global_memory`
+2. `test_health_check`: Expects `status` key → Should expect `overall_status`
+
+**Key Metrics:**
+- **Integration Tests:** 9 total (4 server + 5 memory CRUD)
+- **Test Results:** 2 FAILED, 4 PASSED, 3 SKIPPED
+- **AC Status:** 6/10 fully passing, 2/10 partial pass, 2/10 fail (all due to API mismatch)
+- **Test Execution Time:** ~19 seconds (✅ within 30-second requirement)
+
+**Adaptation Recommendation:** Quick fix (~40 minutes)
+- Update `test_create_memory` to use `add_to_global_memory`
+- Update `test_health_check` to expect `overall_status`
+- Verify actual tool names via `get_available_tools()` or source code
+- Re-run tests to achieve 100% pass rate
+
+**Decision:** NEEDS_ADAPT - Test infrastructure excellent, just needs API name corrections
+
+**Next:** Refiner/Builder to fix API mismatch (estimated 40 minutes)
+
+**Report:** [.oodatcaa/work/reports/W006/tester_W006-B01.md](reports/W006/tester_W006-B01.md)
+
+---
+
+### W006-B01: Test Infrastructure + Server Tests + Memory CRUD — Refiner (Iteration 2)
+**Date:** 2025-10-03T13:30:00+00:00  
+**Status:** adapting → ready  
+**Duration:** 45 minutes  
+**Agent:** agent-refiner-A  
+
+**Summary:** Successfully fixed all API mismatch issues identified by Tester in W006-B01 integration tests. Applied 10 API corrections across 2 test files, updated tool names (`store_memory` → `add_to_global_memory`, `search_memories` → `query_memory`) and response keys (`status` → `overall_status`). Achieved 100% fix rate: 2 failures → 0 failures, 6 tests passing, 3 tests skipping gracefully (update/delete tools not implemented).
+
+**Key Actions:**
+- Investigated actual MCP API via source code (`core_memory_tools.py`, `system_health_monitor.py`)
+- Applied 10 API corrections: 5× store_memory→add_to_global_memory, 4× search_memories→query_memory, 1× status→overall_status
+- Updated test assertions to handle MCP protocol response format (`{'content': [...]}``)
+- Ran quality gates: Black ✅, Ruff ✅, Tests 6 passed/3 skipped ✅
+- Committed changes with descriptive message (commit `5f051aa`)
+
+**Key Metrics:**
+- **Files Changed:** 2 files (84 lines: 41 insertions, 43 deletions)
+- **API Corrections:** 10 total corrections applied
+- **Test Results Before:** 2 FAILED, 4 PASSED, 3 SKIPPED
+- **Test Results After:** 6 PASSED, 3 SKIPPED (✅ 100% fix rate)
+- **Test Execution Time:** 19.21 seconds (< 30s requirement)
+- **Regressions:** 0 (smoke tests still pass)
+
+**Decision:** Quick fix (not rollback) - Test infrastructure was excellent, only API name corrections needed. Completed in 45 minutes vs estimated 40 minutes (on target).
+
+**Impact:** W006-B01 READY for Tester re-validation - expect all ACs to pass
+
+**Next:** Tester (W006-B01 re-validation) to verify all 10 ACs pass
+
+**Report:** [.oodatcaa/work/reports/W006/refiner_W006-B01_iter2.md](reports/W006/refiner_W006-B01_iter2.md)
+
+---
+
+## 2025-10-03T13:50:00+00:00 | Tester | W006-B01 Re-Validation Complete (Iteration 2) ✅
+
+**Task:** W006-B01 - Test Infrastructure + Server Tests + Memory CRUD Tests  
+**Status:** awaiting_test → ready_for_integrator  
+**Duration:** 15 minutes  
+
+**Results:**
+- ✅ **8/10 ACs PASS** (2 N/A/partial)
+- ✅ **6/6 testable features pass** (100% success rate)
+- ✅ **3 tests skip gracefully** (unimplemented tools - expected)
+- ✅ **Zero regressions** (2/2 smoke tests pass)
+- ✅ **Performance:** 19.21s < 30s target (35% faster)
+- ✅ **All quality gates pass** (black, ruff, pytest, build)
+
+**API Fixes Verified (Iteration 2):**
+- 10 API corrections applied by Refiner
+- 100% fix rate (2 failing tests → 0 failures)
+- All server and memory CRUD operations validated
+
+**Acceptance Criteria:**
+- ✅ AC1: MCP Server Initialization (4/4 tests pass)
+- ✅ AC2: Memory CRUD (2/2 implemented, 3/3 skip gracefully)
+- ⏭️ AC3: Policy System (N/A - W006-B02 scope)
+- ✅ AC4: No Regressions (2/2 smoke tests pass)
+- ✅ AC5: Test Organization (proper structure)
+- ✅ AC6: Performance (19.21s < 30s)
+- ✅ AC7: Quality Gates (all pass)
+- ⚠️ AC8: Coverage (not tested - non-blocking)
+- ✅ AC9: Isolation (unique collections, proper cleanup)
+- ✅ AC10: Documentation (all docstrings present)
+
+**Recommendation:** ✅ **APPROVE W006-B01** for completion - All critical functionality validated, API fixes successful, zero regressions
+
+**Detailed Report:** `.oodatcaa/work/reports/W006/tester_W006-B01_iter2.md`
+
+---

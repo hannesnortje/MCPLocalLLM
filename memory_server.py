@@ -22,8 +22,8 @@ import subprocess
 import sys
 import tempfile
 
-from src.mcp_server import run_mcp_server
-from src.server_config import get_logger
+from src.mcp_local.mcp_server import run_mcp_server
+from src.mcp_local.server_config import get_logger
 
 logger = get_logger("memory-server")
 
