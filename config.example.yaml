@@ -1,10 +1,11 @@
-# MCP Memory Server Configuration
+# MCP Local LLM Configuration
+# Configuration optimized for small coder model training on Apple M1 Max
 # This file demonstrates the YAML configuration capabilities
 
 server:
-  name: "memory-server"
+  name: "mcp-local-llm-training"  # Training-specific server name
   version: "1.0.0"
-  description: "Memory management server for AI agents using Qdrant vector database"
+  description: "MCP server for small coder model training with context preservation"
 
 logging:
   level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -12,35 +13,35 @@ logging:
   file: null  # Optional log file path
 
 qdrant:
-  mode: "local"  # local, remote, cloud
-  host: "localhost"
+  mode: "local"  # Training mode: use "local" for development (Docker on same machine)
+  host: "localhost"  # Use "localhost" for local dev, "qdrant" for Docker Compose
   port: 6333
-  api_key: null  # Required for cloud mode
+  api_key: null  # Not needed for local training environment
   timeout: 60
   
   # Docker settings (for local mode)
   docker_image: "qdrant/qdrant:latest"
   container_name: "qdrant"
   
-  # Timeouts
+  # Timeouts (increased for M1 Max training environment)
   startup_timeout: 15
   health_check_timeout: 5
 
 embedding:
-  model_name: "all-MiniLM-L6-v2"
-  dimension: 384
-  device: "cpu"  # or "cuda" for GPU acceleration
-  cache_folder: null
+  model_name: "all-MiniLM-L6-v2"  # Lightweight model optimized for training data generation
+  dimension: 384  # Compatible with Qwen2.5-Coder-7B embeddings
+  device: "cpu"  # Use CPU for M1 Max (MPS not well supported by sentence-transformers)
+  cache_folder: null  # Defaults to ~/.cache/huggingface
 
 markdown:
-  chunk_size: 900
-  chunk_overlap: 200
-  recursive_processing: true
+  chunk_size: 1000  # Training-optimized: 1000 chars for good context windows
+  chunk_overlap: 200  # 200 char overlap preserves continuity for training data
+  recursive_processing: true  # Process nested markdown structures for comprehensive training data
   
-  # AI enhancement settings
-  ai_enhancement_enabled: true
+  # AI enhancement settings (for training data generation)
+  ai_enhancement_enabled: true  # Enable AI-enhanced training data generation
   ai_analysis_depth: "standard"  # basic, standard, deep
-  ai_content_optimization: true
+  ai_content_optimization: true  # Optimize content for small coder model training
 
 policy:
   directory: "./policy"

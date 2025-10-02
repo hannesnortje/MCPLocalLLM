@@ -1,4 +1,7 @@
-.PHONY: fmt gates test check build audit ship tag rollback
+.PHONY: fmt gates test check build audit ship tag rollback validate-env
+
+validate-env:
+	python3 scripts/validate-env.py
 
 fmt:
 	black .
