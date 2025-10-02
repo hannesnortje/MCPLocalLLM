@@ -1,492 +1,322 @@
-# TEST PLAN — W005: Python Tooling & Quality Gates
+# W006 Test Plan — Basic Integration Testing
 
-**Task ID:** W005  
-**Objective ID:** OBJ-2025-002  
-**Sprint:** 1  
-**Created:** 2025-10-03T00:15:00+02:00  
 **Planner:** agent-planner-A  
+**Test Plan Version:** 1.0  
+**Created:** 2025-10-03T04:05:00+02:00  
+**Story:** W006 - Basic Integration Testing
 
 ---
 
-## Test Commands (Standard CI Gates)
+## Test Strategy
 
-### 1. Black Formatting
+**Scope:** Integration tests for MCP server initialization, memory operations, and policy system  
+**Approach:** Pytest with async support, Qdrant dependency handling, test isolation  
+**Coverage Target:** ≥85% line coverage on new test files
+
+---
+
+## Quality Gate Commands
+
+### 1. Format Check
 ```bash
-black --check .
+black tests/mcp/
+black --check tests/mcp/
 ```
-**Expected:** All files pass, exit code 0  
-**Current Baseline:** ✅ PASS (52 files)
+**Expected:** All files formatted, no changes needed
 
-### 2. Ruff Linting
+---
+
+### 2. Lint Check
 ```bash
-ruff check .
+ruff check tests/mcp/
 ```
-**Expected:** 0 errors, exit code 0  
-**Current Baseline:** ❌ 43 errors
+**Expected:** 0 errors, 0 warnings
 
-### 3. Mypy Type Checking (MDNotes)
+---
+
+### 3. Type Check (Optional for Tests)
 ```bash
-mypy src/mdnotes
+mypy tests/mcp/ || echo "Type checking tests is optional"
 ```
-**Expected:** Success, no issues, exit code 0  
-**Current Baseline:** ✅ PASS (2 files)
+**Expected:** Clean or acceptable errors (tests excluded from strict mypy)
 
-### 4. Mypy Type Checking (MCP)
+---
+
+### 4. Unit Tests (Existing)
 ```bash
-mypy src/mcp
+pytest tests/test_smoke.py -v
 ```
-**Expected:** < 10 errors (documented edge cases acceptable), exit code 0 or 1  
-**Current Baseline:** ❌ 496 errors in 29 files
+**Expected:** 2/2 tests pass (test_greets, test_package_import)
 
-### 5. Unit Tests (Smoke)
+---
+
+### 5. Integration Tests (New)
 ```bash
-pytest -q tests/test_smoke.py
+pytest tests/mcp/ -v -m integration
 ```
-**Expected:** 2/2 tests pass, exit code 0  
-**Current Baseline:** ✅ PASS
+**Expected:** 12 tests pass (4 server + 5 memory + 3 policy)
 
-### 6. Unit Tests (All)
+---
+
+### 6. Full Test Suite
 ```bash
-pytest -q
+pytest tests/ -v
 ```
-**Expected:** 3/3 tests pass (smoke + acceptance placeholder), exit code 0  
-**Current Baseline:** ✅ PASS
+**Expected:** 14 tests pass total (2 smoke + 12 integration), 0 failures
 
-### 7. Code Coverage
+---
+
+### 7. Coverage Check
 ```bash
-pytest --cov=src --cov-report=term-missing --cov-fail-under=85
+pytest --cov=tests/mcp --cov-report=term-missing --cov-fail-under=85
 ```
-**Expected:** ≥ 85% coverage, exit code 0  
-**Current Baseline:** ✅ 100% on mdnotes (MCP not yet covered)
+**Expected:** ≥85% line coverage on tests/mcp/
 
-### 8. Build Package
+---
+
+### 8. Build Check
 ```bash
 python -m build
 ```
-**Expected:** Wheel + sdist created successfully, exit code 0  
-**Current Baseline:** ✅ PASS
+**Expected:** Successfully builds wheel and sdist in dist/
+
+---
 
 ### 9. Security Audit
 ```bash
 pip-audit
 ```
-**Expected:** No high-severity vulnerabilities, exit code 0  
-**Current Baseline:** ✅ 1 informational issue only
-
-### 10. Optional: Bandit Security Scan
-```bash
-bandit -r src -ll
-```
-**Expected:** No high-severity issues (S603/S607 Docker warnings acceptable)  
-**Current Baseline:** ⚠️ Some subprocess warnings (expected)
+**Expected:** 0 high-severity vulnerabilities
 
 ---
 
-## Acceptance Criteria Testing
+## Acceptance Criteria Validation
 
-### AC1: Zero Ruff Errors ✅
-**Test:**
+### AC1: MCP Server Initialization ✅
+**Test File:** `tests/mcp/test_server_initialization.py`  
+**Tests:**
+- `test_server_can_initialize`: Creates MemoryMCPServer instance
+- `test_memory_manager_available`: Verifies memory_manager is not None
+- `test_health_check`: Calls get_system_health(), validates response
+- `test_available_tools`: Calls get_available_tools(), checks tool list
+
+**Validation Command:**
 ```bash
-ruff check .
-echo "Exit code: $?"
+pytest tests/mcp/test_server_initialization.py -v
 ```
-**Pass Criteria:**
-- Exit code = 0
-- Output: "All checks passed!"
-- No errors reported
+**Expected:** 4/4 tests pass
 
-**Validation Method:**
-1. Run `ruff check .` → Expect 0 errors
-2. Verify no warnings (config deprecation fixed)
-3. Spot-check 3 files manually for code quality
-
-**Edge Cases:**
-- Long lines in prompts → Should be reformatted or have `# noqa: E501` with reason
-- Security warnings → Should have `# noqa: S603` with "Docker management - trusted input"
+**AC Pass Criteria:** ✅ All 4 server initialization tests pass
 
 ---
 
-### AC2: Mypy Core Code Clean ✅
-**Test:**
+### AC2: Memory CRUD Operations ✅
+**Test File:** `tests/mcp/test_memory_operations.py`  
+**Tests:**
+- `test_create_memory`: Stores a memory, verifies creation
+- `test_read_memory`: Retrieves memory by ID
+- `test_search_memories`: Searches memories by text query
+- `test_update_memory`: Modifies existing memory
+- `test_delete_memory`: Removes memory, verifies deletion
+
+**Validation Command:**
 ```bash
-mypy src/mcp 2>&1 | tee mypy_results.txt
-grep "Found [0-9]* error" mypy_results.txt
+pytest tests/mcp/test_memory_operations.py -v
 ```
-**Pass Criteria:**
-- < 10 errors (all documented with `# type: ignore` and reason)
-- No `no-untyped-def` errors in core files
-- No `type-arg` errors (all generics have parameters)
-- Library stub errors for external deps acceptable
+**Expected:** 5/5 tests pass
 
-**Validation Method:**
-1. Run `mypy src/mcp` → Expect < 10 errors
-2. For each remaining error:
-   - Verify `# type: ignore[error-code]  # <reason>` comment present
-   - Verify reason is documented and valid
-3. Spot-check 5 files for type annotation quality:
-   - `src/mcp/config.py`
-   - `src/mcp/server_config.py`
-   - `src/mcp/memory_manager.py`
-   - `src/mcp/handlers/core_memory_handlers.py`
-   - `src/mcp/policy_processor.py`
-
-**Edge Cases:**
-- External library imports (aiofiles, yaml) → Stubs installed OR ignore rules in mypy.ini
-- Complex union types → May need cast() or assert is not None
-- Any types → Acceptable for truly dynamic data
+**AC Pass Criteria:** ✅ All 5 memory CRUD tests pass
 
 ---
 
-### AC3: No Regressions ✅
-**Test:**
+### AC3: Policy System ✅
+**Test File:** `tests/mcp/test_policy_system.py`  
+**Tests:**
+- `test_policy_initialization`: Verifies PolicyProcessor loads
+- `test_preservation_levels`: Checks strict/moderate/flexible levels
+- `test_rule_compliance`: Validates rule compliance markers
+
+**Validation Command:**
 ```bash
-pytest -q
+pytest tests/mcp/test_policy_system.py -v
 ```
-**Pass Criteria:**
-- 3/3 tests pass
-- No new failures
-- No warnings about deprecated imports
+**Expected:** 3/3 tests pass
 
-**Validation Method:**
-1. Run `pytest -q` → All tests green
-2. Run `pytest -q tests/test_smoke.py` → 2/2 pass (critical)
-3. Manual smoke test:
-   ```python
-   from mdnotes.core import MDNotes
-   from mcp.memory_manager import MemoryManager
-   from mcp.config import Config
-   # All imports work
-   ```
-
-**Edge Cases:**
-- Type annotations might catch latent bugs → If so, fix bug OR adjust type
-- Import order changes → Verify no circular dependencies
+**AC Pass Criteria:** ✅ All 3 policy system tests pass
 
 ---
 
-### AC4: Black Formatting Maintained ✅
-**Test:**
+### AC4: No Regressions ✅
+**Test File:** `tests/test_smoke.py` (existing)
+
+**Validation Command:**
 ```bash
-black --check .
+pytest tests/test_smoke.py -v
 ```
-**Pass Criteria:**
-- "All done! ✨ 🍰 ✨"
-- "X files would be left unchanged"
-- Exit code 0
+**Expected:** 2/2 tests pass (test_greets, test_package_import)
 
-**Validation Method:**
-1. Run `black --check .` → Must PASS
-2. If fails: Run `black .` and commit formatting fixes
-3. Verify line-length=100 respected
-
-**Edge Cases:**
-- Long string literals → Black won't break them (expected)
-- Docstrings → Black formats them (verify readable)
+**AC Pass Criteria:** ✅ All existing tests still pass, zero regressions
 
 ---
 
-### AC5: Build Success ✅
-**Test:**
+### AC5: Test Organization ✅
+**Expected Structure:**
+```
+tests/
+├── mcp/
+│   ├── __init__.py (empty)
+│   ├── conftest.py (fixtures)
+│   ├── test_server_initialization.py
+│   ├── test_memory_operations.py
+│   └── test_policy_system.py
+├── test_smoke.py (existing)
+└── acceptance/ (existing)
+```
+
+**Validation Command:**
 ```bash
-rm -rf dist/
+ls -la tests/mcp/
+pytest --collect-only tests/mcp/
+```
+**Expected:** 4 test files in tests/mcp/, pytest discovers 12 tests
+
+**AC Pass Criteria:** ✅ Tests organized in tests/mcp/ with clear structure
+
+---
+
+### AC6: Performance ⚡
+**Validation Command:**
+```bash
+time pytest tests/mcp/ -v
+```
+**Expected:** Total time <30 seconds
+
+**AC Pass Criteria:** ✅ Integration tests complete in <30 seconds
+
+---
+
+### AC7: Quality Gates 🛡️
+**Validation Commands:**
+```bash
+black --check tests/mcp/
+ruff check tests/mcp/
+pytest tests/ -v
 python -m build
-ls -lh dist/
-```
-**Pass Criteria:**
-- `dist/mdnotes-0.1.0.tar.gz` created
-- `dist/mdnotes-0.1.0-py3-none-any.whl` created
-- Exit code 0
-- No errors or warnings
-
-**Validation Method:**
-1. Clean `dist/` directory
-2. Run `python -m build`
-3. Verify both wheel and sdist artifacts present
-4. Spot-check wheel contents:
-   ```bash
-   unzip -l dist/mdnotes-0.1.0-py3-none-any.whl | grep -E "(mdnotes|mcp)"
-   ```
-
-**Edge Cases:**
-- Missing files → Verify `MANIFEST.in` or `pyproject.toml` includes all needed files
-- Large files → Check if unnecessary files included (should be in `.gitignore`)
-
----
-
-### AC6: Security Clean ✅
-**Test:**
-```bash
 pip-audit
 ```
-**Pass Criteria:**
-- No high-severity vulnerabilities
-- No medium-severity vulnerabilities (or documented exceptions)
-- Exit code 0
+**Expected:** All commands pass with 0 errors
 
-**Validation Method:**
-1. Run `pip-audit`
-2. Review any findings:
-   - Informational → Acceptable
-   - Low → Review, likely acceptable
-   - Medium/High → Must fix or document mitigation
-3. Document any accepted risks in commit message
-
-**Edge Cases:**
-- Transitive dependencies → May need to update parent package
-- False positives → Document in security notes
+**AC Pass Criteria:** ✅ All quality gates (black, ruff, pytest, build, security) pass
 
 ---
 
-### AC7: Config Cleanup ✅
-**Test:**
+### AC8: Coverage 📊
+**Validation Command:**
 ```bash
-ruff check . 2>&1 | grep "warning:"
+pytest --cov=tests/mcp --cov-report=term-missing --cov-fail-under=85
 ```
-**Pass Criteria:**
-- No output (no warnings)
-- Exit code 0 (only if no errors)
+**Expected:** ≥85% line coverage on tests/mcp/
 
-**Validation Method:**
-1. Run `ruff check .`
-2. Verify no deprecation warnings about top-level linter settings
-3. Verify `ruff.toml` has settings in `[tool.ruff.lint]` section
-
-**Edge Cases:**
-- New ruff version → May introduce new warnings (document)
+**AC Pass Criteria:** ✅ Test files have ≥85% line coverage
 
 ---
 
-## Integration Testing
-
-### MCP Core Functionality Verification
-
-**Test 1: MCP Imports**
-```python
-# File: tests/test_w005_mcp_imports.py
-import pytest
-
-def test_mcp_core_imports():
-    """Verify all core MCP modules import without errors"""
-    from mcp.config import Config
-    from mcp.memory_manager import MemoryManager
-    from mcp.handlers.core_memory_handlers import CoreMemoryHandlers
-    from mcp.memory.embedding_service import EmbeddingService
-    from mcp.tools.core_memory_tools import get_core_memory_tools
-    assert Config is not None
-    assert MemoryManager is not None
-    # Imports succeed = test passes
+### AC9: Isolation 🔒
+**Validation Commands:**
+```bash
+# Run tests in random order
+pytest tests/mcp/ --random-order -v
+# Run tests in parallel
+pytest tests/mcp/ -n auto -v
 ```
+**Expected:** All tests pass regardless of execution order
 
-**Test 2: Type Annotations Runtime**
-```python
-# File: tests/test_w005_type_runtime.py
-import pytest
-from typing import get_type_hints
-
-def test_type_annotations_present():
-    """Verify type annotations are present on key functions"""
-    from mcp.config import Config
-    from mcp.memory_manager import MemoryManager
-    
-    # Config class has type hints
-    hints = get_type_hints(Config.__init__)
-    assert hints  # Not empty
-    
-    # MemoryManager methods have hints
-    if hasattr(MemoryManager, 'store_memory'):
-        hints = get_type_hints(MemoryManager.store_memory)
-        assert hints
-```
-
-**Test 3: No Runtime Type Errors**
-```python
-# File: tests/test_w005_no_runtime_errors.py
-import pytest
-
-def test_mdnotes_unchanged():
-    """Verify mdnotes module still works"""
-    from mdnotes.core import parse_markdown
-    result = parse_markdown("# Test\n\nContent")
-    assert result  # Basic functionality works
-
-def test_mcp_basic_instantiation():
-    """Verify MCP classes can be instantiated if they have defaults"""
-    from mcp.config import Config
-    # If Config() works, it works
-    # If it needs args, that's expected
-    try:
-        config = Config()
-    except TypeError:
-        pass  # Expected if args required
-```
+**AC Pass Criteria:** ✅ Tests can run independently or in any order
 
 ---
 
-## Performance Tests (Optional)
+### AC10: Documentation 📝
+**Expected:** Each test file has:
+- Module docstring explaining purpose
+- Test function docstrings explaining what is validated
+- Clear assertions with helpful failure messages
 
-### Type Checking Speed
-**Goal:** Ensure mypy runs in reasonable time
-
-**Test:**
+**Validation Command:**
 ```bash
-time mypy src/mcp
+# Check docstrings exist
+python -c "import tests.mcp.test_server_initialization; print(tests.mcp.test_server_initialization.__doc__)"
 ```
-**Expected:** < 30 seconds on M1 Max
-**Baseline:** Unknown (first strict mypy run)
+**Expected:** Non-None docstring returned
 
-### Build Speed
-**Goal:** Ensure type annotations don't slow build
-
-**Test:**
-```bash
-time python -m build
-```
-**Expected:** < 15 seconds
-**Baseline:** ~10 seconds
+**AC Pass Criteria:** ✅ Docstrings present explaining test purpose
 
 ---
 
-## Rollback Testing
+## Test Execution Summary
 
-### Rollback Trigger Tests
-
-**Trigger 1: Test Failures**
+**Full Validation Sequence:**
 ```bash
-pytest -q
-if [ $? -ne 0 ]; then
-  echo "ROLLBACK TRIGGER: Tests failed"
-  git reset --hard <baseline-tag>
-fi
-```
+# 1. Format
+black tests/mcp/
+black --check tests/mcp/
 
-**Trigger 2: MCP Import Failures**
-```bash
-python -c "from mcp.memory_manager import MemoryManager"
-if [ $? -ne 0 ]; then
-  echo "ROLLBACK TRIGGER: MCP imports broken"
-  git reset --hard <baseline-tag>
-fi
-```
+# 2. Lint
+ruff check tests/mcp/
 
-**Trigger 3: Build Failures**
-```bash
+# 3. Run existing tests (regression check)
+pytest tests/test_smoke.py -v
+
+# 4. Run new integration tests
+pytest tests/mcp/ -v
+
+# 5. Run full test suite
+pytest tests/ -v
+
+# 6. Check coverage
+pytest --cov=tests/mcp --cov-report=term-missing --cov-fail-under=85
+
+# 7. Build
 python -m build
-if [ $? -ne 0 ]; then
-  echo "ROLLBACK TRIGGER: Build failed"
-  git reset --hard <baseline-tag>
-fi
+
+# 8. Security
+pip-audit
 ```
 
----
-
-## Test Artifacts
-
-### Files to Generate
-1. **mypy_results.txt**: Full mypy output for analysis
-2. **ruff_results.txt**: Full ruff output showing 0 errors
-3. **test_output.txt**: pytest output with all tests passing
-4. **build_artifacts/**: dist/ directory with wheel and sdist
-
-### Reports to Create
-1. **Quality Gate Report**: All 10 gates with PASS/FAIL
-2. **Error Reduction Report**: 
-   - Ruff: 43 → 0 (100% reduction)
-   - Mypy: 496 → < 10 (98% reduction)
-3. **Type Annotation Coverage**: % of functions with type hints
+**Expected Final Results:**
+- ✅ 14 tests pass (2 smoke + 12 integration)
+- ✅ 0 failures, 0 errors
+- ✅ ≥85% coverage on tests/mcp/
+- ✅ All quality gates pass
+- ✅ Build succeeds
+- ✅ No high-severity vulnerabilities
 
 ---
 
-## Exit Criteria
+## Acceptance Tests to Add
 
-### Required (Must Pass)
-- ✅ **AC1:** `ruff check .` → 0 errors
-- ✅ **AC2:** `mypy src/mcp` → < 10 errors (documented)
-- ✅ **AC3:** `pytest -q` → 3/3 tests pass
-- ✅ **AC4:** `black --check .` → pass
-- ✅ **AC5:** `python -m build` → success
-- ✅ **AC6:** `pip-audit` → no high-severity
-- ✅ **AC7:** No ruff config warnings
+**New Integration Test Files:**
+1. `tests/mcp/conftest.py` - Pytest fixtures (qdrant_available, mcp_server, test_collection, cleanup_test_data)
+2. `tests/mcp/test_server_initialization.py` - 4 tests for server initialization
+3. `tests/mcp/test_memory_operations.py` - 5 tests for memory CRUD
+4. `tests/mcp/test_policy_system.py` - 3 tests for policy system
 
-### Optional (Nice to Have)
-- ⚪ **Coverage:** ≥ 85% (mdnotes already at 100%)
-- ⚪ **Bandit:** No high-severity (some subprocess warnings acceptable)
-- ⚪ **Type hint coverage:** ≥ 90% of public functions
-
-### Blockers (Fail Fast)
-- ❌ **Any test regression:** Immediate rollback
-- ❌ **MCP imports break:** Immediate rollback
-- ❌ **Build fails:** Immediate rollback
+**Total New Tests:** 12 integration tests
 
 ---
 
-## Validation Procedure
+## Performance/Benchmark Setup
 
-### Step-by-Step Validation (For Tester)
+**Target:** Integration tests complete in <30 seconds
 
-1. **Environment Setup**
-   ```bash
-   cd /media/hannesn/storage/Code/MCPLocalLLM
-   git checkout feat/W005-step-01-quality-gates
-   pip install -e .[dev]
-   ```
+**Measurement:**
+```bash
+time pytest tests/mcp/ -v
+```
 
-2. **Run All Quality Gates**
-   ```bash
-   black --check . > test_results/ac4_black.txt 2>&1
-   ruff check . > test_results/ac1_ruff.txt 2>&1
-   mypy src/mdnotes > test_results/ac3_mypy_mdnotes.txt 2>&1
-   mypy src/mcp > test_results/ac2_mypy_mcp.txt 2>&1
-   pytest -q > test_results/ac3_pytest.txt 2>&1
-   python -m build > test_results/ac5_build.txt 2>&1
-   pip-audit > test_results/ac6_security.txt 2>&1
-   ```
-
-3. **Verify Each AC**
-   - AC1: Check `test_results/ac1_ruff.txt` → "All checks passed!"
-   - AC2: Check `test_results/ac2_mypy_mcp.txt` → < 10 errors
-   - AC3: Check `test_results/ac3_pytest.txt` → "3 passed"
-   - AC4: Check `test_results/ac4_black.txt` → "would be left unchanged"
-   - AC5: Check `test_results/ac5_build.txt` → "Successfully built"
-   - AC6: Check `test_results/ac6_security.txt` → "No vulnerabilities"
-   - AC7: Check `test_results/ac1_ruff.txt` → No "warning:" lines
-
-4. **Manual Spot Checks**
-   - Open 3 random MCP files → Verify type annotations present
-   - Run MCP imports → Verify no errors
-   - Check code readability → Verify types improve, not obscure
-
-5. **Generate Test Report**
-   ```bash
-   cat > test_results/W005_VALIDATION_REPORT.md << 'EOF'
-   # W005 Validation Report
-   
-   ## Summary
-   - **AC1 (Ruff):** PASS/FAIL
-   - **AC2 (Mypy):** PASS/FAIL (X errors remaining)
-   - **AC3 (Tests):** PASS/FAIL
-   - **AC4 (Black):** PASS/FAIL
-   - **AC5 (Build):** PASS/FAIL
-   - **AC6 (Security):** PASS/FAIL
-   - **AC7 (Config):** PASS/FAIL
-   
-   ## Details
-   [Include error counts, notable issues, edge cases]
-   
-   ## Decision: APPROVE / NEEDS_ADAPT / ROLLBACK
-   EOF
-   ```
+**Acceptable Range:** 5-30 seconds (depending on Qdrant startup time)
 
 ---
 
-## Success Criteria Summary
+## Test Plan Complete
 
-**W005 is DONE when:**
-1. ✅ All 7 ACs pass
-2. ✅ Zero regressions in existing tests
-3. ✅ All MCP imports work
-4. ✅ Build succeeds
-5. ✅ < 10 mypy errors (documented)
-6. ✅ 0 ruff errors
-7. ✅ All quality gates green
-
-**Estimated Test Time:** 45 minutes (automated tests + manual validation)
+Tester (W006-T01) should validate all 10 acceptance criteria using the commands above. All ACs must pass before W006 can be marked "ready for integrator".
