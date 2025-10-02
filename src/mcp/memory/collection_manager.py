@@ -7,9 +7,10 @@ of concerns.
 """
 
 import logging
-from typing import List
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
+
 from ..config import Config
 
 logger = logging.getLogger(__name__)

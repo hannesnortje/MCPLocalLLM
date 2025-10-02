@@ -6,14 +6,14 @@ analysis, and processing workflows with AI enhancement capabilities.
 Extracted from monolithic tool_definitions.py for better maintainability.
 """
 
-from typing import Dict, Any, List
+from typing import Any
 
 
 class MarkdownTools:
     """Markdown content processing and analysis tools."""
 
     @staticmethod
-    def get_tools() -> List[Dict[str, Any]]:
+    def get_tools() -> list[dict[str, Any]]:
         """Get markdown processing tool definitions."""
         return [
             {

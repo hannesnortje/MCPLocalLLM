@@ -8,10 +8,10 @@ of concerns.
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any
+
 from qdrant_client import QdrantClient
-from qdrant_client.models import PointStruct, Filter, FieldCondition, Range
-from ..config import Config
+from qdrant_client.models import FieldCondition, Filter, PointStruct, Range
 
 logger = logging.getLogger(__name__)
 
@@ -28,9 +28,9 @@ class VectorOperations:
         self,
         content: str,
         collection: str,
-        metadata: Optional[Dict[str, Any]] = None,
-        content_hash: Optional[str] = None,
-    ) -> Dict[str, Any]:
+        metadata: dict[str, Any] | None = None,
+        content_hash: str | None = None,
+    ) -> dict[str, Any]:
         """Add content to specified memory collection."""
         try:
             if metadata is None:
@@ -69,8 +69,8 @@ class VectorOperations:
         collection: str,
         limit: int = 10,
         min_score: float = 0.3,
-        filters: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        filters: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Query memory collection for relevant content."""
         try:
             # Generate query embedding
@@ -126,9 +126,9 @@ class VectorOperations:
         content: str,
         collection: str,
         similarity_threshold: float = 0.95,
-        metadata_filters: Optional[Dict[str, Any]] = None,
+        metadata_filters: dict[str, Any] | None = None,
         check_hash_first: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Check for duplicate content using similarity search."""
         try:
             results = {"is_duplicate": False, "similar_content": []}
@@ -186,7 +186,7 @@ class VectorOperations:
             return {"is_duplicate": False, "error": str(e)}
 
     def async_check_duplicate(
-        self, content: str, collection: str, metadata_filters: Optional[Dict[str, Any]] = None
+        self, content: str, collection: str, metadata_filters: dict[str, Any] | None = None
     ) -> bool:
         """Simple duplicate check by content hash."""
         try:
@@ -200,7 +200,7 @@ class VectorOperations:
             logger.error(f"❌ Duplicate check failed: {e}")
             return False
 
-    def async_delete_content(self, content_hash: str, collection: str) -> Dict[str, Any]:
+    def async_delete_content(self, content_hash: str, collection: str) -> dict[str, Any]:
         """Delete content from collection by hash."""
         try:
             self.client.delete(collection_name=collection, points_selector=[content_hash])
@@ -212,7 +212,7 @@ class VectorOperations:
             logger.error(f"❌ Failed to delete content: {e}")
             return {"success": False, "error": str(e)}
 
-    def async_get_collection_info(self, collection: str) -> Dict[str, Any]:
+    def async_get_collection_info(self, collection: str) -> dict[str, Any]:
         """Get information about a collection."""
         try:
             info = self.client.get_collection(collection)

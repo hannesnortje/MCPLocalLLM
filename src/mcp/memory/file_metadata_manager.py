@@ -8,9 +8,11 @@ of concerns.
 
 import logging
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct
+
 from ..config import Config
 
 logger = logging.getLogger(__name__)
@@ -32,8 +34,8 @@ class FileMetadataManager:
         processing_status: str = "processed",
         chunks_created: int = 0,
         processing_time: float = 0.0,
-        additional_metadata: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        additional_metadata: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Add file processing metadata to tracking collection."""
         try:
             if additional_metadata is None:
@@ -66,7 +68,7 @@ class FileMetadataManager:
             logger.error(f"❌ Failed to add file metadata: {e}")
             return {"success": False, "error": str(e)}
 
-    def get_file_metadata(self, file_path: str) -> Optional[Dict[str, Any]]:
+    def get_file_metadata(self, file_path: str) -> dict[str, Any] | None:
         """Get file metadata by file path."""
         try:
             # Search by file path in metadata
@@ -111,8 +113,8 @@ class FileMetadataManager:
             return False
 
     def update_file_status(
-        self, file_hash: str, status: str, additional_metadata: Optional[Dict[str, Any]] = None
-    ) -> Dict[str, Any]:
+        self, file_hash: str, status: str, additional_metadata: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Update file processing status."""
         try:
             # Get current metadata
@@ -148,8 +150,8 @@ class FileMetadataManager:
             return {"success": False, "error": str(e)}
 
     def list_processed_files(
-        self, status_filter: Optional[str] = None, limit: int = 100
-    ) -> Dict[str, Any]:
+        self, status_filter: str | None = None, limit: int = 100
+    ) -> dict[str, Any]:
         """List processed files with optional status filter."""
         try:
             result = self.client.scroll(
@@ -169,7 +171,7 @@ class FileMetadataManager:
             logger.error(f"❌ Failed to list processed files: {e}")
             return {"success": False, "error": str(e)}
 
-    def delete_file_metadata(self, file_hash: str) -> Dict[str, Any]:
+    def delete_file_metadata(self, file_hash: str) -> dict[str, Any]:
         """Delete file metadata by hash."""
         try:
             self.client.delete(

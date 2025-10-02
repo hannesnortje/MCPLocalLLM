@@ -6,14 +6,14 @@ adding content to different memory types and querying stored information.
 Extracted from monolithic tool_definitions.py for better maintainability.
 """
 
-from typing import Dict, Any, List
+from typing import Any
 
 
 class CoreMemoryTools:
     """Core memory management tools (legacy compatibility)."""
 
     @staticmethod
-    def get_tools() -> List[Dict[str, Any]]:
+    def get_tools() -> list[dict[str, Any]]:
         """Get core memory management tool definitions."""
         return [
             {

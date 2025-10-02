@@ -1,7 +1,7 @@
 """Configuration management for MCP Memory Server."""
 
 import os
-from typing import Optional
+
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -14,7 +14,7 @@ class Config:
     # Qdrant Configuration
     QDRANT_HOST: str = os.getenv("QDRANT_HOST", "localhost")
     QDRANT_PORT: int = int(os.getenv("QDRANT_PORT", "6333"))
-    QDRANT_API_KEY: Optional[str] = os.getenv("QDRANT_API_KEY")
+    QDRANT_API_KEY: str | None = os.getenv("QDRANT_API_KEY")
 
     # Embedding Model Configuration
     EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2")
@@ -53,7 +53,7 @@ class Config:
     ]
 
     @classmethod
-    def get_collection_name(cls, memory_type: str, agent_id: Optional[str] = None) -> str:
+    def get_collection_name(cls, memory_type: str, agent_id: str | None = None) -> str:
         """Get the collection name for a specific memory type and agent."""
         if memory_type == "global":
             return cls.GLOBAL_MEMORY_COLLECTION

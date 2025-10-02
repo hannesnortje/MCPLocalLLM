@@ -5,16 +5,15 @@ Handles Docker container startup, health checks, and service management.
 
 import subprocess
 import time
-from typing import Optional
 
 from .server_config import (
-    QDRANT_HEALTH_ENDPOINT,
-    QDRANT_DOCKER_IMAGE,
-    QDRANT_CONTAINER_NAME,
-    QDRANT_DOCKER_PORTS,
     DOCKER_COMMAND_TIMEOUT,
-    QDRANT_STARTUP_TIMEOUT,
     HEALTH_CHECK_TIMEOUT,
+    QDRANT_CONTAINER_NAME,
+    QDRANT_DOCKER_IMAGE,
+    QDRANT_DOCKER_PORTS,
+    QDRANT_HEALTH_ENDPOINT,
+    QDRANT_STARTUP_TIMEOUT,
     get_logger,
 )
 
@@ -45,7 +44,7 @@ def is_docker_available() -> bool:
         return False
 
 
-def _check_existing_container() -> Optional[str]:
+def _check_existing_container() -> str | None:
     """Check if Qdrant container exists and return its status."""
     try:
         result = subprocess.run(

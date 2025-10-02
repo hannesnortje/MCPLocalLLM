@@ -3,9 +3,9 @@ Core agent prompt handlers for MCP Memory Server.
 Handles agent startup, initialization, and role-specific prompts.
 """
 
-from datetime import datetime
-from typing import Dict, Any
 import uuid
+from datetime import datetime
+from typing import Any
 
 try:
     from ..server_config import get_logger
@@ -101,7 +101,7 @@ class CoreAgentPrompts:
             },
         ]
 
-    async def get_prompt(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def get_prompt(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Get a core agent prompt by name."""
         if name == "agent_startup":
             return await self._get_agent_startup_prompt(arguments)
@@ -115,7 +115,7 @@ class CoreAgentPrompts:
                 "content": [{"type": "text", "text": f"Unknown core agent prompt: {name}"}],
             }
 
-    async def _get_agent_startup_prompt(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def _get_agent_startup_prompt(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Generate comprehensive agent startup prompt."""
         try:
             # Extract and validate arguments
@@ -286,8 +286,8 @@ Your operations are governed by the **MCP Memory Server Policy Framework**:
             }
 
     async def _get_development_agent_startup_prompt(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Generate development agent startup prompt (alias)."""
         # Set development-specific defaults
         dev_arguments = {
@@ -297,7 +297,7 @@ Your operations are governed by the **MCP Memory Server Policy Framework**:
         }
         return await self._get_agent_startup_prompt(dev_arguments)
 
-    async def _get_testing_agent_startup_prompt(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def _get_testing_agent_startup_prompt(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Generate testing agent startup prompt (alias)."""
         # Set testing-specific defaults
         test_arguments = {

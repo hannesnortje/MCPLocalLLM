@@ -5,16 +5,16 @@ Enhanced with production-grade error handling and monitoring.
 """
 
 import json
-from typing import Dict, Any, List, Optional
+from typing import Any
 
-from .server_config import get_logger
-from .qdrant_manager import ensure_qdrant_running
-from .tool_handlers import ToolHandlers
-from .resource_handlers import ResourceHandlers
-from .prompt_handlers import PromptHandlers
-from .tool_definitions import MemoryToolDefinitions
 from .mcp_protocol_handler import MCPProtocolHandler
+from .prompt_handlers import PromptHandlers
+from .qdrant_manager import ensure_qdrant_running
+from .resource_handlers import ResourceHandlers
+from .server_config import get_logger
 from .system_health_monitor import SystemHealthMonitor
+from .tool_definitions import MemoryToolDefinitions
+from .tool_handlers import ToolHandlers
 
 logger = get_logger("mcp-server")
 
@@ -65,27 +65,27 @@ class MemoryMCPServer:
 
         logger.info("Memory MCP Server initialized")
 
-    def get_system_health(self) -> Dict[str, Any]:
+    def get_system_health(self) -> dict[str, Any]:
         """Get comprehensive system health information."""
         return self.health_monitor.get_system_health()
 
-    def get_available_tools(self) -> List[Dict[str, Any]]:
+    def get_available_tools(self) -> list[dict[str, Any]]:
         """Get list of available memory management tools."""
         if not self.memory_manager:
             return []
         return MemoryToolDefinitions.get_all_tools()
 
-    async def handle_tool_call(self, tool_name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_tool_call(self, tool_name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle a tool call and return the result."""
         return await self.tool_handlers.handle_tool_call(tool_name, arguments)
 
-    def get_available_resources(self) -> List[Dict[str, Any]]:
+    def get_available_resources(self) -> list[dict[str, Any]]:
         """Get list of available resources."""
         if not self.memory_manager:
             return []
         return self.resource_handlers.list_resources()
 
-    async def handle_resource_read(self, uri: str, params: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_resource_read(self, uri: str, params: dict[str, Any]) -> dict[str, Any]:
         """Handle a resource read request."""
         try:
             # Read the resource with all parameters
@@ -111,7 +111,7 @@ class MemoryMCPServer:
             logger.error(f"Error reading resource {uri}: {e}")
             return {"error": {"code": -32603, "message": f"Failed to read resource: {str(e)}"}}
 
-    def get_available_prompts(self) -> List[Dict[str, Any]]:
+    def get_available_prompts(self) -> list[dict[str, Any]]:
         """Get list of available prompts."""
         # Return empty list in tools-only mode or if components not available
         if self.server_mode == "tools-only" or not self.memory_manager or not self.prompt_handlers:
@@ -119,8 +119,8 @@ class MemoryMCPServer:
         return self.prompt_handlers.list_prompts()
 
     async def handle_prompt_get(
-        self, name: str, arguments: Dict[str, Any] | None = None
-    ) -> Dict[str, Any]:
+        self, name: str, arguments: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
         """Handle a prompt get request."""
         # Return error in tools-only mode
         if self.server_mode == "tools-only" or not self.prompt_handlers:

@@ -6,14 +6,14 @@ help documentation, and usage instructions.
 Extracted from monolithic tool_definitions.py for better maintainability.
 """
 
-from typing import Dict, Any, List
+from typing import Any
 
 
 class GuidanceTools:
     """Guidance and help tools."""
 
     @staticmethod
-    def get_tools() -> List[Dict[str, Any]]:
+    def get_tools() -> list[dict[str, Any]]:
         """Get guidance and help tool definitions."""
         return [
             {

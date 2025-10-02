@@ -3,12 +3,11 @@ Core memory operation handlers for MCP Memory Server.
 Handles fundamental memory operations across global, learned, and agent memory layers.
 """
 
-from typing import Dict, Any
-from datetime import datetime
+from typing import Any
 
 try:
-    from ..server_config import get_logger
     from ..error_handler import error_handler
+    from ..server_config import get_logger
 except ImportError:
     # Fallback for standalone usage
     import logging
@@ -32,7 +31,7 @@ class CoreMemoryHandlers:
         """Initialize with a memory manager instance."""
         self.memory_manager = memory_manager
 
-    def handle_set_agent_context(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_set_agent_context(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle set_agent_context tool call."""
         agent_id = arguments.get("agent_id")
         context_type = arguments.get("context_type")
@@ -46,7 +45,7 @@ class CoreMemoryHandlers:
             ]
         }
 
-    def handle_add_to_global_memory(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_add_to_global_memory(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle add_to_global_memory tool call."""
         content = arguments.get("content")
         category = arguments.get("category", "general")
@@ -63,7 +62,7 @@ class CoreMemoryHandlers:
                 "content": [{"type": "text", "text": f"Failed to add to global memory: {error}"}]
             }
 
-    def handle_add_to_learned_memory(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_add_to_learned_memory(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle add_to_learned_memory tool call."""
         content = arguments.get("content")
         pattern_type = arguments.get("pattern_type", "insight")
@@ -80,7 +79,7 @@ class CoreMemoryHandlers:
                 "content": [{"type": "text", "text": f"Failed to add to learned memory: {error}"}]
             }
 
-    def handle_add_to_agent_memory(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_add_to_agent_memory(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle add_to_agent_memory tool call."""
         content = arguments.get("content")
         agent_id = arguments.get("agent_id")
@@ -97,7 +96,7 @@ class CoreMemoryHandlers:
                 "content": [{"type": "text", "text": f"Failed to add to agent memory: {error}"}]
             }
 
-    def handle_query_memory(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_query_memory(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle query_memory tool call."""
         query = arguments.get("query")
         memory_types = arguments.get("memory_types", ["global", "learned", "agent"])
@@ -152,7 +151,7 @@ class CoreMemoryHandlers:
 
         return {"content": [{"type": "text", "text": response_text}]}
 
-    def handle_compare_against_learned_memory(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_compare_against_learned_memory(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Handle compare_against_learned_memory tool call."""
         situation = arguments.get("situation")
         comparison_type = arguments.get("comparison_type", "pattern_match")

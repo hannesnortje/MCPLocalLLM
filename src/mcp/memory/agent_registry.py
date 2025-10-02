@@ -9,9 +9,11 @@ of concerns.
 import logging
 import uuid
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import PointStruct
+
 from ..config import Config
 
 logger = logging.getLogger(__name__)
@@ -54,9 +56,9 @@ class AgentRegistry:
         self,
         agent_id: str,
         agent_role: str = "general",
-        memory_layers: List[str] = None,
-        permissions: Dict[str, Any] = None,
-    ) -> Dict[str, Any]:
+        memory_layers: list[str] = None,
+        permissions: dict[str, Any] = None,
+    ) -> dict[str, Any]:
         """Register a new agent in the agent registry."""
         try:
             if memory_layers is None:
@@ -100,7 +102,7 @@ class AgentRegistry:
             logger.error(f"❌ Failed to register agent {agent_id}: {e}")
             return {"success": False, "error": f"Failed to register agent: {str(e)}"}
 
-    async def get_agent(self, agent_id: str) -> Dict[str, Any]:
+    async def get_agent(self, agent_id: str) -> dict[str, Any]:
         """Get agent information from registry."""
         try:
             result = self.client.retrieve(
@@ -119,8 +121,8 @@ class AgentRegistry:
             return {"success": False, "error": f"Failed to get agent: {str(e)}"}
 
     async def update_agent_permissions(
-        self, agent_id: str, permissions: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, agent_id: str, permissions: dict[str, Any]
+    ) -> dict[str, Any]:
         """Update agent permissions."""
         try:
             # Get current agent data
@@ -155,7 +157,7 @@ class AgentRegistry:
             logger.error(f"❌ Failed to update agent permissions: {e}")
             return {"success": False, "error": f"Failed to update permissions: {str(e)}"}
 
-    async def list_agents(self) -> Dict[str, Any]:
+    async def list_agents(self) -> dict[str, Any]:
         """List all registered agents."""
         try:
             # Get all points from agent registry
@@ -196,10 +198,10 @@ class AgentRegistry:
         self,
         agent_id: str,
         action: str,
-        context: Dict[str, Any],
+        context: dict[str, Any],
         outcome: str,
         store_as_learned: bool = False,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Log an agent action and optionally store as learned memory."""
         try:
             action_log = {

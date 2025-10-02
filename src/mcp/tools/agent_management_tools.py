@@ -6,14 +6,14 @@ permissions, and configuration operations.
 Extracted from monolithic tool_definitions.py for better maintainability.
 """
 
-from typing import Dict, Any, List
+from typing import Any
 
 
 class AgentManagementTools:
     """Agent lifecycle and permission management tools."""
 
     @staticmethod
-    def get_tools() -> List[Dict[str, Any]]:
+    def get_tools() -> list[dict[str, Any]]:
         """Get agent management tool definitions."""
         return [
             {

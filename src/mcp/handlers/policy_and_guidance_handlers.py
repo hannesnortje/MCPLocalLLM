@@ -3,14 +3,14 @@ Policy and guidance handlers for MCP Memory Server.
 Handles policy building, validation, violation logging, and guidance content.
 """
 
-from typing import Dict, Any
 import json
 from datetime import datetime
+from typing import Any
 
 try:
-    from ..server_config import get_logger
-    from ..policy_processor import PolicyProcessor
     from ..error_handler import error_handler
+    from ..policy_processor import PolicyProcessor
+    from ..server_config import get_logger
 except ImportError:
     # Fallback for standalone usage
     import logging
@@ -39,7 +39,7 @@ class PolicyAndGuidanceHandlers:
         self.memory_manager = memory_manager
         self.policy_processor = policy_processor or PolicyProcessor()
 
-    async def handle_build_policy_from_markdown(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_build_policy_from_markdown(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Build policy from markdown files in directory."""
         try:
             directory = arguments.get("directory", "./policy")
@@ -100,7 +100,7 @@ class PolicyAndGuidanceHandlers:
                 "content": [{"type": "text", "text": f"Error building policy: {str(e)}"}],
             }
 
-    async def handle_get_policy_rulebook(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_get_policy_rulebook(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Get the canonical policy rulebook."""
         try:
             version = arguments.get("version", "latest")
@@ -138,8 +138,8 @@ class PolicyAndGuidanceHandlers:
             }
 
     async def handle_validate_json_against_schema(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Validate JSON against policy schema requirements."""
         try:
             schema_name = arguments.get("schema_name")
@@ -189,7 +189,7 @@ class PolicyAndGuidanceHandlers:
                 "content": [{"type": "text", "text": f"Error validating JSON: {str(e)}"}],
             }
 
-    async def handle_log_policy_violation(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    async def handle_log_policy_violation(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Log a policy violation for compliance tracking."""
         try:
             agent_id = arguments.get("agent_id")
@@ -250,7 +250,7 @@ class PolicyAndGuidanceHandlers:
             }
 
     # Guidance Tools
-    def _get_guidance_content(self, guidance_type: str) -> Dict[str, Any]:
+    def _get_guidance_content(self, guidance_type: str) -> dict[str, Any]:
         """Get guidance content for a specific type."""
         guidance_map = {
             "memory_usage": (
@@ -375,60 +375,61 @@ class PolicyAndGuidanceHandlers:
         content = guidance_map.get(guidance_type, "Guidance content not found.")
         return {"content": [{"type": "text", "text": content}]}
 
-    def handle_get_memory_usage_guidance(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_get_memory_usage_guidance(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Provide guidance on effective memory usage patterns."""
         return self._get_guidance_content("memory_usage")
 
-    def handle_get_context_preservation_guidance(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_get_context_preservation_guidance(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Provide guidance on preserving context across sessions."""
         return self._get_guidance_content("context_preservation")
 
-    def handle_get_query_optimization_guidance(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_get_query_optimization_guidance(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Provide guidance on optimizing memory queries and retrieval."""
         return self._get_guidance_content("query_optimization")
 
     def handle_get_markdown_optimization_guidance(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Provide guidance on processing and storing markdown content."""
         return self._get_guidance_content("markdown_optimization")
 
-    def handle_get_duplicate_detection_guidance(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_get_duplicate_detection_guidance(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Provide guidance on detecting and handling duplicate content."""
         return self._get_guidance_content("duplicate_detection")
 
-    def handle_get_directory_processing_guidance(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_get_directory_processing_guidance(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Provide guidance on batch processing directories."""
         return self._get_guidance_content("directory_processing")
 
     def handle_get_memory_type_selection_guidance(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Provide guidance on selecting appropriate memory types."""
         return self._get_guidance_content("memory_type_selection")
 
     def handle_get_memory_type_suggestion_guidance(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Provide guidance for AI-powered memory type suggestions."""
         return self._get_guidance_content("memory_type_suggestion")
 
-    def handle_get_policy_compliance_guidance(self, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def handle_get_policy_compliance_guidance(self, arguments: dict[str, Any]) -> dict[str, Any]:
         """Provide guidance for following policy compliance."""
         return self._get_guidance_content("policy_compliance")
 
     def handle_get_policy_violation_recovery_guidance(
-        self, arguments: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        self, arguments: dict[str, Any]
+    ) -> dict[str, Any]:
         """Provide guidance for recovering from policy violations."""
         return self._get_guidance_content("policy_violation_recovery")
 
     # Policy Helper Methods
-    async def _store_policy_entries(self, entries: list) -> Dict[str, Any]:
+    async def _store_policy_entries(self, entries: list) -> dict[str, Any]:
         """Store policy entries in Qdrant."""
         try:
-            from ..config import Config
             import uuid
+
+            from ..config import Config
 
             success_count = 0
             warnings = []
@@ -491,11 +492,11 @@ class PolicyAndGuidanceHandlers:
             logger.error(f"Error querying policy memory: {e}")
             return []
 
-    def _build_rulebook_structure(self, policy_entries: list) -> Dict[str, Any]:
+    def _build_rulebook_structure(self, policy_entries: list) -> dict[str, Any]:
         """Build structured rulebook from policy entries."""
         try:
             # Group by section
-            sections: Dict[str, list] = {}
+            sections: dict[str, list] = {}
             policy_hash = None
 
             for entry in policy_entries:
@@ -551,7 +552,7 @@ class PolicyAndGuidanceHandlers:
 
     def _validate_json_structure(
         self, candidate_json: str, schema_name: str, required_sections: list
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate JSON structure against policy requirements."""
         try:
             # Parse JSON
@@ -593,11 +594,12 @@ class PolicyAndGuidanceHandlers:
         except Exception:
             return "medium"
 
-    async def _store_policy_violation(self, violation_entry: Dict[str, Any]) -> Dict[str, Any]:
+    async def _store_policy_violation(self, violation_entry: dict[str, Any]) -> dict[str, Any]:
         """Store policy violation in violations collection."""
         try:
-            from ..config import Config
             import uuid
+
+            from ..config import Config
 
             # Create vector embedding for the violation context
             context_text = f"{violation_entry['rule_id']} " f"{violation_entry.get('context', '')}"

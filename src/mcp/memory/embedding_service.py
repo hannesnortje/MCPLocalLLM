@@ -7,8 +7,9 @@ extracted from the monolithic memory_manager.py for better separation of concern
 
 import hashlib
 import logging
-from typing import List
+
 from sentence_transformers import SentenceTransformer
+
 from ..config import Config
 
 logger = logging.getLogger(__name__)
@@ -31,7 +32,7 @@ class EmbeddingService:
             logger.error(f"❌ Failed to initialize embedding model: {e}")
             raise
 
-    def _embed_text(self, text: str) -> List[float]:
+    def _embed_text(self, text: str) -> list[float]:
         """Generate embeddings for text content."""
         if not self.embedding_model:
             raise ValueError("Embedding model not initialized")
@@ -55,7 +56,7 @@ class EmbeddingService:
             logger.error(f"❌ Failed to generate content hash: {e}")
             raise
 
-    def embed_text(self, text: str) -> List[float]:
+    def embed_text(self, text: str) -> list[float]:
         """Public interface for text embedding."""
         return self._embed_text(text)
 

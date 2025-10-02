@@ -6,14 +6,14 @@ batch operations, and directory-level processing workflows.
 Extracted from monolithic tool_definitions.py for better maintainability.
 """
 
-from typing import Dict, Any, List
+from typing import Any
 
 
 class BatchTools:
     """Batch processing and pipeline tools."""
 
     @staticmethod
-    def get_tools() -> List[Dict[str, Any]]:
+    def get_tools() -> list[dict[str, Any]]:
         """Get batch processing tool definitions."""
         return [
             {

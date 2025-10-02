@@ -4,7 +4,7 @@ Handles policy compliance guidance, violation recovery, and checklist prompts.
 """
 
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any
 
 try:
     from ..server_config import get_logger
@@ -45,7 +45,7 @@ class PolicyCompliancePrompts:
             },
         ]
 
-    def get_prompt(self, name: str, arguments: Dict[str, Any]) -> Dict[str, Any]:
+    def get_prompt(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Get a policy compliance prompt by name."""
         method_map = {
             "final_checklist": self._get_final_checklist_prompt,
@@ -61,7 +61,7 @@ class PolicyCompliancePrompts:
                 "content": [{"type": "text", "text": f"Unknown policy compliance prompt: {name}"}],
             }
 
-    def _get_final_checklist_prompt(self) -> Dict[str, Any]:
+    def _get_final_checklist_prompt(self) -> dict[str, Any]:
         """Pre-finalization policy compliance checklist."""
         content = """# Final Checklist - Policy Compliance
 
@@ -219,7 +219,7 @@ class PolicyCompliancePrompts:
             },
         }
 
-    def _get_policy_compliance_guide_prompt(self) -> Dict[str, Any]:
+    def _get_policy_compliance_guide_prompt(self) -> dict[str, Any]:
         """Comprehensive guide for following the policy rulebook."""
         content = """# Policy Compliance Guide
 
@@ -403,7 +403,7 @@ continuous attention to both letter and spirit of policies*"""
             },
         }
 
-    def _get_policy_violation_recovery_prompt(self) -> Dict[str, Any]:
+    def _get_policy_violation_recovery_prompt(self) -> dict[str, Any]:
         """Recovery procedures when policy conflicts arise."""
         content = """# Policy Violation Recovery Procedures
 
