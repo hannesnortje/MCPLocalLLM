@@ -356,3 +356,36 @@ When completing work, each agent MUST:
 **Report:** [.oodatcaa/work/reports/W006/tester_W006-B01.md](reports/W006/tester_W006-B01.md)
 
 ---
+
+### W006-B01: Test Infrastructure + Server Tests + Memory CRUD — Refiner (Iteration 2)
+**Date:** 2025-10-03T13:30:00+00:00  
+**Status:** adapting → ready  
+**Duration:** 45 minutes  
+**Agent:** agent-refiner-A  
+
+**Summary:** Successfully fixed all API mismatch issues identified by Tester in W006-B01 integration tests. Applied 10 API corrections across 2 test files, updated tool names (`store_memory` → `add_to_global_memory`, `search_memories` → `query_memory`) and response keys (`status` → `overall_status`). Achieved 100% fix rate: 2 failures → 0 failures, 6 tests passing, 3 tests skipping gracefully (update/delete tools not implemented).
+
+**Key Actions:**
+- Investigated actual MCP API via source code (`core_memory_tools.py`, `system_health_monitor.py`)
+- Applied 10 API corrections: 5× store_memory→add_to_global_memory, 4× search_memories→query_memory, 1× status→overall_status
+- Updated test assertions to handle MCP protocol response format (`{'content': [...]}``)
+- Ran quality gates: Black ✅, Ruff ✅, Tests 6 passed/3 skipped ✅
+- Committed changes with descriptive message (commit `5f051aa`)
+
+**Key Metrics:**
+- **Files Changed:** 2 files (84 lines: 41 insertions, 43 deletions)
+- **API Corrections:** 10 total corrections applied
+- **Test Results Before:** 2 FAILED, 4 PASSED, 3 SKIPPED
+- **Test Results After:** 6 PASSED, 3 SKIPPED (✅ 100% fix rate)
+- **Test Execution Time:** 19.21 seconds (< 30s requirement)
+- **Regressions:** 0 (smoke tests still pass)
+
+**Decision:** Quick fix (not rollback) - Test infrastructure was excellent, only API name corrections needed. Completed in 45 minutes vs estimated 40 minutes (on target).
+
+**Impact:** W006-B01 READY for Tester re-validation - expect all ACs to pass
+
+**Next:** Tester (W006-B01 re-validation) to verify all 10 ACs pass
+
+**Report:** [.oodatcaa/work/reports/W006/refiner_W006-B01_iter2.md](reports/W006/refiner_W006-B01_iter2.md)
+
+---
