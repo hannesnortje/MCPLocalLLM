@@ -254,7 +254,7 @@
       "title": "Adapt MCP for Training Use Case",
       "type": "Story",
       "complexity": "M",
-      "status": "ready_for_integrator",
+      "status": "done",
       "priority": 4,
       "agent": "integrator",
       "lease": null,
@@ -264,14 +264,17 @@
       "objective_link": "MCP Integration (Critical) → Clean and adapt",
       "test_failures": "NEGOTIATED: 8/10 ACs ACCEPTED. ✅AC1(43 ruff-ACCEPTED), ✅AC4(mypy-DEFERRED). All critical ACs pass.",
       "adaptation_notes": "3 iterations: Critical fix→W002 complete→Black fix. APPROVED: 8/10 ACs (80%), 88.97% error reduction, zero regressions, all MCP functional",
-      "negotiation_decision": "APPROVED for integration. AC1: 43 errors acceptable (88.97% reduction). AC4: Mypy deferred to future iteration. Rationale: All critical functionality works, DoD alignment, pragmatic delivery."
+      "negotiation_decision": "APPROVED for integration. AC1: 43 errors acceptable (88.97% reduction). AC4: Mypy deferred to future iteration. Rationale: All critical functionality works, DoD alignment, pragmatic delivery.",
+      "completed_at": "2025-10-02T23:45:00+02:00",
+      "merged_commit": "ea38ca8",
+      "tag": "W004-complete"
     },
      {
        "id": "W004-B01",
        "title": "W004 Steps 1-3: Setup + Automated Fixes + Manual Fixes",
        "type": "Implementation",
        "complexity": "S",
-       "status": "ready_for_integrator",
+       "status": "done",
        "priority": 4,
        "agent": "builder",
        "lease": null,
@@ -279,14 +282,15 @@
        "objective": "OBJ-2025-002",
        "sprint": "1",
        "parent_task": "W004",
-       "plan_step": "1-3"
+       "plan_step": "1-3",
+       "completed_at": "2025-10-02T23:45:00+02:00"
      },
      {
        "id": "W004-B02",
        "title": "W004 Steps 4-5: Type Annotations + Remove UI",
        "type": "Implementation",
        "complexity": "M",
-       "status": "ready_for_integrator",
+       "status": "done",
        "priority": 4,
        "agent": "builder",
        "lease": null,
@@ -294,14 +298,15 @@
        "objective": "OBJ-2025-002",
        "sprint": "1",
        "parent_task": "W004",
-       "plan_step": "4-5"
+       "plan_step": "4-5",
+       "completed_at": "2025-10-02T23:45:00+02:00"
      },
      {
        "id": "W004-B03",
        "title": "W004 Steps 6-8: Verify + Quality Gates + Commit",
        "type": "Implementation",
        "complexity": "S",
-       "status": "ready_for_integrator",
+       "status": "done",
        "priority": 4,
        "agent": "builder",
        "lease": null,
@@ -309,14 +314,15 @@
        "objective": "OBJ-2025-002",
        "sprint": "1",
        "parent_task": "W004",
-       "plan_step": "6-8"
+       "plan_step": "6-8",
+       "completed_at": "2025-10-02T23:45:00+02:00"
      },
     {
       "id": "W004-T01",
       "title": "W004 Testing: Verify Code Quality and Functionality",
       "type": "Testing",
       "complexity": "S",
-      "status": "ready_for_integrator",
+      "status": "done",
       "priority": 4,
       "agent": "tester",
       "lease": null,
@@ -324,7 +330,8 @@
       "objective": "OBJ-2025-002",
       "sprint": "1",
       "parent_task": "W004",
-      "notes": "NEGOTIATED & APPROVED: 8/10 ACs PASS (80%). ✅AC1(43 ruff-ACCEPTED), ✅AC4(mypy-DEFERRED). All critical ACs pass."
+      "notes": "NEGOTIATED & APPROVED: 8/10 ACs PASS (80%). ✅AC1(43 ruff-ACCEPTED), ✅AC4(mypy-DEFERRED). All critical ACs pass.",
+      "completed_at": "2025-10-02T23:45:00+02:00"
     },
     {
       "id": "W005",
@@ -385,13 +392,13 @@
   ],
            "metadata": {
              "created": "2025-10-01T00:00:00Z",
-             "updated": "2025-10-02T23:00:00+02:00",
+             "updated": "2025-10-02T23:45:00+02:00",
              "sprint_goal": "MCP Server Foundation - Migrate and integrate MCP infrastructure",
              "total_tasks": 24,
              "story_tasks": 8,
              "builder_tasks": 12,
              "tester_tasks": 4,
-             "completed_tasks": 15,
+             "completed_tasks": 20,
              "ready_tasks": 0,
              "blocked_tasks": 0,
              "in_progress_tasks": 0,
@@ -400,8 +407,8 @@
              "needs_adapt_tasks": 0,
              "adapting_tasks": 0,
              "adapted_tasks": 0,
-             "ready_for_integrator_tasks": 5,
+             "ready_for_integrator_tasks": 0,
              "integrating_tasks": 0,
-             "done_tasks": 15
+             "done_tasks": 20
            }
 }
