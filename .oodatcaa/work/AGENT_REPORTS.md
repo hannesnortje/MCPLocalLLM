@@ -142,3 +142,27 @@ When completing work, each agent MUST:
 
 *Last Updated: 2025-10-02T23:45:00+02:00*
 
+
+### W005: Python Tooling & Quality Gates — Planner
+**Date:** 2025-10-03T00:15:00+02:00  
+**Status:** needs_plan → planning_complete  
+**Duration:** 15 minutes  
+**Agent:** agent-planner-A  
+
+**Summary:** Created comprehensive plan to achieve 100% quality gate compliance. Analyzed current state (43 ruff, 496 mypy errors), evaluated 3 alternatives, selected pragmatic systematic approach targeting 98% error reduction in 6 hours. Created 8-step implementation plan broken into 3 builder subtasks + 1 tester subtask.
+
+**Key Deliverables:**
+- AGENT_PLAN.md: 8 steps, 7 ACs, ~400 lines
+- TEST_PLAN.md: 10 test commands, 7 AC tests, ~350 lines
+- 4 subtasks: W005-B01 (ready), W005-B02/B03/T01 (blocked)
+
+**Key Metrics:**
+- Ruff target: 43 → 0 (100% reduction)
+- Mypy target: 496 → < 10 (98% reduction)
+- Estimated implementation: 6 hours
+
+**Next:** Builder (W005-B01) - Steps 1-4: Cleanup + Auto-Fixes + Type Stubs + Return Types
+
+**Report:** [.oodatcaa/work/reports/W005/planner.md](reports/W005/planner.md)
+
+---

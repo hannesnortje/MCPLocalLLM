@@ -121,7 +121,7 @@ class MCPLauncher:
 
                 import requests  # type: ignore
 
-                for i in range(10):  # Try for 10 seconds
+                for _i in range(10):  # Try for 10 seconds
                     try:
                         response = requests.get("http://localhost:6333/", timeout=1)
                         if response.status_code == 200:
