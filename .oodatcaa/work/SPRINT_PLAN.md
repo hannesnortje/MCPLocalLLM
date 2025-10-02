@@ -142,11 +142,19 @@
 - Quality: 362 automated fixes + manual cleanup ✅
 
 **Builder → W004-B02: Type Annotations + Remove UI**
-- Status: In Progress (second W004 build task)
+- Status: Awaiting Test (completed)
 - Assigned: 2025-10-02T19:15:00+02:00
-- Dependencies: W004-B01 (satisfied)
-- Scope: Add return type annotations, generic type parameters, disable UI code
-- Next: W004-B03 will unblock upon B02 completion
+- Completed: 2025-10-02T19:30:00+02:00
+- Deliverables: Mypy configured for external deps, UI verified excluded, all gates pass
+- Quality: Pragmatic type handling approach ✅
+
+**Builder → W004-B03: Verify + Quality Gates + Commit**
+- Status: In Progress (final W004 build task)
+- Assigned: 2025-10-02T19:45:00+02:00
+- Dependencies: W004-B02 (satisfied)
+- Scope: Verify MCP functionality, run comprehensive quality gates, commit changes
+- Next: W004-T01 will unblock upon B03 completion
+- Note: Builder WIP at capacity (3/3)
 
 ### Pending Assignment (blocked by dependencies)
 - W005: Python Tooling & Quality Gates (depends on W004)
