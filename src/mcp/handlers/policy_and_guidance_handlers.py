@@ -463,7 +463,9 @@ class PolicyAndGuidanceHandlers:
         except Exception as e:
             return {"success": False, "error": str(e)}
 
-    async def _query_policy_memory(self, version: str = "latest", limit: int = 1000) -> list[dict[str, Any]]:
+    async def _query_policy_memory(
+        self, version: str = "latest", limit: int = 1000
+    ) -> list[dict[str, Any]]:
         """Query policy memory collection."""
         try:
             from ..config import Config
