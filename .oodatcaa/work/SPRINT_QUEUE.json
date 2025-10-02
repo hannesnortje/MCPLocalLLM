@@ -471,15 +471,10 @@
       "title": "W006 Steps 4-6: Policy Tests + Regression Validation + Quality Gates",
       "type": "Implementation",
       "complexity": "S",
-      "status": "integrating",
+      "status": "done",
       "priority": 6,
       "agent": "integrator",
-      "lease": {
-        "agent": "integrator",
-        "acquired": "2025-10-03T14:55:00+00:00",
-        "ttl": 30,
-        "last_heartbeat": "2025-10-03T14:55:00+00:00"
-      },
+      "lease": null,
       "dependencies": ["W006-B01"],
       "objective": "OBJ-2025-002",
       "sprint": "1",
@@ -488,9 +483,12 @@
       "branch": "feat/W006-step-01-integration-tests",
       "completed_at": "2025-10-03T14:15:00+00:00",
       "commit": "aca31e3",
-      "notes": "Builder completed Steps 4-6: Policy tests (4 tests), regression validation (13 passed, 0 failed), quality gates (black, ruff, build all pass). All tests pass, zero regressions. Ready for Tester validation.",
+      "notes": "Builder completed Steps 4-6: Policy tests (4 tests), regression validation (13 passed, 0 failed), quality gates (black, ruff, build all pass). All tests pass, zero regressions. Integrator merged to main: a2dbf6e, tag W006-B02-complete, CHANGELOG +90 lines.",
       "test_result": "9/10 ACs PASS (90% success). All critical ACs pass: AC3 (4 policy tests), AC4 (zero regressions), AC5-7 (organization, performance, quality gates), AC9-10 (isolation, docs). AC8 (coverage) optional. 13/16 tests pass (3 skip expected). Performance 19.92s/18.32s < 30s. Zero issues found. APPROVED for integration.",
-      "test_completed_at": "2025-10-03T14:50:00+00:00"
+      "test_completed_at": "2025-10-03T14:50:00+00:00",
+      "merged_commit": "a2dbf6e",
+      "tag": "W006-B02-complete",
+      "integration_completed_at": "2025-10-03T15:25:00+00:00"
     },
     {
       "id": "W006-T01",
@@ -537,16 +535,16 @@
   ],
                            "metadata": {
                              "created": "2025-10-01T00:00:00Z",
-                             "updated": "2025-10-03T14:55:00+00:00",
+                             "updated": "2025-10-03T15:25:00+00:00",
                              "sprint_goal": "MCP Server Foundation - Migrate and integrate MCP infrastructure",
                              "total_tasks": 31,
                              "story_tasks": 8,
                              "builder_tasks": 17,
                              "tester_tasks": 6,
-                             "completed_tasks": 27,
+                             "completed_tasks": 28,
                              "ready_tasks": 0,
-                             "blocked_tasks": 1,
-                             "in_progress_tasks": 1,
+                             "blocked_tasks": 0,
+                             "in_progress_tasks": 0,
                              "planning_tasks": 0,
                              "planning_complete_tasks": 1,
                              "needs_plan_tasks": 2,
@@ -556,7 +554,7 @@
                              "adapting_tasks": 0,
                              "adapted_tasks": 2,
                              "ready_for_integrator_tasks": 0,
-                             "integrating_tasks": 1,
-                             "done_tasks": 26
+                             "integrating_tasks": 0,
+                             "done_tasks": 28
                            }
 }
