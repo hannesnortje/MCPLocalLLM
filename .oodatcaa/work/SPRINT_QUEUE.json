@@ -101,7 +101,7 @@
       "title": "Automatic Log Rotation System",
       "type": "Infra",
       "complexity": "M",
-      "status": "planning_complete",
+      "status": "done",
       "priority": 2,
       "agent": null,
       "lease": null,
@@ -109,7 +109,8 @@
       "objective": "SPRINT-2025-002",
       "sprint": "2",
       "objective_link": "Automatic Log Rotation Working",
-      "plan_completed": "2025-10-03T09:30:00+02:00"
+      "plan_completed": "2025-10-03T09:30:00+02:00",
+      "completed": "2025-10-03T12:30:00+02:00"
     },
     {
       "id": "P002-B01",
@@ -168,7 +169,7 @@
       "title": "P002 Testing: Verify All 9 ACs",
       "type": "Test",
       "complexity": "S",
-      "status": "blocked",
+      "status": "cancelled",
       "priority": 2,
       "agent": null,
       "lease": null,
@@ -177,7 +178,8 @@
       ],
       "objective": "SPRINT-2025-002",
       "sprint": "2",
-      "parent": "P002"
+      "parent": "P002",
+      "cancellation_reason": "Redundant - P002-B01 already tested (9/9 ACs PASS) and integrated. P002-B02 was verification-only."
     },
     {
       "id": "P003",
@@ -201,7 +203,7 @@
       "title": "P003 Step 1-3: Dashboard + Status JSON + Completion Script",
       "type": "Build",
       "complexity": "L",
-      "status": "ready",
+      "status": "ready_for_integrator",
       "priority": 3,
       "agent": null,
       "lease": null,
@@ -211,7 +213,16 @@
       "parent": "P003",
       "plan_steps": "1-3",
       "estimated_time": "195 min",
-      "branch": "feat/P003-step-01-sprint-dashboard"
+      "completed": "2025-10-03T19:18:00+02:00",
+      "branch": "feat/P003-step-01-sprint-dashboard",
+      "commits": [
+        "d9b4d42",
+        "65ac473",
+        "1eb5d6a",
+        "16bd9b5"
+      ],
+      "tested": "2025-10-03T19:32:00Z",
+      "test_result": "7/7 ACs PASS (100%). Performance: 0.199s dashboard, 0.021s complete (<5s target). Atomic operations verified. Zero regressions. Known: Sprint ID displays SPRINT-UNKNOWN (fix in P003-B02)."
     },
     {
       "id": "P003-B02",
@@ -270,7 +281,7 @@
       "title": "OODATCAA Loop Documentation & Visualization",
       "type": "Docs",
       "complexity": "L",
-      "status": "planning_complete",
+      "status": "done",
       "priority": 4,
       "agent": null,
       "lease": null,
@@ -278,7 +289,8 @@
       "objective": "SPRINT-2025-002",
       "sprint": "2",
       "objective_link": "OODATCAA Loop Documented & Visualized",
-      "plan_completed": "2025-10-03T10:08:00+02:00"
+      "plan_completed": "2025-10-03T10:08:00+02:00",
+      "completed": "2025-10-03T13:00:00+02:00"
     },
     {
       "id": "P004-B01",
@@ -304,7 +316,7 @@
       "title": "P004 Step 4-6: Policy + Metrics + Analysis",
       "type": "Build",
       "complexity": "M",
-      "status": "ready",
+      "status": "cancelled",
       "priority": 4,
       "agent": null,
       "lease": null,
@@ -315,7 +327,8 @@
       "sprint": "2",
       "parent": "P004",
       "plan_steps": "4-6",
-      "estimated_time": "210 min"
+      "estimated_time": "210 min",
+      "cancellation_reason": "Work completed and integrated in P004-B03. P004-B03 integration included all deliverables (B01+B02+B03 combined: 1,589 lines)."
     },
     {
       "id": "P004-B03",
@@ -348,7 +361,7 @@
       "title": "P004 Testing: Verify All 6 ACs",
       "type": "Test",
       "complexity": "M",
-      "status": "blocked",
+      "status": "cancelled",
       "priority": 4,
       "agent": null,
       "lease": null,
@@ -357,7 +370,8 @@
       ],
       "objective": "SPRINT-2025-002",
       "sprint": "2",
-      "parent": "P004"
+      "parent": "P004",
+      "cancellation_reason": "Redundant - P004-B03 integration already verified (zero regressions, all quality gates pass). P004 story 100% complete."
     },
     {
       "id": "P005",
@@ -417,7 +431,7 @@
   ],
   "metadata": {
     "created": "2025-10-03T08:45:00+02:00",
-    "updated": "2025-10-03T15:40:00+02:00",
+    "updated": "2025-10-03T19:35:00+02:00",
     "sprint_goal": "OODATCAA Process Improvement - Automate and enhance multi-agent development",
     "sprint_status": "in_progress",
     "total_tasks": 26,
@@ -427,16 +441,17 @@
     "infra_tasks": 3,
     "docs_tasks": 2,
     "quality_tasks": 2,
-    "completed_tasks": 3,
-    "ready_tasks": 3,
-    "blocked_tasks": 10,
+    "completed_tasks": 5,
+    "ready_tasks": 0,
+    "blocked_tasks": 7,
     "in_progress_tasks": 0,
     "planning_tasks": 1,
-    "planning_complete_tasks": 4,
+    "planning_complete_tasks": 2,
     "needs_plan_tasks": 2,
     "awaiting_test_tasks": 0,
-    "done_tasks": 2,
-    "ready_for_integrator_tasks": 1,
+    "done_tasks": 4,
+    "cancelled_tasks": 3,
+    "ready_for_integrator_tasks": 2,
     "integrating_tasks": 0,
     "sprint_2_start": "2025-10-03",
     "sprint_2_target_completion": "2025-10-10",
