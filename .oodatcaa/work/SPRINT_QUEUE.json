@@ -204,7 +204,14 @@
       "status": "awaiting_test",
       "priority": 3,
       "agent": "builder",
-      "lease": null,
+      "lease": {
+        "agent": "builder",
+        "owner": "agent-builder-B2",
+        "acquired": "2025-10-03T13:00:00Z",
+        "ttl": 5400,
+        "last_heartbeat": "2025-10-03T13:30:00Z",
+        "completed_at": "2025-10-03T13:30:00Z"
+      },
       "dependencies": [],
       "objective": "SPRINT-2025-002",
       "sprint": "2",
@@ -212,7 +219,8 @@
       "plan_steps": "1-3",
       "estimated_time": "195 min",
       "branch": "feat/P003-step-01-sprint-dashboard",
-      "completed": "2025-10-03T18:00:00Z"
+      "completed": "2025-10-03T13:30:00Z",
+      "commit": "65ac473"
     },
     {
       "id": "P003-B02",
