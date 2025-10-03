@@ -233,9 +233,9 @@
       "title": "P003 Step 4-6: Initialization Script + Makefile + Sprint ID Consistency",
       "type": "Build",
       "complexity": "M",
-      "status": "ready_for_integrator",
+      "status": "done",
       "priority": 3,
-      "agent": "builder",
+      "agent": "integrator",
       "lease": null,
       "dependencies": [
         "P003-B01"
@@ -246,9 +246,19 @@
       "plan_steps": "4-6",
       "estimated_time": "150 min",
       "completed": "2025-10-03T19:45:00Z",
+      "integration_completed_at": "2025-10-03T20:30:00+02:00",
       "branch": "feat/P003-step-02-sprint-init",
+      "commits": [
+        "57b5f35",
+        "8926294",
+        "a670ae5",
+        "1c4e3c3"
+      ],
+      "merged_commit": "aa28ffe",
+      "tag": "P003-B02-complete",
       "tested": "2025-10-03T19:59:00Z",
-      "test_result": "4/4 ACs PASS (100%). Sprint initialization script validated. Makefile integration complete. Sprint ID bug FIXED: dashboard now shows SPRINT-2025-002 (not SPRINT-UNKNOWN). Zero regressions."
+      "test_result": "4/4 ACs PASS (100%). Sprint initialization validated. Makefile integration complete. Sprint ID bug FIXED: dashboard now shows SPRINT-2025-002. Zero regressions.",
+      "notes": "Sprint Management system complete! Interactive wizard (299 lines), Makefile integration, Sprint ID fix. Zero adaptations needed. P003 story: 67% complete (B01 + B02 done)."
     },
     {
       "id": "P003-B03",
