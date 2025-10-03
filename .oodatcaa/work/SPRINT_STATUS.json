@@ -2,43 +2,18 @@
   "sprint_id": "SPRINT-2025-002",
   "sprint_number": 2,
   "status": "in_progress",
-  "started": "2025-10-03",
-  "target_completion": "2025-10-10",
+  "generated_at": "2025-10-03T19:59:53Z",
   "progress": {
     "total_tasks": 26,
-    "completed": 2,
+    "completed": 4,
     "in_progress": 0,
-    "ready": 3,
-    "blocked": 10,
-    "needs_plan": 2,
-    "percentage": 7
+    "ready": 2,
+    "blocked": 7,
+    "needs_plan": 3,
+    "planning": 0,
+    "awaiting_test": 0,
+    "percentage": 15
   },
-  "wip": {
-    "planner": {
-      "current": 1,
-      "limit": 1
-    },
-    "builder": {
-      "current": 0,
-      "limit": 3
-    },
-    "tester": {
-      "current": 0,
-      "limit": 2
-    },
-    "refiner": {
-      "current": 0,
-      "limit": 1
-    },
-    "integrator": {
-      "current": 0,
-      "limit": 1
-    }
-  },
-  "velocity": {
-    "days_elapsed": 1,
-    "tasks_per_day": 2,
-    "estimated_days_remaining": 12
-  },
-  "generated_at": "2025-10-03T19:16:26+0000"
+  "wip": {"planner":{"current":0,"limit":1},"builder":{"current":1,"limit":3},"tester":{"current":0,"limit":2},"refiner":{"current":0,"limit":1},"integrator":{"current":0,"limit":1}},
+  "exit_criteria": [{"name":"Agent Role Completeness","status":"needs_plan","progress":0},{"name":"Automatic Log Rotation Working","status":"done","progress":100},{"name":"Background Agent System Operational","status":"planning_complete","progress":25},{"name":"OODATCAA Loop Documented & Visualized","status":"done","progress":100},{"name":"Process Documentation Complete","status":"needs_plan","progress":0},{"name":"Quality Gates Maintained","status":"needs_plan","progress":0},{"name":"Sprint Management Enhanced","status":"planning_complete","progress":25}]
 }
