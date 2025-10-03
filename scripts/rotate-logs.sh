@@ -111,7 +111,7 @@ get_next_archive_num() {
     local pattern="${ARCHIVE_DIR}/${filename}_archive_*.md"
     local max_num=0
     
-    for file in ${pattern} 2>/dev/null; do
+    for file in ${pattern}; do
         if [ -f "$file" ]; then
             num=$(echo "$file" | grep -oP 'archive_\K\d+' || echo "0")
             if [ "$num" -gt "$max_num" ]; then
