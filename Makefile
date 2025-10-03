@@ -1,4 +1,4 @@
-.PHONY: fmt gates test check build audit ship tag rollback validate-env
+.PHONY: fmt gates test check build audit ship tag rollback validate-env loop-metrics
 
 validate-env:
 	python3 scripts/validate-env.py
@@ -33,4 +33,8 @@ tag:
 rollback:
 	@[ -n "$(TAG)" ] || (echo "Set TAG=pre/W123-YYYY-MM-DDTHH-MM-SS"; exit 1)
 	git switch main && git reset --hard $(TAG) && git push --force-with-lease
+
+# OODATCAA Loop Metrics
+loop-metrics:
+	@bash scripts/loop-metrics.sh
 
