@@ -1,305 +1,290 @@
-# W007: Configuration & Environment Setup — TEST PLAN
+# W008: Documentation Update — TEST PLAN
 
-**Task ID:** W007  
+**Task ID:** W008  
 **Test Plan Version:** 1.0  
-**Created:** 2025-10-03T15:50:00+00:00  
-**Tester:** TBD (W007-T01)  
+**Created:** 2025-10-03T19:40:00+00:00  
+**Tester:** TBD (W008-T01)  
 
 ---
 
 ## Test Objectives
 
-Verify that W007 Configuration & Environment Setup delivers a complete, functional setup experience for developers starting with the MCPLocalLLM project for training use case.
+Verify that W008 Documentation Update delivers comprehensive, professional documentation that completes Sprint 1 exit criteria and supports developer onboarding.
 
-**Primary Goal:** Ensure fresh environment setup is successful and well-documented  
-**Secondary Goal:** Verify zero regressions in existing MCP functionality  
-**Quality Goal:** All configuration files valid and properly documented  
+**Primary Goal:** Ensure README is complete with MCP integration overview, architecture, and migration story  
+**Secondary Goal:** Verify zero code changes (documentation-only)  
+**Sprint Goal:** Complete Sprint 1 final task and meet all exit criteria  
 
 ---
 
 ## Test Commands
 
-### Format Check
+### Quality Gates (Should All Pass with Zero Changes)
+
 ```bash
+# Format check (no formatting needed for docs)
 black --check .
-```
-**Expected:** All files formatted correctly OR minimal formatting changes
 
-### Lint Check
-```bash
+# Lint check (should maintain W007 baseline)
 ruff check .
-```
-**Expected:** Pass OR ≤28 errors (W005 baseline)
 
-### Type Check
-```bash
+# Type check (should maintain W007 baseline)
 mypy .
-```
-**Expected:** Pass OR ≤401 errors (W005 baseline)
 
-### Unit Tests
-```bash
+# Tests (should pass with zero changes)
 pytest -q
-```
-**Expected:** All tests pass (smoke + integration)
 
-### Integration Tests
-```bash
+# Integration tests (should maintain W006 baseline)
 pytest -q tests/mcp/
-```
-**Expected:** 10 passed, 3 skipped (W006 baseline maintained)
 
-### Build Test
-```bash
+# Build (should succeed)
 python -m build
-```
-**Expected:** Successfully built mdnotes-0.1.0 (wheel + sdist)
 
-### Security Audit
-```bash
+# Security (should pass)
 pip-audit
 ```
-**Expected:** No high-severity vulnerabilities
 
-### Environment Validation
-```bash
-make validate-env
-```
-**Expected:** All checks pass OR clear actionable error messages
-
-### Setup Script Test
-```bash
-./scripts/setup-dev.sh
-```
-**Expected:** Setup completes successfully, creates venv, dirs, .env
+**Expected:** All gates pass with same results as W007 baseline
 
 ---
 
 ## Acceptance Criteria Testing
 
-### AC1: `.env.example` File Created
+### AC1: MCP Integration Overview Section
 **Test Steps:**
-1. Verify file exists: `ls -la .env.example`
-2. Check file contents: `cat .env.example`
-3. Verify all config.py env vars present:
-   - QDRANT_HOST, QDRANT_PORT, QDRANT_API_KEY
-   - EMBEDDING_MODEL, EMBEDDING_DIMENSION
-   - CHUNK_SIZE, CHUNK_OVERLAP
-   - SIMILARITY_THRESHOLD, MAX_RESULTS
-   - DEFAULT_AGENT_ID, LOG_LEVEL
-   - POLICY_DIRECTORY
-4. Verify inline comments present for each variable
-5. Verify example values (not real secrets)
-6. Verify header comment explains purpose
+1. Open README.md
+2. Find section titled "MCP Integration" or "🔗 MCP Integration"
+3. Verify section location: After "Quick Start", before "Setup & Installation"
+4. Verify content includes:
+   - "What is MCP?" subsection
+   - "Why MCP?" or benefits subsection
+   - "Key Components" subsection
+   - Link to `docs/mcp/mcp-qdrant-reference-architecture.md`
+5. Verify length: 50-100 lines (reasonable overview)
+6. Verify clarity: Non-technical reader can understand MCP purpose
 
 **Pass Criteria:**
-- ✅ File exists at project root
-- ✅ All 11+ environment variables present
-- ✅ Each variable has inline comment
-- ✅ Example values appropriate (no secrets)
-- ✅ Header comment clear
+- ✅ Section exists in correct location
+- ✅ All required subsections present
+- ✅ Link to detailed MCP docs included
+- ✅ Length appropriate (50-100 lines)
+- ✅ Clear and concise writing
 
 ---
 
-### AC2: Docker Configuration Validated
+### AC2: Architecture Section
 **Test Steps:**
-1. Review docker-compose.yml: `cat docker-compose.yml`
-2. Verify Qdrant service:
-   - Image: `qdrant/qdrant:latest`
-   - Ports: 6333, 6334
-   - Volume: `qdrant_data:/qdrant/storage`
-   - Health check present
-3. Verify comments for training mode present
-4. Test docker-compose syntax: `docker-compose config`
+1. Open README.md
+2. Find section titled "Architecture" or "🏗 Architecture"
+3. Verify section location: After "MCP Integration", before "Development Commands"
+4. Verify content includes:
+   - Training workflow explanation
+   - How MCP enables training
+   - Component interaction (server, Qdrant, training pipeline)
+   - Data flow description or diagram
+   - Link to detailed architecture docs
+5. Verify length: 50-80 lines
+6. Verify clarity: Explains MCP role in training workflow
 
 **Pass Criteria:**
-- ✅ Qdrant service configured correctly
-- ✅ Volume mounts include ./data, ./logs, ./policy
-- ✅ Health checks working
-- ✅ Container names appropriate
-- ✅ Comments explain training mode
-- ✅ `docker-compose config` passes
+- ✅ Section exists in correct location
+- ✅ Training workflow explained
+- ✅ Component interactions clear
+- ✅ Link to detailed architecture included
+- ✅ Length appropriate (50-80 lines)
 
 ---
 
-### AC3: Config Files Adapted for Training
+### AC3: Migration Journey Documented
 **Test Steps:**
-1. Review config.example.yaml: `cat config.example.yaml`
-2. Verify training-specific settings:
-   - `server.name: "mcp-local-llm-training"` OR similar
-   - `qdrant.mode: "local"`
-   - `embedding.device: "cpu"`
-   - `markdown.chunk_size: 1000`
-   - `logging.level: "INFO"`
-3. Verify comments explain training choices
-4. Validate YAML syntax: `python -c "import yaml; yaml.safe_load(open('config.example.yaml'))"`
+1. Open README.md
+2. Find section titled "Sprint 1 Journey" or "Migration Journey" or similar
+3. Verify section location: After "Architecture" or near end (before "License")
+4. Verify content includes:
+   - W001-W007 summary (brief overview)
+   - Key achievements (files migrated, tests added, quality improvements)
+   - Reference to CHANGELOG.md for details
+5. Verify length: 30-50 lines (concise summary)
+6. Check CHANGELOG.md has detailed W001-W007 entries
 
 **Pass Criteria:**
-- ✅ Training-specific defaults present
-- ✅ CPU inference configured
-- ✅ Local Qdrant mode
-- ✅ Comments explain choices
-- ✅ YAML syntax valid
+- ✅ Migration journey section exists
+- ✅ W001-W007 summarized
+- ✅ Key achievements highlighted
+- ✅ CHANGELOG reference included
+- ✅ Length appropriate (30-50 lines)
 
 ---
 
-### AC4: Setup Script Functional
+### AC4: README Structure Improved
 **Test Steps:**
-1. Verify script exists and executable: `ls -la scripts/setup-dev.sh`
-2. Review script contents: `cat scripts/setup-dev.sh`
-3. Test script (dry-run or fresh clone):
-   ```bash
-   ./scripts/setup-dev.sh
-   ```
-4. Verify script actions:
-   - Creates venv directory
-   - Installs dependencies
-   - Creates data/, logs/ directories
-   - Copies .env.example → .env (if not exists)
-   - Checks Docker availability
-5. Verify clear output and next steps provided
+1. Open README.md
+2. Search for duplicate "Repository Structure" sections
+3. Verify only ONE "Repository Structure" section exists
+4. Search for "PYTemplate" references
+5. Verify all "PYTemplate" changed to "MCPLocalLLM"
+6. Verify section flow is logical:
+   - Introduction
+   - Quick Start
+   - MCP Integration (NEW)
+   - Setup & Installation
+   - Architecture (NEW)
+   - What Happens Next
+   - Repository Structure (single instance)
+   - Development Commands
+   - Autonomous Workflow
+   - Sprint 1 Journey (NEW)
+   - Additional Documentation (NEW)
+   - License
+7. Check for orphaned or confusing sections
 
 **Pass Criteria:**
-- ✅ Script exists and executable (`chmod +x`)
-- ✅ Script completes successfully
-- ✅ Venv created and dependencies installed
-- ✅ Directories created (data/, logs/)
-- ✅ .env copied if missing
-- ✅ Clear success message and next steps
+- ✅ No duplicate sections
+- ✅ All "PYTemplate" references fixed
+- ✅ Logical section flow
+- ✅ Clear section hierarchy (##, ###)
+- ✅ No orphaned sections
 
 ---
 
-### AC5: Environment Validation Tool
+### AC5: MCP Documentation Links
 **Test Steps:**
-1. Verify Makefile target: `grep validate-env Makefile`
-2. Verify script exists: `ls -la scripts/validate-env.py`
-3. Run validation: `make validate-env` OR `python scripts/validate-env.py`
-4. Verify checks performed:
-   - Python version (3.11-3.12)
-   - .env file exists
-   - Required directories exist (data/, logs/, policy/)
-   - Docker available (optional warning)
-   - Dependencies installed (optional)
-5. Verify clear success/failure output
+1. Open README.md
+2. Find section titled "Additional Documentation" or "📚 Additional Documentation"
+3. Verify section location: Near end (before "License")
+4. Verify links to docs/mcp/ files:
+   - `docs/mcp/API.md`
+   - `docs/mcp/DEPLOYMENT.md`
+   - `docs/mcp/mcp-qdrant-reference-architecture.md`
+   - `docs/mcp/TROUBLESHOOTING.md`
+   - Other MCP docs (PROMPT_EXAMPLES.md, etc.)
+5. Verify each link has brief description
+6. Test links work: `ls docs/mcp/API.md` etc.
 
 **Pass Criteria:**
-- ✅ Makefile has `validate-env` target
-- ✅ Script exists and executable
-- ✅ Validation checks 5+ prerequisites
-- ✅ Clear success message if all pass
-- ✅ Actionable error messages if fail
+- ✅ Documentation links section exists
+- ✅ All major MCP docs linked
+- ✅ Brief descriptions provided
+- ✅ All linked files exist
+- ✅ Clear subsection structure
 
 ---
 
-### AC6: All Tests Pass (CRITICAL)
+### AC6: Zero Code Changes (CRITICAL)
 **Test Steps:**
-1. Run smoke tests: `pytest tests/test_smoke.py -v`
-2. Run integration tests: `pytest tests/mcp/ -v`
-3. Run full test suite: `pytest -v`
-4. Verify W006 baseline maintained:
-   - 13 passed, 3 skipped
-   - Performance < 30s
+1. Check git status: `git status`
+2. Check git diff: `git diff --stat`
+3. Verify only README.md changed (and possibly other docs)
+4. Verify NO changes to:
+   - src/ (any Python files)
+   - tests/ (any test files)
+   - scripts/ (any shell scripts)
+   - pyproject.toml, pytest.ini, mypy.ini, ruff.toml
+   - docker-compose.yml, Makefile
+   - .env.example, config.example.yaml
+5. Count files changed: `git diff --name-only | wc -l`
 
 **Pass Criteria:**
-- ✅ Smoke tests: 2/2 passing
-- ✅ Integration tests: 10 passed, 3 skipped
-- ✅ Full suite: 13 passed, 3 skipped
-- ✅ Zero test failures
-- ✅ Zero test regressions
-- ✅ Performance maintained
+- ✅ Only README.md modified (or other docs/ files)
+- ✅ Zero changes to src/, tests/, scripts/
+- ✅ Zero changes to configuration files
+- ✅ Git diff shows documentation-only changes
 
-**CRITICAL:** If any test fails, W007 MUST be marked needs_adapt
+**CRITICAL:** If any code files changed, W008 MUST be marked needs_adapt
 
 ---
 
-### AC7: Quality Gates Pass
+### AC7: All Quality Gates Pass
 **Test Steps:**
 1. Run black: `black --check .`
 2. Run ruff: `ruff check .`
 3. Run mypy: `mypy .`
-4. Run build: `python -m build`
-5. Run security: `pip-audit`
+4. Run tests: `pytest -q`
+5. Run integration tests: `pytest -q tests/mcp/`
+6. Run build: `python -m build`
+7. Run security: `pip-audit`
 
 **Pass Criteria:**
-- ✅ Black: Pass OR minimal changes
-- ✅ Ruff: Pass OR ≤28 errors (W005 baseline)
+- ✅ Black: Pass (no changes needed)
+- ✅ Ruff: Pass OR ≤29 errors (W007 baseline)
 - ✅ Mypy: Pass OR ≤401 errors (W005 baseline)
+- ✅ Pytest: 13 passed, 3 skipped (W006 baseline)
+- ✅ Integration tests: 10 passed, 3 skipped
 - ✅ Build: Success (wheel + sdist)
 - ✅ Security: No high-severity issues
 
-**Note:** Negotiation allowed if ruff/mypy within W005 baseline
+**CRITICAL:** Any test regression MUST mark W008 as needs_adapt
 
 ---
 
-### AC8: Documentation Updated (CRITICAL)
+### AC8: Clear Navigation
 **Test Steps:**
-1. Review README.md: Search for "Setup" section
-2. Verify prerequisites listed (Python 3.11+, Docker optional)
-3. Verify step-by-step instructions (5-10 steps)
-4. Verify configuration section explains .env and config.yaml
-5. Verify troubleshooting section with common issues
-6. Verify instructions are clear and actionable
+1. Read through README from top to bottom
+2. Verify each section has clear purpose
+3. Verify logical flow between sections
+4. Verify no confusing jumps or non-sequiturs
+5. Optional: Check if table of contents exists (nice-to-have)
+6. Verify section headers consistent (## for main, ### for sub)
 
 **Pass Criteria:**
-- ✅ README has "Setup & Installation" section
-- ✅ Prerequisites clearly listed
-- ✅ Step-by-step instructions (1-5 steps minimum)
-- ✅ Configuration section present
-- ✅ Troubleshooting section with 2+ common issues
-- ✅ Instructions clear and actionable
+- ✅ Each section has clear purpose
+- ✅ Logical flow from intro → MCP → setup → architecture → workflow
+- ✅ No confusing section ordering
+- ✅ Consistent header levels
+- ✅ Clear separation between sections
 
 ---
 
-### AC9: No Secrets Committed
+### AC9: Consistent Formatting
 **Test Steps:**
-1. Verify .gitignore includes .env: `grep "^\.env$" .gitignore`
-2. Check .env.example for secrets:
+1. Review README.md formatting
+2. Verify code blocks have language tags:
    ```bash
-   rg -i "api[_-]?key.*[a-zA-Z0-9]{32,}" .env.example
-   rg -i "password.*[a-zA-Z0-9]{8,}" .env.example
+   # Good
    ```
-3. Check config.example.yaml for secrets:
-   ```bash
-   rg -i "api[_-]?key.*[a-zA-Z0-9]{32,}" config.example.yaml
-   ```
-4. Review docker-compose.yml for hardcoded secrets
+3. Verify links formatted correctly: `[text](url)`
+4. Verify lists formatted consistently (-, *)
+5. Verify emoji usage consistent (if used)
+6. Test all links work (internal and external)
+7. Check for broken markdown (mismatched backticks, brackets)
 
 **Pass Criteria:**
-- ✅ .gitignore includes `.env` pattern
-- ✅ No real API keys in .env.example
-- ✅ No real secrets in config.example.yaml
-- ✅ No hardcoded secrets in docker-compose.yml
-- ✅ Security audit clean
+- ✅ All code blocks have language tags
+- ✅ All links formatted correctly
+- ✅ Lists consistent
+- ✅ No broken markdown syntax
+- ✅ All links work (tested)
+- ✅ Professional appearance
 
 ---
 
-### AC10: Clean Repository State
+### AC10: Sprint 1 Completion Ready
 **Test Steps:**
-1. Check git status: `git status`
-2. Verify no temporary files: `find . -name "*.tmp" -o -name "*.bak"`
-3. Verify no pycache committed: `git status | grep __pycache__`
-4. Verify intended files only:
-   - .env.example
-   - config.example.yaml (modified)
-   - docker-compose.yml (modified)
-   - scripts/setup-dev.sh
-   - scripts/validate-env.py
-   - Makefile (modified)
-   - README.md (modified)
+1. Open `.oodatcaa/objectives/SPRINT_GOAL.md`
+2. Verify all Sprint 1 exit criteria met:
+   - MCP server migrated ✅
+   - Dependencies integrated ✅
+   - Code quality passing ✅
+   - Integration tests passing ✅
+   - Configuration setup complete ✅
+   - Documentation complete ✅ (W008)
+3. Verify W008 is final task in SPRINT_QUEUE.json
+4. Verify all W001-W008 tasks complete
+5. Check CHANGELOG has complete W001-W007 history
 
 **Pass Criteria:**
-- ✅ Only intended files staged/committed
-- ✅ No temporary files in git
-- ✅ No __pycache__ committed
-- ✅ All configuration files properly formatted
-- ✅ Git status clean after commit
+- ✅ All Sprint 1 exit criteria met
+- ✅ W008 is final task
+- ✅ All preceding tasks complete
+- ✅ CHANGELOG up to date
+- ✅ Documentation supports project handoff
 
 ---
 
 ## Test Execution Summary Template
 
 ```
-W007 Test Results
+W008 Test Results
 =================
 
 Tester: [Name]
@@ -307,47 +292,48 @@ Date: [ISO 8601]
 Duration: [X minutes]
 
 Acceptance Criteria:
-- AC1 (.env.example):        ✅ PASS / ❌ FAIL
-- AC2 (Docker config):       ✅ PASS / ❌ FAIL
-- AC3 (Config adapted):      ✅ PASS / ❌ FAIL
-- AC4 (Setup script):        ✅ PASS / ❌ FAIL
-- AC5 (Validation tool):     ✅ PASS / ❌ FAIL
-- AC6 (All tests):           ✅ PASS / ❌ FAIL (CRITICAL)
-- AC7 (Quality gates):       ✅ PASS / ❌ FAIL
-- AC8 (Documentation):       ✅ PASS / ❌ FAIL (CRITICAL)
-- AC9 (No secrets):          ✅ PASS / ❌ FAIL
-- AC10 (Clean repo):         ✅ PASS / ❌ FAIL
+- AC1 (MCP Integration):      ✅ PASS / ❌ FAIL
+- AC2 (Architecture):          ✅ PASS / ❌ FAIL
+- AC3 (Migration journey):     ✅ PASS / ❌ FAIL
+- AC4 (Structure improved):    ✅ PASS / ❌ FAIL
+- AC5 (Documentation links):   ✅ PASS / ❌ FAIL
+- AC6 (Zero code changes):     ✅ PASS / ❌ FAIL (CRITICAL)
+- AC7 (Quality gates):         ✅ PASS / ❌ FAIL (CRITICAL)
+- AC8 (Clear navigation):      ✅ PASS / ❌ FAIL
+- AC9 (Consistent formatting): ✅ PASS / ❌ FAIL
+- AC10 (Sprint 1 complete):    ✅ PASS / ❌ FAIL (CRITICAL)
 
-Quality Gates:
-- Black:     ✅ PASS / ❌ FAIL
-- Ruff:      ✅ PASS / ⚠️ [X] errors (baseline ≤28)
+Quality Gates (Should Match W007 Baseline):
+- Black:     ✅ PASS
+- Ruff:      ✅ PASS / ⚠️ [X] errors (baseline ≤29)
 - Mypy:      ✅ PASS / ⚠️ [X] errors (baseline ≤401)
-- Pytest:    ✅ [X/Y] PASS / ❌ FAIL
-- Build:     ✅ PASS / ❌ FAIL
-- Security:  ✅ PASS / ❌ FAIL
+- Pytest:    ✅ [13/16] PASS (3 skipped)
+- Build:     ✅ PASS
+- Security:  ✅ PASS
 
 Overall Result: ✅ PASS (X/10 ACs) / ❌ FAIL (needs_adapt)
+
+Sprint 1 Status: ✅ COMPLETE / ❌ INCOMPLETE
 
 Notes:
 [Any issues, warnings, or observations]
 
 Recommendation:
-[ready_for_integrator / needs_adapt / Start-Over Gate]
+[ready_for_integrator / needs_adapt]
 ```
 
 ---
 
 ## Rollback Triggers
 
-**W007 MUST be marked needs_adapt if:**
-1. ❌ AC6 fails — Any test regression detected
-2. ❌ AC8 fails — Documentation insufficient/unclear
-3. ❌ AC4 fails — Setup script doesn't work
+**W008 MUST be marked needs_adapt if:**
+1. ❌ AC6 fails — Any code changes detected
+2. ❌ AC7 fails — Any quality gate regression
+3. ❌ AC10 fails — Sprint 1 exit criteria not met
 4. ❌ ≥3 critical ACs fail — Fundamental issues
 
-**Start-Over Gate (highly unlikely for W007):**
-- Configuration completely breaks existing functionality
-- Fundamental architectural issue discovered
+**Start-Over Gate (highly unlikely for W008):**
+- Documentation completely incorrect or misleading
 - After 2 Adapt loops, ACs still unmet
 
 ---
@@ -355,34 +341,46 @@ Recommendation:
 ## Test Environment
 
 **Prerequisites:**
-- Fresh clone of repository (or reset to W007 branch)
-- Python 3.11 or 3.12 installed
-- Docker Desktop available (optional)
-- No existing .env file
-- No existing venv directory
+- W007 completed (configuration setup complete)
+- README.md exists with W007 setup section
+- All W001-W007 tasks complete
 
 **Test Execution:**
-1. Clone repository
-2. Checkout W007 branch
-3. Run setup script: `./scripts/setup-dev.sh`
-4. Run validation: `make validate-env`
-5. Execute all test commands
-6. Verify all 10 ACs
+1. Checkout W008 branch
+2. Read through complete README
+3. Verify all 10 acceptance criteria
+4. Run all quality gate commands
+5. Check git diff (documentation-only)
+6. Verify Sprint 1 exit criteria
 7. Document results
 
 ---
 
 ## Success Criteria
 
-W007 is approved for integration when:
+W008 is approved for integration when:
 - ✅ **All 10 acceptance criteria PASS**
-- ✅ **All W006 integration tests pass** (zero regressions)
-- ✅ **Fresh setup successful** (validated in clean environment)
-- ✅ **Quality gates pass** (or within W005 baseline)
-- ✅ **Documentation clear and actionable**
+- ✅ **Zero code changes** (documentation-only)
+- ✅ **All quality gates pass** (W007 baseline maintained)
+- ✅ **Sprint 1 exit criteria met**
+- ✅ **README complete and professional**
+
+---
+
+## Sprint 1 Completion Checklist
+
+Upon W008 approval:
+- [ ] All W001-W008 tasks complete
+- [ ] MCP server fully migrated and integrated
+- [ ] Configuration and environment setup complete
+- [ ] Integration tests passing (13 tests)
+- [ ] Documentation complete and comprehensive
+- [ ] Sprint 1 exit criteria met
+- [ ] Ready for Sprint 1 retrospective
 
 ---
 
 **Test Plan Status:** COMPLETE  
-**Ready for:** Tester (W007-T01) after Builder completes W007-B01 + W007-B02  
-**Estimated Test Duration:** 15-20 minutes
+**Ready for:** Tester (W008-T01) after Builder completes W008-B01 + W008-B02  
+**Estimated Test Duration:** 15-20 minutes  
+**Sprint Impact:** W008 approval marks **SPRINT 1 COMPLETE** 🎉
