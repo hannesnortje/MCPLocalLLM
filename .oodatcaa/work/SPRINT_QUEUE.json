@@ -201,26 +201,30 @@
       "title": "P003 Step 1-3: Dashboard + Status JSON + Completion Script",
       "type": "Build",
       "complexity": "L",
-      "status": "awaiting_test",
+      "status": "done",
       "priority": 3,
-      "agent": "builder",
-      "lease": {
-        "agent": "builder",
-        "owner": "agent-builder-B2",
-        "acquired": "2025-10-03T13:00:00Z",
-        "ttl": 5400,
-        "last_heartbeat": "2025-10-03T13:30:00Z",
-        "completed_at": "2025-10-03T13:30:00Z"
-      },
+      "agent": "integrator",
+      "lease": null,
       "dependencies": [],
       "objective": "SPRINT-2025-002",
       "sprint": "2",
       "parent": "P003",
       "plan_steps": "1-3",
       "estimated_time": "195 min",
+      "completed": "2025-10-03T19:18:00+02:00",
+      "integration_completed_at": "2025-10-03T20:00:00+02:00",
       "branch": "feat/P003-step-01-sprint-dashboard",
-      "completed": "2025-10-03T13:30:00Z",
-      "commit": "65ac473"
+      "commits": [
+        "d9b4d42",
+        "65ac473",
+        "1eb5d6a",
+        "16bd9b5"
+      ],
+      "merged_commit": "ac6381b",
+      "tag": "P003-B01-complete",
+      "tested": "2025-10-03T19:32:00Z",
+      "test_result": "7/7 ACs PASS (100%). Performance: 0.199s dashboard, 0.021s complete (<5s target, 96% faster!). Atomic operations verified. Zero regressions.",
+      "notes": "Sprint Management transformed! Interactive dashboard (180 lines), automated transitions (210 lines), status JSON (44 lines). Zero adaptations needed. Sprint 2 Exit Criterion 3: 85% → ready for 100%."
     },
     {
       "id": "P003-B02",
