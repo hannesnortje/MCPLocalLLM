@@ -1,4 +1,4 @@
-.PHONY: fmt gates test check build audit ship tag rollback validate-env
+.PHONY: fmt gates test check build audit ship tag rollback validate-env agents-start agents-stop agents-restart agents-status
 
 validate-env:
 	python3 scripts/validate-env.py
@@ -33,4 +33,41 @@ tag:
 rollback:
 	@[ -n "$(TAG)" ] || (echo "Set TAG=pre/W123-YYYY-MM-DDTHH-MM-SS"; exit 1)
 	git switch main && git reset --hard $(TAG) && git push --force-with-lease
+
+# Agent Daemon Management
+agents-start:
+	@if command -v systemctl >/dev/null 2>&1 && systemctl --user status >/dev/null 2>&1; then \
+		echo "Starting agents via systemd..."; \
+		systemctl --user start agent-planner agent-builder agent-tester agent-refiner agent-integrator; \
+	else \
+		echo "Systemd not available, using fallback mode..."; \
+		bash scripts/agents-daemon-cli.sh start; \
+	fi
+
+agents-stop:
+	@if command -v systemctl >/dev/null 2>&1 && systemctl --user status >/dev/null 2>&1; then \
+		echo "Stopping agents via systemd..."; \
+		systemctl --user stop agent-planner agent-builder agent-tester agent-refiner agent-integrator; \
+	else \
+		echo "Systemd not available, using fallback mode..."; \
+		bash scripts/agents-daemon-cli.sh stop; \
+	fi
+
+agents-restart:
+	@if command -v systemctl >/dev/null 2>&1 && systemctl --user status >/dev/null 2>&1; then \
+		echo "Restarting agents via systemd..."; \
+		systemctl --user restart agent-planner agent-builder agent-tester agent-refiner agent-integrator; \
+	else \
+		echo "Systemd not available, using fallback mode..."; \
+		bash scripts/agents-daemon-cli.sh restart; \
+	fi
+
+agents-status:
+	@if command -v systemctl >/dev/null 2>&1 && systemctl --user status >/dev/null 2>&1; then \
+		echo "Agent daemon status (systemd):"; \
+		systemctl --user status agent-planner agent-builder agent-tester agent-refiner agent-integrator --no-pager || true; \
+	else \
+		echo "Systemd not available, using fallback mode..."; \
+		bash scripts/agents-daemon-cli.sh status; \
+	fi
 
