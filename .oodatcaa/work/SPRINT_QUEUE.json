@@ -265,17 +265,10 @@
       "title": "P003 Step 7: Documentation + Quality Gates + Integration",
       "type": "Build",
       "complexity": "S",
-      "status": "in_progress",
+      "status": "awaiting_test",
       "priority": 3,
-      "agent": "builder",
-      "lease": {
-        "task_id": "P003-B03",
-        "agent": "builder",
-        "owner": "agent-builder-cursor",
-        "acquired": "2025-10-03T22:28:13+02:00",
-        "ttl": 5400,
-        "last_heartbeat": "2025-10-03T22:28:13+02:00"
-      },
+      "agent": null,
+      "lease": null,
       "dependencies": [
         "P003-B02"
       ],
@@ -283,7 +276,8 @@
       "sprint": "2",
       "parent": "P003",
       "plan_steps": "7",
-      "estimated_time": "45 min"
+      "estimated_time": "45 min",
+      "completed": "2025-10-03T22:33:57+02:00"
     },
     {
       "id": "P003-T01",
