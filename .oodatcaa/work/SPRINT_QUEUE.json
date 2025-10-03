@@ -318,9 +318,9 @@
       "title": "P004 Step 7: Integration",
       "type": "Build",
       "complexity": "S",
-      "status": "ready_for_integrator",
+      "status": "done",
       "priority": 4,
-      "agent": null,
+      "agent": "integrator",
       "lease": null,
       "dependencies": [
         "P004-B02"
@@ -330,8 +330,14 @@
       "parent": "P004",
       "plan_steps": "7",
       "estimated_time": "60 min",
+      "completed": "2025-10-03T13:00:00+02:00",
       "tested": "2025-10-03T12:04:44Z",
-      "test_result": "README Integration PASS"
+      "integration_completed_at": "2025-10-03T13:00:00+02:00",
+      "test_result": "README Integration PASS. Zero regressions (13 passed, 3 skipped, 21.84s). All quality gates pass.",
+      "branch": "feat/P004-step-01-oodatcaa-docs",
+      "merged_commit": "0a1509c",
+      "tag": "P004-complete",
+      "notes": "P004 story complete! Builder created comprehensive OODATCAA documentation (982+323+284 lines = 1,589 lines docs + 3 Mermaid diagrams). Integrator merged to main: 0a1509c, tag P004-complete, CHANGELOG +120 lines. Zero adaptations needed. OODATCAA loop fully documented!"
     },
     {
       "id": "P004-T01",
