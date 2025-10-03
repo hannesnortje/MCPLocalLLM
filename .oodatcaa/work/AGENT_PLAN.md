@@ -1,539 +1,583 @@
-# W008: Documentation Update — AGENT PLAN
+# AGENT_PLAN: P003 - Enhanced Sprint Management System
 
-**Task ID:** W008  
-**Task Title:** Documentation Update  
-**Type:** Docs  
-**Complexity:** S (Small)  
-**Objective:** OBJ-2025-002  
-**Sprint:** 1  
-**Dependencies:** W005, W006, W007 (all satisfied ✅)  
-
-**Planner:** agent-planner-A  
 **Plan Version:** 1.0  
-**Created:** 2025-10-03T19:40:00+00:00  
+**Task ID:** P003  
+**Objective:** SPRINT-2025-002 (OODATCAA Process Improvement)  
+**Sprint:** 2  
+**Complexity:** Medium  
+**Planner:** agent-planner-A  
+**Created:** 2025-10-03T15:30:00+02:00
 
 ---
 
 ## Traceability
 
-**Objective ID:** OBJ-2025-002 — Small Coder Model Training with MCP Integration  
-**Epic:** MCP Server Foundation (Sprint 1)  
-**Sprint Goal:** Migrate and integrate MCP server infrastructure  
-**Sprint:** 1  
-
-**Links to Objective:**
-- OBJECTIVE.md → Documentation & Deployment → Comprehensive Documentation
-- SPRINT_GOAL.md → Exit Criteria #5: Documentation Complete
-- Sprint completion requirement: W008 is the final task
+**Objective Link:** `.oodatcaa/objectives/SPRINT_2_OBJECTIVE.md` → Sprint Management Improvements  
+**Epic:** Sprint 2 - OODATCAA Process Improvement  
+**Success Criteria Addressed:**
+- Sprint ID System: Clear, unambiguous sprint identifiers (Format: SPRINT-YYYY-NNN)
+- Sprint Dashboard: Visual progress tracking (`make sprint-status`)
+- Sprint Transitions: Automated sprint lifecycle (`make sprint-complete`, `make sprint-new`)
 
 ---
 
 ## Problem Statement
 
-Sprint 1 has successfully migrated and integrated the MCP server (W001-W007), but the project documentation is incomplete:
+**Current State:**
+- Sprint 1 completed successfully but revealed sprint management gaps
+- Sprint transitions are manual with unclear numbering
+- No automated way to visualize sprint progress
+- Sprint completion requires manual log archiving and state updates
+- Sprint initiation is ad-hoc without standardized process
 
-1. **No MCP integration overview** — Developers don't understand what MCP is or why we use it
-2. **Missing architecture section** — No explanation of how MCP enables the training workflow
-3. **No migration story** — The W001-W007 journey isn't documented for future reference
-4. **Incomplete README structure** — Duplicated sections, missing MCP-specific quick start
-5. **Broken links** — Some references to old structure (`PYTemplate` in Quick Start)
-6. **No link to MCP docs** — Comprehensive docs exist in `docs/mcp/` but aren't referenced
+**Evidence:**
+- SPRINT_QUEUE.json shows sprint 2 status but no standardized tracking
+- SPRINT_LOG.md has sprint completion markers but no automated lifecycle
+- No sprint dashboard or status visualization exists
+- Sprint transitions performed manually by agents (error-prone)
 
-This blocks new developers from understanding the MCP integration and limits project onboarding effectiveness.
+**Impact:**
+- Increased cognitive load for Negotiator agent
+- Risk of incomplete sprint transitions
+- Difficulty tracking sprint health and progress
+- Inconsistent sprint metadata and documentation
+
+**Goal:**
+Build a comprehensive sprint management system that automates transitions, provides visibility, and maintains consistent sprint metadata across the project lifecycle.
 
 ---
 
 ## Constraints & Interfaces
 
-### Constraints
-- **Must preserve W007 setup section** — Excellent setup documentation already exists
-- **Sprint 1 completion gate** — W008 is the final task before sprint retrospective
-- **Documentation clarity** — Must be accessible to developers unfamiliar with MCP
-- **No code changes** — Documentation-only task, zero code modifications
-- **Existing docs preserved** — All docs in `docs/mcp/` stay unchanged
+### Technical Constraints
+- **Shell Scripts:** Bash 4+ for maximum compatibility
+- **JSON Parsing:** Use `jq` for reliable SPRINT_QUEUE.json manipulation
+- **Makefile Integration:** Commands must integrate with existing Makefile targets
+- **Cross-Platform:** Scripts should work on Linux/macOS (current: Linux 6.14.0)
+- **Non-Interactive:** All operations must be automatable (no user prompts)
 
 ### Interfaces
-- **README.md** — Primary project documentation (main interface)
-- **CHANGELOG.md** — Already comprehensive (W001-W007 documented)
-- **docs/mcp/** — Existing MCP technical documentation (reference but don't modify)
-- **SPRINT_GOAL.md** — Sprint exit criteria reference
+**Input:**
+- `.oodatcaa/work/SPRINT_QUEUE.json` - Current sprint state
+- `.oodatcaa/work/SPRINT_LOG.md` - Sprint history
+- `.oodatcaa/work/SPRINT_PLAN.md` - Sprint assignments
+- `.oodatcaa/objectives/SPRINT_GOAL.md` - Sprint goals
+- `.oodatcaa/objectives/SPRINT_2_OBJECTIVE.md` - Current objective
+
+**Output:**
+- `scripts/sprint-dashboard.sh` - Status visualization script
+- `scripts/sprint-complete.sh` - Sprint finalization script  
+- `scripts/sprint-new.sh` - Sprint initialization script
+- `Makefile` - Updated with new targets
+- `.oodatcaa/work/SPRINT_STATUS.json` - Real-time sprint metrics
+
+### Existing Infrastructure
+- Log rotation system (P002-B01) - Sprint-aware archiving
+- OODATCAA documentation (P004) - Process documentation
+- Makefile - Existing quality gates and commands
+- SPRINT_QUEUE.json - Task tracking system
 
 ### Risks
-- **Documentation length** — README becoming too long (mitigated: use sections with clear navigation)
-- **Technical depth** — Too much detail could overwhelm (mitigated: high-level overview with links)
-- **Maintenance** — Documentation becoming stale (mitigated: clear structure and links)
+1. **JSON Corruption:** Improper jq usage could corrupt SPRINT_QUEUE.json
+   - Mitigation: Atomic writes with temp files, validation before commit
+2. **Incomplete Transitions:** Partial sprint completion could leave inconsistent state
+   - Mitigation: Transaction-like behavior, rollback on errors
+3. **Breaking Changes:** New sprint ID format might break existing scripts
+   - Mitigation: Backward compatibility checks, migration path
+4. **Concurrency:** Multiple agents might trigger transitions simultaneously
+   - Mitigation: Lock files during transitions
 
 ---
 
 ## Definition of Done (DoD)
 
 ### Functional Requirements
-1. ✅ **MCP Integration section added** to README with overview, benefits, architecture
-2. ✅ **Architecture section** explaining MCP role in training workflow
-3. ✅ **Migration journey documented** (W001-W007 story) with reference to CHANGELOG
-4. ✅ **README structure improved** (remove duplication, fix broken references)
-5. ✅ **MCP documentation links** added (point to docs/mcp/ for details)
+1. **Sprint ID System:**
+   - All sprints identified with SPRINT-YYYY-NNN format
+   - Sprint metadata consistent across all OODATCAA files
+   - Backward compatible with existing sprint references (sprint 1, sprint 2)
+
+2. **Sprint Dashboard:**
+   - `make sprint-status` command functional
+   - Displays: Sprint ID, progress %, task counts, exit criteria status
+   - Color-coded output for quick health assessment
+   - Shows WIP limits and utilization
+
+3. **Sprint Transitions:**
+   - `make sprint-complete` finalizes current sprint:
+     - Archives all logs automatically
+     - Updates sprint status to "completed"
+     - Generates sprint retrospective template
+     - Tags sprint completion in git (e.g., sprint-2-complete)
+   - `make sprint-new` initializes next sprint:
+     - Creates new sprint directories
+     - Resets active logs
+     - Updates sprint number in SPRINT_QUEUE.json
+     - Creates sprint planning templates
 
 ### Non-Functional Requirements
-1. ✅ **Zero code changes** (documentation-only task)
-2. ✅ **All quality gates pass** (no regressions)
-3. ✅ **Clear navigation** (table of contents or clear sections)
-4. ✅ **Consistent formatting** (markdown best practices)
+- **Performance:** All commands complete in < 5 seconds
+- **Reliability:** No data loss during transitions (atomic operations)
+- **Usability:** Clear, informative output with progress indicators
+- **Maintainability:** Well-documented scripts with error handling
 
----
-
-## Acceptance Criteria (Explicit)
-
-### Functional ACs
-
-**AC1: MCP Integration Overview Section**
-- Location: README.md, after Quick Start, before Setup & Installation
-- Content:
-  - What is MCP (Model Context Protocol)
-  - Why we use MCP for this training project
-  - Key benefits: context preservation, memory management, vector search
-  - High-level architecture diagram (ASCII or description)
-  - Link to comprehensive MCP documentation
-- Length: 50-100 lines (concise overview)
-
-**AC2: Architecture Section**
-- Location: README.md, after MCP Integration, before Development Commands
-- Content:
-  - How MCP enables training workflow
-  - Dual-layer context preservation (overview)
-  - Training pipeline integration points
-  - Qdrant vector database role
-  - Agent coordination through MCP protocol
-- Length: 50-80 lines
-- Visual aids: ASCII diagram or clear bullet structure
-
-**AC3: Migration Journey Documented**
-- Location: README.md, new "Sprint 1 Journey" or "Migration Story" section
-- Content:
-  - W001-W007 summary (brief, 1-2 paragraphs)
-  - Key achievements: 61 files migrated, 13 integration tests, quality improvements
-  - Reference to CHANGELOG.md for details
-  - Lessons learned (optional)
-- Length: 30-50 lines
-
-**AC4: README Structure Improved**
-- Remove duplicate "Repository Structure" section (lines 276-305)
-- Fix broken reference to `PYTemplate` (line 15) → update to `MCPLocalLLM`
-- Add table of contents at top (optional but recommended)
-- Consistent section headers (##, ###)
-- Clear section flow: Intro → Quick Start → MCP Integration → Setup → Architecture → Commands → Autonomous Workflow
-
-**AC5: MCP Documentation Links**
-- Add "📚 Additional Documentation" section near end
-- Link to all docs/mcp/ files:
-  - API.md (MCP API reference)
-  - DEPLOYMENT.md (deployment guide)
-  - mcp-qdrant-reference-architecture.md (detailed architecture)
-  - TROUBLESHOOTING.md (MCP-specific troubleshooting)
-  - Other relevant docs
-- Brief description for each link
-
-### Quality ACs
-
-**AC6: Zero Code Changes (CRITICAL)**
-- Only README.md and possibly docs/ files modified
-- No changes to src/, tests/, scripts/, or configuration
-- Git diff shows only documentation changes
-
-**AC7: All Quality Gates Pass**
-- `black --check .` → Pass (no formatting changes needed)
-- `ruff check .` → Pass (≤29 errors, W007 baseline)
-- `pytest -q` → All tests pass (13 passed, 3 skipped)
-- No regressions in any quality metrics
-
-**AC8: Clear Navigation**
-- README sections clearly delineated
-- Logical flow from intro → MCP → setup → architecture → workflow
-- Each section has clear purpose
-- No orphaned or confusing sections
-
-**AC9: Consistent Formatting**
-- Markdown best practices followed
-- Code blocks properly formatted with language tags
-- Links tested (no broken links)
-- Consistent emoji usage (optional)
-
-**AC10: Sprint 1 Completion Ready**
-- All Sprint 1 exit criteria met (reference SPRINT_GOAL.md)
-- W008 marks sprint completion
-- Documentation supports project handoff
+### Acceptance Criteria (Detailed in TEST_PLAN.md)
+- AC1: Sprint ID system functional
+- AC2: `make sprint-status` displays accurate information
+- AC3: `make sprint-complete` finalizes sprint correctly
+- AC4: `make sprint-new` initializes next sprint
+- AC5: All quality gates pass
+- AC6: Documentation complete
+- AC7: Zero regressions in existing functionality
+- AC8: Sprint transitions are atomic (no partial states)
+- AC9: Sprint metadata consistent across all files
+- AC10: Performance targets met (< 5s per command)
 
 ---
 
 ## Alternatives Considered
 
-### Alternative 1: Minimal Documentation Update (Rejected)
-**Approach:** Only add MCP overview section, skip architecture and migration story  
-**Pros:** Fastest (30 min)  
-**Cons:**
-- Incomplete sprint exit criteria
-- Poor onboarding for new developers
-- Missing key context on why MCP was chosen
-- Doesn't explain training workflow
-
-### Alternative 2: Comprehensive Documentation Overhaul (Rejected)
-**Approach:** Rewrite entire README, create new architecture docs, detailed diagrams  
-**Pros:** Complete, professional, comprehensive  
-**Cons:**
-- Over-engineering for Sprint 1 completion
-- 8-12 hours of work (too much for Small task)
-- Risk of introducing errors
-- Delays sprint completion
-
-### Alternative 3: Structured Documentation Update (SELECTED) ✅
+### Alternative 1: Python-Based Sprint Management
 **Approach:**
-- Add MCP integration overview (50-100 lines)
-- Add architecture section (50-80 lines)
-- Document migration journey with CHANGELOG reference (30-50 lines)
-- Clean up README structure (remove duplication, fix references)
-- Add MCP documentation links section
+- Implement sprint management in Python using existing project structure
+- Create `src/sprint_management/` module with OOP design
+- Use Python's JSON library for manipulation
 
 **Pros:**
-- Completes all Sprint 1 exit criteria
-- Provides essential context for new developers
-- Reasonable timeline (1.5-2 hours total)
-- Good balance of completeness and efficiency
-- Preserves existing good documentation (W007 setup)
+- Type safety with mypy
+- Better error handling and testing
+- Integration with existing Python tooling
+- More sophisticated data validation
 
 **Cons:**
-- Not as minimal as Alt 1
-- Not as comprehensive as Alt 2
+- Adds complexity to project structure
+- Requires additional dependencies
+- Heavier weight for simple shell operations
+- Less transparent for debugging
 
-**Rationale:** Alternative 3 achieves sprint completion requirements while providing essential developer onboarding context. The 1.5-2 hour timeline is appropriate for a Small complexity documentation task completing a sprint.
-
----
-
-## Implementation Plan (Step-by-Step)
-
-### Branch Strategy
-**Branch:** `feat/W008-step-01-documentation-update`  
-**Baseline Tag:** `pre/W008-step-01-<ISO8601>`  
-**Parent:** `main` (includes W001-W007 completed work)
+**Verdict:** ❌ **Rejected** - Overkill for straightforward file manipulation. Shell scripts are more appropriate for DevOps automation tasks.
 
 ---
 
-### Step 1: Pre-Flight Analysis (10 min) → W008-B01
+### Alternative 2: Makefile-Only Implementation
+**Approach:**
+- Implement all logic directly in Makefile targets
+- No separate shell scripts, everything inline
+- Use Make's variable system for state management
 
-**Exit Gate:** README structure analyzed, changes identified
+**Pros:**
+- Single source of truth (Makefile)
+- No separate script files to maintain
+- Familiar Make syntax
 
-**Actions:**
-1. Create feature branch: `git checkout -b feat/W008-step-01-documentation-update`
-2. Create baseline tag: `git tag "pre/W008-step-01-$(date -Iseconds)"`
-3. Analyze current README.md:
-   - Identify duplicate sections (lines 247-305 duplicate Repository Structure)
-   - Identify broken references (line 15: `PYTemplate`)
-   - Map current structure
-   - Identify insertion points for new sections
-4. Review CHANGELOG.md for W001-W007 summary material
-5. Review docs/mcp/ files for linking
-6. Document findings in scratch notes
+**Cons:**
+- Make syntax is arcane for complex logic
+- Poor error handling capabilities
+- Difficult to test in isolation
+- Hard to read and maintain for complex operations
+- No real transaction support
+
+**Verdict:** ❌ **Rejected** - Makefile is great for orchestration but poor for complex business logic. Separate scripts are more maintainable.
+
+---
+
+### Alternative 3: Hybrid Bash Scripts + Make Orchestration (CHOSEN)
+**Approach:**
+- Implement core logic in well-structured bash scripts
+- Use Makefile as thin orchestration layer
+- Scripts are independently testable and reusable
+- Follow existing pattern from P002 (log rotation)
+
+**Pros:**
+- ✅ Separation of concerns (orchestration vs logic)
+- ✅ Scripts can be called directly or via Make
+- ✅ Consistent with existing P002 pattern
+- ✅ Easy to test and debug
+- ✅ Good error handling in bash
+- ✅ Transparent execution (scripts show progress)
+
+**Cons:**
+- Requires bash 4+ (acceptable given deployment environment)
+- More files to maintain (mitigated by good structure)
+
+**Verdict:** ✅ **CHOSEN** - Best balance of simplicity, maintainability, and consistency with existing codebase patterns.
+
+---
+
+## Implementation Plan
+
+### Step-by-Step Breakdown
+
+#### **Step 1: Sprint Dashboard Script (60 min)**
+**Goal:** Create `scripts/sprint-dashboard.sh` - Visualize current sprint status
+
+**Tasks:**
+1. Parse SPRINT_QUEUE.json for current sprint state
+2. Calculate progress metrics:
+   - Total tasks, completed, in-progress, blocked
+   - Sprint completion percentage
+   - Exit criteria progress
+3. Parse SPRINT_GOAL.md for sprint objectives
+4. Format output with color coding:
+   - Green: ✅ Complete
+   - Yellow: 🔄 In Progress  
+   - Red: ❌ Blocked/Failed
+5. Display WIP limits and utilization
+6. Show time estimates vs actuals (if available)
+
+**Output Example:**
+```
+=======================================
+  Sprint Status: SPRINT-2025-002
+=======================================
+
+Sprint: OODATCAA Process Improvement
+Status: in_progress
+Progress: 18% complete (4 of 22 tasks)
+
+Tasks:
+  ✅ Done:       2 tasks
+  🔄 In Progress: 1 task
+  ⏳ Ready:      2 tasks
+  🚫 Blocked:    7 tasks
+  📋 Needs Plan: 4 tasks
+
+WIP Utilization:
+  Planner:    0/1 (0%)
+  Builder:    1/3 (33%)
+  Tester:     0/2 (0%)
+  Refiner:    0/1 (0%)
+  Integrator: 0/1 (0%)
+
+Exit Criteria:
+  ✅ Background Agent System Operational
+  🔄 Automatic Log Rotation Working (50%)
+  ❌ Sprint Management Enhanced
+  🔄 OODATCAA Loop Documented (75%)
+  ❌ Agent Role Completeness
+  ❌ Process Documentation Complete
+  ❌ Quality Gates Maintained
+
+Recent Activity:
+  - P002-B01 INTEGRATED (Automatic Log Rotation)
+  - P004-B01 COMPLETE (OODATCAA Docs Foundation)
+  - P002-B02 in progress (Testing + Docs)
+
+Next Actions:
+  - P004-B03 ready for integrator
+  - P003 needs planning
+=======================================
+```
+
+**Exit Gate:** Script runs without errors, displays accurate information
+
+---
+
+#### **Step 2: Sprint Status JSON Generator (45 min)**
+**Goal:** Create `.oodatcaa/work/SPRINT_STATUS.json` - Machine-readable sprint metrics
+
+**Tasks:**
+1. Extract all relevant metrics from SPRINT_QUEUE.json
+2. Calculate derived metrics:
+   - Progress percentage
+   - Velocity (tasks/day)
+   - Estimated completion date
+   - Blocker analysis
+3. Generate JSON with consistent schema
+4. Include timestamp for staleness detection
+5. Document JSON schema in comments
+
+**Output Schema:**
+```json
+{
+  "sprint_id": "SPRINT-2025-002",
+  "sprint_number": 2,
+  "status": "in_progress",
+  "started": "2025-10-03",
+  "target_completion": "2025-10-10",
+  "progress": {
+    "total_tasks": 22,
+    "completed": 2,
+    "in_progress": 1,
+    "ready": 2,
+    "blocked": 7,
+    "needs_plan": 4,
+    "percentage": 18
+  },
+  "wip": {
+    "planner": {"current": 0, "limit": 1},
+    "builder": {"current": 1, "limit": 3},
+    "tester": {"current": 0, "limit": 2},
+    "refiner": {"current": 0, "limit": 1},
+    "integrator": {"current": 0, "limit": 1}
+  },
+  "exit_criteria": [
+    {"name": "Background Agent System", "status": "complete", "progress": 100},
+    {"name": "Automatic Log Rotation", "status": "in_progress", "progress": 50}
+  ],
+  "velocity": {
+    "tasks_per_day": 1.5,
+    "estimated_days_remaining": 10
+  },
+  "generated_at": "2025-10-03T15:30:00+02:00"
+}
+```
+
+**Exit Gate:** JSON validates, contains all required fields, integrates with dashboard script
+
+---
+
+#### **Step 3: Sprint Completion Script (90 min)**
+**Goal:** Create `scripts/sprint-complete.sh` - Automate sprint finalization
+
+**Tasks:**
+1. Validate sprint can be completed (check exit criteria)
+2. **Archive Phase:**
+   - Call `scripts/rotate-logs.sh --force` to archive all logs
+   - Copy SPRINT_QUEUE.json to archive as SPRINT_N_FINAL.json
+   - Copy SPRINT_PLAN.md to archive as SPRINT_N_FINAL.md
+3. **Status Update Phase:**
+   - Update SPRINT_QUEUE.json status to "completed"
+   - Update SPRINT_GOAL.md with completion timestamp
+   - Add completion entry to SPRINT_LOG.md
+4. **Retrospective Generation:**
+   - Create `.oodatcaa/work/SPRINT_N_RETROSPECTIVE.md` template
+   - Include: achievements, challenges, metrics, lessons learned
+   - Auto-fill with data from SPRINT_STATUS.json
+5. **Git Tagging:**
+   - Create annotated tag: `sprint-N-complete`
+   - Include sprint summary in tag annotation
+6. **Cleanup:**
+   - Remove stale leases (all expired during sprint)
+   - Clear temporary locks
+
+**Safety Features:**
+- Dry-run mode (`--dry-run`) to preview actions
+- Atomic operations (temp files + atomic renames)
+- Rollback capability if errors occur
+- Validation checks before each phase
+- Backup critical files before modification
+
+**Exit Gate:** Sprint transitions to "completed" state, all artifacts archived, git tag created
+
+---
+
+#### **Step 4: Sprint Initialization Script (75 min)**
+**Goal:** Create `scripts/sprint-new.sh` - Automate next sprint setup
+
+**Tasks:**
+1. **Validation Phase:**
+   - Verify current sprint is "completed"
+   - Check no active tasks remain
+   - Ensure no active agent leases
+2. **Sprint Number Increment:**
+   - Parse current sprint number
+   - Generate new sprint ID (SPRINT-YYYY-NNN)
+   - Update all relevant files with new sprint number
+3. **Directory Setup:**
+   - Create `.oodatcaa/work/archive/sprint_N/` (if not exists)
+   - Create `.oodatcaa/work/reports/sprint_N/` (if not exists)
+4. **File Initialization:**
+   - Reset AGENT_LOG.md with sprint header
+   - Reset SPRINT_LOG.md with sprint header
+   - Reset SPRINT_PLAN.md with sprint header
+   - Create new SPRINT_QUEUE.json with empty tasks array
+5. **Sprint Goal Setup:**
+   - Update SPRINT_GOAL.md status to "needs_planning"
+   - Trigger Sprint Planner (or document manual step)
+6. **Documentation:**
+   - Update ROTATION_STATS.md with sprint transition marker
+   - Create sprint planning checklist
+
+**Safety Features:**
+- Pre-flight checks (no active work)
+- Confirmation prompt (unless --force flag)
+- Preserve sprint 1 artifacts
+- Comprehensive logging
+
+**Exit Gate:** New sprint initialized, all files reset, ready for Sprint Planner
+
+---
+
+#### **Step 5: Makefile Integration (30 min)**
+**Goal:** Add sprint management commands to Makefile
+
+**Tasks:**
+1. Add target: `sprint-status`
+   - Calls `scripts/sprint-dashboard.sh`
+   - No parameters needed
+2. Add target: `sprint-complete`
+   - Calls `scripts/sprint-complete.sh`
+   - Optional: `FORCE=1` to skip checks
+3. Add target: `sprint-new`
+   - Calls `scripts/sprint-new.sh`
+   - Requires sprint-complete first
+4. Add .PHONY declarations for all new targets
+5. Update Makefile documentation (comments)
+
+**New Makefile Targets:**
+```makefile
+# Sprint Management
+sprint-status:
+	bash scripts/sprint-dashboard.sh
+
+sprint-complete:
+	bash scripts/sprint-complete.sh $(if $(FORCE),--force,)
+
+sprint-new:
+	bash scripts/sprint-new.sh
+
+.PHONY: sprint-status sprint-complete sprint-new
+```
+
+**Exit Gate:** All make targets work, integrate with existing quality gates
+
+---
+
+#### **Step 6: Sprint ID Consistency Update (45 min)**
+**Goal:** Ensure sprint ID format consistency across all files
+
+**Tasks:**
+1. Update SPRINT_QUEUE.json:
+   - Add `sprint_id` field to metadata
+   - Ensure consistent with `sprint` field
+2. Update SPRINT_GOAL.md:
+   - Add sprint ID to each sprint section
+3. Update template files:
+   - `.oodatcaa/templates/*` (if any)
+4. Document sprint ID format in README
+5. Create migration guide for sprint 1 → sprint 2 format
 
 **Validation:**
-- ✅ Branch created
-- ✅ Baseline tag created
-- ✅ README structure analyzed
-- ✅ Insertion points identified
+- Grep all OODATCAA files for sprint references
+- Ensure consistent format (SPRINT-YYYY-NNN)
+- No orphaned sprint 1 references
+
+**Exit Gate:** All files use consistent sprint ID format
 
 ---
 
-### Step 2: Add MCP Integration Section (30 min) → W008-B01
+#### **Step 7: Documentation & Quality Gates (45 min)**
+**Goal:** Complete documentation and verify quality
 
-**Exit Gate:** MCP Integration section complete with overview and benefits
+**Tasks:**
+1. **Script Documentation:**
+   - Add comprehensive header comments to all scripts
+   - Document all functions and exit codes
+   - Add usage examples
+2. **README Updates:**
+   - Add "Sprint Management" section
+   - Document all new Makefile targets
+   - Provide workflow examples
+3. **Testing Documentation:**
+   - Create test cases for each script
+   - Document expected inputs/outputs
+   - Add troubleshooting guide
+4. **Quality Gates:**
+   - Run `make gates` (black, ruff, mypy)
+   - Run `make test` (existing tests)
+   - Run `make audit` (security scan)
+   - Verify no regressions
 
-**Actions:**
-1. Insert new section after "Quick Start" (before "Setup & Installation")
-2. Add section header: `## 🔗 MCP Integration`
-3. Write MCP overview:
-   ```markdown
-   ### What is MCP?
-   
-   The **Model Context Protocol (MCP)** is an open standard for integrating AI models with external context sources. In MCPLocalLLM, MCP provides:
-   
-   - **Vector Memory Management** — Persistent storage via Qdrant
-   - **Context Preservation** — Dual-layer protection for training data
-   - **Semantic Search** — Efficient retrieval with embeddings
-   - **Agent Coordination** — Structured communication protocol
-   ```
-4. Write "Why MCP?" subsection (training benefits)
-5. Write "Key Components" subsection (server, Qdrant, handlers, tools)
-6. Add link to comprehensive docs: `docs/mcp/mcp-qdrant-reference-architecture.md`
+**Documentation Structure:**
+```
+docs/
+  SPRINT_MANAGEMENT.md
+    - Overview
+    - Commands Reference
+    - Workflow Examples
+    - Troubleshooting
+```
 
-**Validation:**
-- ✅ Section inserted at correct location
-- ✅ MCP overview clear and concise (50-100 lines)
-- ✅ Benefits explained
-- ✅ Links to detailed docs
-
----
-
-### Step 3: Add Architecture Section (30 min) → W008-B01
-
-**Exit Gate:** Architecture section explains MCP role in training workflow
-
-**Actions:**
-1. Insert new section after "MCP Integration" (before "Development Commands")
-2. Add section header: `## 🏗 Architecture`
-3. Write high-level architecture:
-   ```markdown
-   ### Training Workflow with MCP
-   
-   1. **Training Data Ingestion** → Markdown files chunked and embedded
-   2. **Vector Storage** → Qdrant stores embeddings (384-dim all-MiniLM-L6-v2)
-   3. **Context Retrieval** → Semantic search for relevant training examples
-   4. **Model Training** → QLoRA fine-tuning with context injection
-   5. **Memory Management** → Global, learned, and agent-specific memories
-   ```
-4. Write "Dual-Layer Context Preservation" subsection (brief overview)
-5. Write "Component Interaction" subsection (server ↔ Qdrant ↔ training pipeline)
-6. Add ASCII diagram or bullet structure showing data flow
-7. Link to detailed architecture: `docs/mcp/mcp-qdrant-reference-architecture.md`
-
-**Validation:**
-- ✅ Architecture section added
-- ✅ Training workflow explained
-- ✅ Component interactions clear
-- ✅ Links to detailed docs
+**Exit Gate:** All quality gates pass, documentation complete
 
 ---
 
-### Step 4: Document Migration Journey (20 min) → W008-B01
+## Task Breakdown for SPRINT_QUEUE.json
 
-**Exit Gate:** Sprint 1 migration story documented
+### P003-B01: Steps 1-3 - Dashboard + Status JSON + Completion Script
+**Complexity:** Large  
+**Estimated Time:** 195 minutes (~3.25 hours)  
+**Steps:** 1, 2, 3  
+**Dependencies:** None  
+**Deliverables:**
+- `scripts/sprint-dashboard.sh` (executable, tested)
+- `.oodatcaa/work/SPRINT_STATUS.json` (schema documented)
+- `scripts/sprint-complete.sh` (executable, tested with --dry-run)
 
-**Actions:**
-1. Insert new section after "Architecture" or near end (before "License")
-2. Add section header: `## 📦 Sprint 1: MCP Migration Journey`
-3. Write migration summary:
-   ```markdown
-   Sprint 1 successfully migrated and integrated the MCP server infrastructure:
-   
-   - **W001** — Analyzed MCP source (67 essential files identified)
-   - **W002** — Migrated 61 files (31 Python, 4 policy, 12 docs, infrastructure)
-   - **W003** — Integrated 12 dependencies (~7GB, Qdrant + embeddings)
-   - **W004** — Adapted code quality (88.97% error reduction)
-   - **W005** — Enhanced quality gates (92.8% ruff reduction total)
-   - **W006** — Added 13 integration tests (10 passed, 3 skipped)
-   - **W007** — Configuration and environment setup complete
-   ```
-4. Add key achievements (tests, quality metrics)
-5. Reference CHANGELOG.md for detailed history
-6. Optional: Add lessons learned or future work
-
-**Validation:**
-- ✅ Migration journey section added
-- ✅ W001-W007 summarized
-- ✅ Key achievements highlighted
-- ✅ Link to CHANGELOG for details
+**Branch:** `feat/P003-step-01-sprint-dashboard`
 
 ---
 
-### Step 5: Clean Up README Structure (20 min) → W008-B01
+### P003-B02: Steps 4-6 - Initialization Script + Makefile + Sprint ID Consistency
+**Complexity:** Medium  
+**Estimated Time:** 150 minutes (~2.5 hours)  
+**Steps:** 4, 5, 6  
+**Dependencies:** P003-B01  
+**Deliverables:**
+- `scripts/sprint-new.sh` (executable, tested)
+- Makefile updated with new targets
+- Sprint ID consistency across all files
 
-**Exit Gate:** README structure improved, duplication removed
-
-**Actions:**
-1. Remove duplicate "Repository Structure" section (lines 276-305)
-2. Fix broken reference: `PYTemplate` → `MCPLocalLLM` (line 15)
-3. Verify section flow:
-   - Quick Start
-   - MCP Integration (NEW)
-   - Setup & Installation
-   - Architecture (NEW)
-   - What Happens Next
-   - Repository Structure (single instance)
-   - Development Commands
-   - Autonomous Workflow
-   - Sprint 1 Journey (NEW)
-   - Additional Documentation (NEW)
-   - License
-4. Optional: Add table of contents at top
-5. Check all internal links work
-
-**Validation:**
-- ✅ Duplicate section removed
-- ✅ Broken references fixed
-- ✅ Section flow logical
-- ✅ All links working
+**Branch:** `feat/P003-step-02-sprint-init`
 
 ---
 
-### Step 6: Add MCP Documentation Links (15 min) → W008-B01
+### P003-B03: Step 7 - Documentation + Quality Gates + Integration
+**Complexity:** Small  
+**Estimated Time:** 45 minutes  
+**Steps:** 7  
+**Dependencies:** P003-B02  
+**Deliverables:**
+- `docs/SPRINT_MANAGEMENT.md` (complete)
+- README updated
+- All quality gates pass
+- Branch ready for integration
 
-**Exit Gate:** Links to all MCP documentation added
-
-**Actions:**
-1. Insert new section near end: `## 📚 Additional Documentation`
-2. Add subsection: `### MCP Server Documentation`
-3. Link to all docs/mcp/ files:
-   - `docs/mcp/API.md` — MCP API reference
-   - `docs/mcp/DEPLOYMENT.md` — Deployment guide
-   - `docs/mcp/mcp-qdrant-reference-architecture.md` — Detailed architecture
-   - `docs/mcp/TROUBLESHOOTING.md` — MCP-specific troubleshooting
-   - `docs/mcp/PROMPT_EXAMPLES.md` — Example prompts
-4. Add brief description for each
-5. Optional: Add subsection for other docs (CONTRIBUTING.md, SECURITY.md)
-
-**Validation:**
-- ✅ Documentation links section added
-- ✅ All docs/mcp/ files linked
-- ✅ Brief descriptions provided
-- ✅ Links tested (files exist)
+**Branch:** `feat/P003-step-03-docs-quality`
 
 ---
 
-### Step 7: Quality Gates & Commit (15 min) → W008-B02
-
-**Exit Gate:** All quality gates pass, changes committed
-
-**Actions:**
-1. Run quality gates (should all pass since only doc changes):
-   ```bash
-   black --check .
-   ruff check .
-   pytest -q
-   python -m build
-   ```
-2. Verify zero code changes: `git status` (only README.md changed)
-3. Verify all tests still pass (13 passed, 3 skipped)
-4. Commit changes:
-   ```bash
-   git add README.md
-   git commit -m "[docs] W008: Documentation update - MCP integration & architecture
-   
-   - Added MCP Integration section (overview, benefits, components)
-   - Added Architecture section (training workflow, component interaction)
-   - Documented Sprint 1 migration journey (W001-W007 summary)
-   - Cleaned up README structure (removed duplication, fixed references)
-   - Added MCP documentation links section
-   - All quality gates pass, zero code changes, Sprint 1 complete"
-   ```
-5. Update AGENT_LOG.md
-
-**Validation:**
-- ✅ All quality gates pass
-- ✅ Zero code changes (doc-only)
-- ✅ All tests pass
-- ✅ Changes committed
+### P003-T01: Testing - Verify All 10 ACs
+**Complexity:** Medium  
+**Estimated Time:** 45 minutes  
+**Dependencies:** P003-B03  
+**Deliverables:**
+- All 10 acceptance criteria verified
+- Sprint transition tested end-to-end
+- No regressions confirmed
+- Performance validated (< 5s per command)
 
 ---
 
-### Step 8: Final Validation (15 min) → W008-T01 (Tester)
+## Exit Criteria Summary
 
-**Exit Gate:** All 10 acceptance criteria verified
+This task is complete when:
+1. ✅ Sprint ID system operational (SPRINT-YYYY-NNN format)
+2. ✅ `make sprint-status` displays accurate sprint information
+3. ✅ `make sprint-complete` finalizes sprint with full archival
+4. ✅ `make sprint-new` initializes next sprint correctly
+5. ✅ All sprint transitions are atomic (no partial states)
+6. ✅ Sprint metadata consistent across all OODATCAA files
+7. ✅ Documentation complete (README + SPRINT_MANAGEMENT.md)
+8. ✅ All quality gates pass (black, ruff, mypy, pytest)
+9. ✅ Zero regressions in existing functionality
+10. ✅ Performance targets met (< 5s per command)
 
-**Actions (Tester):**
-1. Read through complete README end-to-end
-2. Verify all 10 ACs:
-   - AC1: MCP Integration section ✅
-   - AC2: Architecture section ✅
-   - AC3: Migration journey ✅
-   - AC4: Structure improved ✅
-   - AC5: Documentation links ✅
-   - AC6: Zero code changes ✅
-   - AC7: Quality gates pass ✅
-   - AC8: Clear navigation ✅
-   - AC9: Consistent formatting ✅
-   - AC10: Sprint 1 complete ✅
-3. Check all links work
-4. Check markdown formatting
-5. Verify Sprint 1 exit criteria met
-6. Document test results
-7. Mark W008 ready for integration
-
-**Validation:**
-- ✅ All 10 ACs pass
-- ✅ README complete and professional
-- ✅ Sprint 1 exit criteria met
-- ✅ W008 approved
+**Unblocks:** P006 (Process Documentation), P007 (Integration Testing)
 
 ---
 
-## Task Breakdown (for SPRINT_QUEUE.json)
+## Notes
 
-### W008-B01: Documentation Updates (Steps 1-6)
-- **Type:** Implementation
-- **Complexity:** S
-- **Status:** ready
-- **Dependencies:** []
-- **Plan Steps:** 1-6
-- **Estimated Time:** ~2 hours
-
-### W008-B02: Quality Gates (Step 7)
-- **Type:** Implementation
-- **Complexity:** S
-- **Status:** blocked (depends on W008-B01)
-- **Dependencies:** [W008-B01]
-- **Plan Steps:** 7
-- **Estimated Time:** ~15 minutes
-
-### W008-T01: Final Validation (Step 8)
-- **Type:** Testing
-- **Complexity:** S
-- **Status:** blocked (depends on W008-B02)
-- **Dependencies:** [W008-B02]
-- **Plan Steps:** 8
-- **Estimated Time:** ~15 minutes
+- **Pattern Consistency:** Follows P002 (log rotation) bash script patterns
+- **Backward Compatibility:** Sprint 1 references preserved, new system additive
+- **Safety First:** All destructive operations have dry-run mode and confirmation
+- **Agent Coordination:** Scripts designed to be called by Negotiator or manually
+- **Future Enhancement:** Could add sprint analytics, burndown charts, velocity tracking
 
 ---
 
-## Sprint 1 Completion
-
-**W008 is the final task for Sprint 1!**
-
-Upon W008 completion:
-- ✅ All Sprint 1 work items complete (W001-W008)
-- ✅ MCP server fully migrated and integrated
-- ✅ Configuration and environment setup complete
-- ✅ Integration tests passing (13 tests)
-- ✅ Documentation complete and comprehensive
-- ✅ Sprint 1 exit criteria met
-
-**Next Steps After W008:**
-1. Sprint 1 retrospective
-2. Sprint 1 archival (logs, reports)
-3. Sprint 2 planning (training system implementation)
-
----
-
-## Success Metrics
-
-**Primary Metrics:**
-- ✅ All 10 acceptance criteria pass
-- ✅ README complete and professional
-- ✅ Sprint 1 exit criteria met
-- ✅ Zero code changes (doc-only)
-
-**Documentation Quality:**
-- MCP Integration section: 50-100 lines, clear and concise
-- Architecture section: 50-80 lines, explains training workflow
-- Migration journey: 30-50 lines, summarizes W001-W007
-- Links section: 5-10 documentation links
-
-**Time Metrics:**
-- Total estimated time: 2 hours 30 minutes
-- Target completion: Within 3 hours (including buffer)
-
----
-
-## Completion Criteria
-
-**W008 is complete when:**
-1. ✅ All 10 acceptance criteria verified
-2. ✅ README.md updated with all required sections
-3. ✅ All quality gates pass (zero regressions)
-4. ✅ Sprint 1 exit criteria met
-5. ✅ Documentation supports project onboarding
-6. ✅ Completion report created
-7. ✅ Branch ready for integration
-
----
-
-**Plan Status:** COMPLETE  
-**Next Action:** Negotiator assigns W008-B01 to Builder  
-**Expected Completion:** 2025-10-03T22:00:00+00:00 (within ~2.5 hours)  
-**Sprint Impact:** W008 completion marks **Sprint 1 COMPLETE** 🎉
+**Plan Status:** ✅ Complete  
+**Ready for:** Builder (P003-B01)  
+**Estimated Total Time:** 390 minutes (~6.5 hours across 3 builder tasks)
