@@ -1,4 +1,4 @@
-.PHONY: fmt gates test check build audit ship tag rollback validate-env
+.PHONY: fmt gates test check build audit ship tag rollback validate-env sprint-status sprint-complete sprint-new
 
 validate-env:
 	python3 scripts/validate-env.py
@@ -22,6 +22,16 @@ audit:
 	pip-audit || true
 	# optional
 	# bandit -r src -ll || true
+
+# Sprint Management
+sprint-status:
+	bash scripts/sprint-dashboard.sh
+
+sprint-complete:
+	bash scripts/sprint-complete.sh $(if $(FORCE),--force,)
+
+sprint-new:
+	bash scripts/sprint-new.sh $(if $(FORCE),--force,)
 
 ship:
 	git push -u origin HEAD
