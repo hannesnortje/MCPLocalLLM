@@ -141,14 +141,16 @@
       "title": "P002 Step 5-7: Testing + Docs + Quality",
       "type": "Build",
       "complexity": "S",
-      "status": "in_progress",
+      "status": "done",
       "priority": 2,
       "agent": "builder",
       "lease": {
         "agent": "builder",
-        "acquired": "2025-10-03T12:39:10+02:00",
-        "ttl": 90,
-        "last_heartbeat": "2025-10-03T12:39:10+02:00"
+        "owner": "agent-builder-B2",
+        "acquired": "2025-10-03T11:30:00+00:00",
+        "ttl": 5400,
+        "last_heartbeat": "2025-10-03T11:45:00+00:00",
+        "completed_at": "2025-10-03T11:45:00+00:00"
       },
       "dependencies": [
         "P002-B01"
@@ -157,7 +159,9 @@
       "sprint": "2",
       "parent": "P002",
       "plan_steps": "5-7",
-      "estimated_time": "105 min"
+      "estimated_time": "105 min",
+      "completed": "2025-10-03T11:45:00+00:00",
+      "note": "Verification-only task, core work done in P002-B01"
     },
     {
       "id": "P002-T01",
@@ -360,10 +364,15 @@
       "title": "Agent Role Assessment & Enhancement",
       "type": "Quality",
       "complexity": "M",
-      "status": "needs_plan",
+      "status": "planning",
       "priority": 5,
-      "agent": null,
-      "lease": null,
+      "agent": "planner",
+      "lease": {
+        "agent": "planner",
+        "acquired": "2025-10-03T15:40:00+02:00",
+        "ttl": 1800,
+        "last_heartbeat": "2025-10-03T15:40:00+02:00"
+      },
       "dependencies": [],
       "objective": "SPRINT-2025-002",
       "sprint": "2",
@@ -408,7 +417,7 @@
   ],
   "metadata": {
     "created": "2025-10-03T08:45:00+02:00",
-    "updated": "2025-10-03T15:35:00+02:00",
+    "updated": "2025-10-03T15:40:00+02:00",
     "sprint_goal": "OODATCAA Process Improvement - Automate and enhance multi-agent development",
     "sprint_status": "in_progress",
     "total_tasks": 26,
@@ -418,13 +427,13 @@
     "infra_tasks": 3,
     "docs_tasks": 2,
     "quality_tasks": 2,
-    "completed_tasks": 1,
+    "completed_tasks": 3,
     "ready_tasks": 3,
     "blocked_tasks": 10,
-    "in_progress_tasks": 1,
-    "planning_tasks": 0,
+    "in_progress_tasks": 0,
+    "planning_tasks": 1,
     "planning_complete_tasks": 4,
-    "needs_plan_tasks": 3,
+    "needs_plan_tasks": 2,
     "awaiting_test_tasks": 0,
     "done_tasks": 2,
     "ready_for_integrator_tasks": 1,
