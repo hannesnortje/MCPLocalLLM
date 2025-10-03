@@ -233,9 +233,9 @@
       "title": "P003 Step 4-6: Initialization Script + Makefile + Sprint ID Consistency",
       "type": "Build",
       "complexity": "M",
-      "status": "ready",
+      "status": "awaiting_test",
       "priority": 3,
-      "agent": null,
+      "agent": "builder",
       "lease": null,
       "dependencies": [
         "P003-B01"
@@ -244,7 +244,9 @@
       "sprint": "2",
       "parent": "P003",
       "plan_steps": "4-6",
-      "estimated_time": "150 min"
+      "estimated_time": "150 min",
+      "completed": "2025-10-03T19:45:00Z",
+      "branch": "feat/P003-step-02-sprint-init"
     },
     {
       "id": "P003-B03",
