@@ -478,34 +478,6 @@ With MCP infrastructure complete, Sprint 2 will focus on:
 
 ---
 
-## 📂 Repository Structure
-
-```
-.
-├── .oodatcaa/                      # All OODATCAA system files
-│   ├── config/                     # Cursor Rules
-│   │   ├── UserRules.md            # Global multi-agent doctrine
-│   │   └── ProjectRules.md         # Python-specific commands & gates
-│   ├── objectives/                 # Strategic planning
-│   │   ├── OBJECTIVE.md            # 👈 YOU EDIT THIS (only file you need)
-│   │   ├── SPRINT_GOAL.md          # Agent-generated sprint goals
-│   │   └── RELEASE_CHECKLIST.md    # Release checklist
-│   ├── work/                       # Active sprint work (agent-managed)
-│   │   ├── SPRINT_BACKLOG.md       # Sprint backlog items
-│   │   ├── SPRINT_PLAN.md          # Current sprint assignments
-│   │   ├── AGENT_PLAN.md           # Detailed implementation plan
-│   │   ├── TEST_PLAN.md            # Test commands & acceptance criteria
-│   │   ├── AGENT_LOG.md            # Append-only execution log
-│   │   ├── SPRINT_LOG.md           # Sprint summary & decisions
-│   │   └── SPRINT_QUEUE.json       # Work queue with status & deps
-│   ├── prompts/                    # Agent prompt templates
-│   └── scripts/                    # Helper scripts (lease.sh, lock.sh)
-├── docs/                           # Project documentation
-├── src/app_pkg/                    # Source code (agents write here)
-├── tests/                          # Tests (agents write here)
-└── pyproject.toml                  # Package config (customize as needed)
-```
-
 ## Repository Structure
 
 ```
