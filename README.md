@@ -478,6 +478,41 @@ With MCP infrastructure complete, Sprint 2 will focus on:
 
 ---
 
+## 🔄 OODATCAA Development Process
+
+This project uses **OODATCAA** (Observe → Orient → Decide → Act → Test → Check → Adapt → Archive), an 8-stage autonomous development loop that enables multi-agent coordination, systematic quality assurance, and adaptive improvement.
+
+### Key Principles
+
+- **Small, incremental steps**: One plan step → one branch → one PR
+- **Automated quality gates**: Black, ruff, mypy, pytest, coverage, build, security
+- **Pragmatic flexibility**: 80% success with all critical ACs is often enough
+- **Adaptation over perfection**: Quick fixes preferred over Start-Over
+- **Loop limits**: Maximum 3 adaptation cycles before Start-Over Gate
+- **Complete documentation**: Every decision, adaptation, and outcome is logged
+
+### Documentation & Metrics
+
+📖 **[OODATCAA Loop Guide](`.oodatcaa/OODATCAA_LOOP_GUIDE.md`)**: Complete 8-stage documentation with flow diagrams, decision criteria, Sprint 1 case studies, and best practices.
+
+📋 **[Loop Policy](`.oodatcaa/LOOP_POLICY.md`)**: Loop limits, warning levels, and Start-Over Gate policy.
+
+📊 **Loop Metrics Dashboard**:
+```bash
+make loop-metrics          # View adaptation cycles, success rates, loop compliance
+make loop-metrics --sprint 2   # Sprint-specific metrics
+```
+
+**Sprint 1 Results:**
+- **Total Tasks**: 34 completed
+- **Adaptation Cycles**: 9 (across 6 tasks)
+- **Average Loops**: 1.5 per adapted task
+- **Loop 3+ Escalations**: 0% (perfect adherence to loop limits)
+- **Start-Over Gates**: 0 (zero rollbacks needed)
+- **Success Rate**: 100%
+
+---
+
 ## Repository Structure
 
 ```
@@ -603,11 +638,18 @@ Internal documentation for the autonomous development system:
 
 | Document | Description |
 |----------|-------------|
+| **`.oodatcaa/OODATCAA_LOOP_GUIDE.md`** | **Complete 8-stage loop documentation** (diagrams, criteria, examples) |
+| **`.oodatcaa/LOOP_POLICY.md`** | Loop limits, warning levels, Start-Over Gate policy |
 | **`.oodatcaa/config/UserRules.md`** | Multi-agent doctrine and coordination rules |
 | **`.oodatcaa/config/ProjectRules.md`** | Python-specific commands and quality gates |
 | **`.oodatcaa/AGENT_MANAGEMENT.md`** | Agent lifecycle management guide |
 | **`.oodatcaa/work/SPRINT_LOG.md`** | Sprint summaries and retrospectives |
 | **`.oodatcaa/work/AGENT_LOG.md`** | Detailed agent execution log |
+
+**OODATCAA Loop Metrics:**
+```bash
+make loop-metrics      # View adaptation cycles, success rates, and loop compliance
+```
 
 ---
 
