@@ -295,7 +295,7 @@
   ],
   "metadata": {
     "created": "2025-10-03T08:45:00+02:00",
-    "updated": "2025-10-03T12:30:00+02:00",
+    "updated": "2025-10-03T12:45:00Z",
     "sprint_goal": "OODATCAA Process Improvement - Automate and enhance multi-agent development",
     "sprint_status": "in_progress",
     "total_tasks": 22,
@@ -312,7 +312,7 @@
     "planning_tasks": 0,
     "planning_complete_tasks": 3,
     "needs_plan_tasks": 4,
-    "awaiting_test_tasks": 0,
+    "awaiting_test_tasks": 1,
     "done_tasks": 2,
     "ready_for_integrator_tasks": 0,
     "integrating_tasks": 0,
