@@ -245,7 +245,7 @@
       "title": "P004 Step 7: Integration",
       "type": "Build",
       "complexity": "S",
-      "status": "ready",
+      "status": "awaiting_test",
       "priority": 4,
       "agent": null,
       "lease": null,
@@ -254,7 +254,10 @@
       "sprint": "2",
       "parent": "P004",
       "plan_steps": "7",
-      "estimated_time": "60 min"
+      "estimated_time": "60 min",
+      "completed": "2025-10-03T11:42:00+00:00",
+      "branch": "feat/P004-step-02-policy-metrics",
+      "commit": "52f033a"
     },
     {
       "id": "P004-T01",
