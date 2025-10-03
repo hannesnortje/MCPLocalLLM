@@ -549,3 +549,60 @@ Each plan should include: task breakdown, implementation steps, dependencies, ac
 **Ready for:** Builder (P004-B01) - **Can run parallel with P002-B01!**
 
 ---
+
+**Planner → P006: Process Documentation & Runbook**  
+- Status: Planning Complete ✅
+- Assigned: 2025-10-03T22:30:00+02:00  
+- Completed: 2025-10-03T22:35:00+02:00
+- Artifacts: AGENT_PLAN.md (7 steps, 3 builder tasks + 1 tester task), TEST_PLAN.md (10 ACs)
+- Completion Report: `.oodatcaa/work/reports/P006/planner.md`
+
+**Next Assignment: Builder → P006-B01 (BLOCKED - needs P001, P003, P004 complete)**
+
+---
+
+### P006: Process Documentation & Runbook (Planning Complete)
+
+**Plan Version:** 1.0  
+**Branch:** `feat/P006-step-01-operational-docs`  
+**Plan Document:** `.oodatcaa/work/AGENT_PLAN.md`  
+**Test Document:** `.oodatcaa/work/TEST_PLAN.md`  
+**Planner:** agent-planner-A  
+**Completed:** 2025-10-03T22:35:00+02:00
+
+**Purpose:** Create comprehensive process documentation including operational runbook, enhanced agent protocols, and developer onboarding guide.
+
+**Implementation Steps:**
+1. **Step 1-3:** Runbook + Troubleshooting + Onboarding → P006-B01 (blocked, 225 min)
+2. **Step 4-5:** Agent Protocols + Architecture → P006-B02 (blocked by B01, 150 min)
+3. **Step 6-7:** Navigation + Quality → P006-B03 (blocked by B02, 75 min)
+4. **Testing:** Verify all 10 ACs → P006-T01 (blocked by B03)
+
+**Deliverables:**
+- `.oodatcaa/RUNBOOK.md` - 20+ operational scenarios
+- `.oodatcaa/TROUBLESHOOTING.md` - 30+ common issues with solutions
+- `.oodatcaa/ONBOARDING.md` - Developer quick start guide (15-minute path)
+- `.oodatcaa/ARCHITECTURE.md` - System architecture with 5 Mermaid diagrams
+- `.oodatcaa/prompts/*.md` - 10 agent prompts enhanced with examples and edge cases
+- Navigation improvements across all documentation
+- Cross-linking between related docs
+
+**Key Features:**
+- Operational runbook covering Sprint Operations, Agent Operations, System Maintenance
+- Comprehensive troubleshooting (Agent Issues, System Issues, Process Issues)
+- Quick start onboarding path (15 minutes to first sprint)
+- Enhanced agent protocols with examples, edge cases, and common errors
+- System architecture documentation with integration points for P001-P004
+- Improved navigation and cross-linking across all OODATCAA documentation
+
+**Exit Criteria:** All 10 ACs pass, documentation comprehensive, P001-P004 systems documented
+
+**Dependencies:** P001 (daemon), P003 (sprint management), P004 (OODATCAA loop)
+
+**Estimated Timeline:** 7.5 hours (3 builder tasks in sequence + testing)
+
+**Ready for:** Builder (P006-B01 when dependencies satisfied)
+
+**Unblocks:** None (final documentation task)
+
+---

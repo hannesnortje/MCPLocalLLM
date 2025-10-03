@@ -15,6 +15,37 @@
 
 set -euo pipefail
 
+# Handle help flag
+if [[ "${1:-}" == "--help" ]] || [[ "${1:-}" == "-h" ]]; then
+    cat <<EOF
+Usage: bash scripts/sprint-dashboard.sh [OPTIONS]
+
+Display real-time sprint status dashboard.
+
+Options:
+  --help, -h   Display this help message
+
+Outputs:
+  - Sprint progress and task breakdown
+  - WIP utilization per agent role
+  - Exit criteria status
+  - Recent activity and next actions
+  - Generates .oodatcaa/work/SPRINT_STATUS.json
+
+Examples:
+  bash scripts/sprint-dashboard.sh
+  make sprint-status
+
+Exit Codes:
+  0 - Success
+  1 - SPRINT_QUEUE.json not found
+  2 - Invalid JSON in SPRINT_QUEUE.json
+  3 - Missing dependencies (jq)
+
+EOF
+    exit 0
+fi
+
 QUEUE_FILE=".oodatcaa/work/SPRINT_QUEUE.json"
 STATUS_FILE=".oodatcaa/work/SPRINT_STATUS.json"
 

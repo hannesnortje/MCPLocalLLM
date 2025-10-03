@@ -1,206 +1,221 @@
-# AGENT_PLAN: P003 - Enhanced Sprint Management System
+# AGENT_PLAN: P006 - Process Documentation & Runbook
 
 **Plan Version:** 1.0  
-**Task ID:** P003  
+**Task ID:** P006  
 **Objective:** SPRINT-2025-002 (OODATCAA Process Improvement)  
 **Sprint:** 2  
 **Complexity:** Medium  
 **Planner:** agent-planner-A  
-**Created:** 2025-10-03T15:30:00+02:00
+**Created:** 2025-10-03T22:30:00+02:00
 
 ---
 
 ## Traceability
 
-**Objective Link:** `.oodatcaa/objectives/SPRINT_2_OBJECTIVE.md` → Sprint Management Improvements  
+**Objective Link:** `.oodatcaa/objectives/SPRINT_2_OBJECTIVE.md` → Process Documentation Complete  
 **Epic:** Sprint 2 - OODATCAA Process Improvement  
+**Dependencies:** P001 (daemon system), P003 (sprint management), P004 (OODATCAA loop docs)
+
 **Success Criteria Addressed:**
-- Sprint ID System: Clear, unambiguous sprint identifiers (Format: SPRINT-YYYY-NNN)
-- Sprint Dashboard: Visual progress tracking (`make sprint-status`)
-- Sprint Transitions: Automated sprint lifecycle (`make sprint-complete`, `make sprint-new`)
+1. Runbook: Practical guide created with common scenarios, command reference, troubleshooting
+2. Agent Protocols: Enhanced `.oodatcaa/prompts/*.md` with examples and edge cases
+3. Onboarding Guide: New user/agent guide with system overview, quick start, architecture diagrams
 
 ---
 
 ## Problem Statement
 
 **Current State:**
-- Sprint 1 completed successfully but revealed sprint management gaps
-- Sprint transitions are manual with unclear numbering
-- No automated way to visualize sprint progress
-- Sprint completion requires manual log archiving and state updates
-- Sprint initiation is ad-hoc without standardized process
+- Sprint 2 has delivered significant infrastructure (P001 daemon, P002 log rotation, P003 sprint management, P004 OODATCAA documentation)
+- Multiple documentation files exist but lack integration and practical operational guidance
+- No comprehensive runbook for common scenarios (failures, debugging, recovery)
+- Agent prompts are functional but lack examples and edge case handling
+- Onboarding new users/developers requires reading multiple disconnected documents
 
 **Evidence:**
-- SPRINT_QUEUE.json shows sprint 2 status but no standardized tracking
-- SPRINT_LOG.md has sprint completion markers but no automated lifecycle
-- No sprint dashboard or status visualization exists
-- Sprint transitions performed manually by agents (error-prone)
+- 14 existing documentation files in `.oodatcaa/` directory
+- Agent prompts in `.oodatcaa/prompts/` are protocol-focused, light on examples
+- No centralized troubleshooting guide
+- No operational runbook with step-by-step procedures
+- Documentation scattered across README.md, QUICK_START.md, START_HERE.md, etc.
 
 **Impact:**
-- Increased cognitive load for Negotiator agent
-- Risk of incomplete sprint transitions
-- Difficulty tracking sprint health and progress
-- Inconsistent sprint metadata and documentation
+- High onboarding friction for new developers or AI agents
+- Difficult to troubleshoot issues without comprehensive guide
+- Common operational tasks undocumented (sprint failures, lease recovery, rollback procedures)
+- Agent prompts assume too much context, leading to errors
 
 **Goal:**
-Build a comprehensive sprint management system that automates transitions, provides visibility, and maintains consistent sprint metadata across the project lifecycle.
+Create comprehensive, integrated process documentation including operational runbook, enhanced agent protocols, and developer onboarding guide that consolidates existing docs and adds practical operational procedures.
 
 ---
 
 ## Constraints & Interfaces
 
 ### Technical Constraints
-- **Shell Scripts:** Bash 4+ for maximum compatibility
-- **JSON Parsing:** Use `jq` for reliable SPRINT_QUEUE.json manipulation
-- **Makefile Integration:** Commands must integrate with existing Makefile targets
-- **Cross-Platform:** Scripts should work on Linux/macOS (current: Linux 6.14.0)
-- **Non-Interactive:** All operations must be automatable (no user prompts)
+- **Documentation Format:** Markdown for all documentation files
+- **Location:** `.oodatcaa/` directory for system docs, `docs/` for developer-facing docs
+- **Integration:** Must reference P001, P002, P003, P004 systems
+- **Accessibility:** Clear navigation, searchable, beginner-friendly
 
 ### Interfaces
-**Input:**
-- `.oodatcaa/work/SPRINT_QUEUE.json` - Current sprint state
-- `.oodatcaa/work/SPRINT_LOG.md` - Sprint history
-- `.oodatcaa/work/SPRINT_PLAN.md` - Sprint assignments
-- `.oodatcaa/objectives/SPRINT_GOAL.md` - Sprint goals
-- `.oodatcaa/objectives/SPRINT_2_OBJECTIVE.md` - Current objective
+**Input Documentation (Existing):**
+- `.oodatcaa/README.md` - System overview
+- `.oodatcaa/QUICK_START.md` - Quick start guide
+- `.oodatcaa/AGENT_MANAGEMENT.md` - Agent details
+- `.oodatcaa/OODATCAA_LOOP_GUIDE.md` - Loop documentation (P004)
+- `.oodatcaa/prompts/*.md` - Agent protocol files
+- `docs/SPRINT_MANAGEMENT.md` - Sprint management reference (P003)
+- Existing README.md
 
-**Output:**
-- `scripts/sprint-dashboard.sh` - Status visualization script
-- `scripts/sprint-complete.sh` - Sprint finalization script  
-- `scripts/sprint-new.sh` - Sprint initialization script
-- `Makefile` - Updated with new targets
-- `.oodatcaa/work/SPRINT_STATUS.json` - Real-time sprint metrics
+**Output Documentation (New/Enhanced):**
+- `.oodatcaa/RUNBOOK.md` - Operational procedures
+- `.oodatcaa/TROUBLESHOOTING.md` - Common issues and solutions
+- `.oodatcaa/ONBOARDING.md` - Developer onboarding guide
+- `.oodatcaa/prompts/*.md` - Enhanced with examples
+- `.oodatcaa/ARCHITECTURE.md` - System architecture diagrams
+- Navigation improvements in existing docs
 
 ### Existing Infrastructure
-- Log rotation system (P002-B01) - Sprint-aware archiving
-- OODATCAA documentation (P004) - Process documentation
-- Makefile - Existing quality gates and commands
-- SPRINT_QUEUE.json - Task tracking system
+- P001: Background agent daemon system
+- P002: Automatic log rotation system
+- P003: Sprint management (dashboard, transitions)
+- P004: OODATCAA loop documentation
+- Sprint 1: Complete MCP server foundation
+- Sprint 2: Process improvement infrastructure
 
 ### Risks
-1. **JSON Corruption:** Improper jq usage could corrupt SPRINT_QUEUE.json
-   - Mitigation: Atomic writes with temp files, validation before commit
-2. **Incomplete Transitions:** Partial sprint completion could leave inconsistent state
-   - Mitigation: Transaction-like behavior, rollback on errors
-3. **Breaking Changes:** New sprint ID format might break existing scripts
-   - Mitigation: Backward compatibility checks, migration path
-4. **Concurrency:** Multiple agents might trigger transitions simultaneously
-   - Mitigation: Lock files during transitions
+1. **Documentation Sprawl:** Too many docs can be as confusing as too few
+   - Mitigation: Clear navigation, consolidated index, cross-references
+2. **Maintenance Burden:** Outdated docs worse than no docs
+   - Mitigation: Link to code/prompts, date stamps, version numbers
+3. **Over-Documentation:** Too detailed = nobody reads it
+   - Mitigation: Tiered approach (quick start → runbook → deep dive)
+4. **Fragmentation:** New docs don't integrate with existing
+   - Mitigation: Navigation hub, consistent structure, cross-linking
 
 ---
 
 ## Definition of Done (DoD)
 
 ### Functional Requirements
-1. **Sprint ID System:**
-   - All sprints identified with SPRINT-YYYY-NNN format
-   - Sprint metadata consistent across all OODATCAA files
-   - Backward compatible with existing sprint references (sprint 1, sprint 2)
+1. **Operational Runbook:**
+   - Common scenarios documented (20+ procedures)
+   - Step-by-step instructions with commands
+   - Troubleshooting section for each scenario
+   - Emergency procedures (rollback, recovery, cleanup)
 
-2. **Sprint Dashboard:**
-   - `make sprint-status` command functional
-   - Displays: Sprint ID, progress %, task counts, exit criteria status
-   - Color-coded output for quick health assessment
-   - Shows WIP limits and utilization
+2. **Enhanced Agent Protocols:**
+   - All 10 agent prompts include examples
+   - Edge cases documented
+   - Common errors and solutions
+   - Input/output contracts clear
 
-3. **Sprint Transitions:**
-   - `make sprint-complete` finalizes current sprint:
-     - Archives all logs automatically
-     - Updates sprint status to "completed"
-     - Generates sprint retrospective template
-     - Tags sprint completion in git (e.g., sprint-2-complete)
-   - `make sprint-new` initializes next sprint:
-     - Creates new sprint directories
-     - Resets active logs
-     - Updates sprint number in SPRINT_QUEUE.json
-     - Creates sprint planning templates
+3. **Onboarding Guide:**
+   - System overview with architecture diagram
+   - 15-minute quick start path
+   - First sprint walkthrough
+   - Key concepts explained
+
+4. **Troubleshooting Guide:**
+   - 30+ common issues documented
+   - Diagnostic procedures
+   - Solution steps with commands
+   - Prevention tips
+
+5. **Architecture Documentation:**
+   - System architecture diagram (Mermaid)
+   - Agent interaction flows
+   - File structure explained
+   - Data flow diagrams
 
 ### Non-Functional Requirements
-- **Performance:** All commands complete in < 5 seconds
-- **Reliability:** No data loss during transitions (atomic operations)
-- **Usability:** Clear, informative output with progress indicators
-- **Maintainability:** Well-documented scripts with error handling
+- **Usability:** Findable in < 30 seconds, understandable on first read
+- **Completeness:** Covers all P001-P004 systems
+- **Accuracy:** All commands tested, examples verified
+- **Maintainability:** Modular structure, clear ownership
 
 ### Acceptance Criteria (Detailed in TEST_PLAN.md)
-- AC1: Sprint ID system functional
-- AC2: `make sprint-status` displays accurate information
-- AC3: `make sprint-complete` finalizes sprint correctly
-- AC4: `make sprint-new` initializes next sprint
-- AC5: All quality gates pass
-- AC6: Documentation complete
-- AC7: Zero regressions in existing functionality
-- AC8: Sprint transitions are atomic (no partial states)
-- AC9: Sprint metadata consistent across all files
-- AC10: Performance targets met (< 5s per command)
+- AC1: RUNBOOK.md complete with 20+ scenarios
+- AC2: TROUBLESHOOTING.md with 30+ issues
+- AC3: ONBOARDING.md with quick start path
+- AC4: All agent prompts enhanced with examples
+- AC5: ARCHITECTURE.md with diagrams
+- AC6: Navigation improved across all docs
+- AC7: All documentation cross-linked
+- AC8: Quality gates pass (links valid, formatting correct)
+- AC9: Existing documentation consolidated
+- AC10: Sprint 2 systems (P001-P004) documented
 
 ---
 
 ## Alternatives Considered
 
-### Alternative 1: Python-Based Sprint Management
+### Alternative 1: Minimal Documentation Updates
 **Approach:**
-- Implement sprint management in Python using existing project structure
-- Create `src/sprint_management/` module with OOP design
-- Use Python's JSON library for manipulation
+- Only update agent prompts with examples
+- Add troubleshooting section to existing README
+- No new documentation files
 
 **Pros:**
-- Type safety with mypy
-- Better error handling and testing
-- Integration with existing Python tooling
-- More sophisticated data validation
+- Minimal work (~2 hours)
+- Less maintenance burden
+- Familiar structure
 
 **Cons:**
-- Adds complexity to project structure
-- Requires additional dependencies
-- Heavier weight for simple shell operations
-- Less transparent for debugging
+- Doesn't address runbook need
+- README becomes bloated
+- No dedicated onboarding path
+- Troubleshooting buried in large file
 
-**Verdict:** ❌ **Rejected** - Overkill for straightforward file manipulation. Shell scripts are more appropriate for DevOps automation tasks.
+**Verdict:** ❌ **Rejected** - Insufficient for operational needs. Troubleshooting and runbook critical for autonomous operation.
 
 ---
 
-### Alternative 2: Makefile-Only Implementation
+### Alternative 2: Comprehensive Documentation Portal
 **Approach:**
-- Implement all logic directly in Makefile targets
-- No separate shell scripts, everything inline
-- Use Make's variable system for state management
+- Build HTML documentation site (Sphinx/MkDocs)
+- Interactive tutorials
+- Search functionality
+- Version-controlled docs
 
 **Pros:**
-- Single source of truth (Makefile)
-- No separate script files to maintain
-- Familiar Make syntax
+- Professional presentation
+- Excellent searchability
+- Multi-version support
+- Interactive examples
 
 **Cons:**
-- Make syntax is arcane for complex logic
-- Poor error handling capabilities
-- Difficult to test in isolation
-- Hard to read and maintain for complex operations
-- No real transaction support
+- Significant implementation time (~3-4 days)
+- Additional build/deploy infrastructure
+- Overkill for internal tool
+- Maintenance complexity
 
-**Verdict:** ❌ **Rejected** - Makefile is great for orchestration but poor for complex business logic. Separate scripts are more maintainable.
+**Verdict:** ❌ **Rejected** - Over-engineering for current needs. Markdown files sufficient for agent-driven development.
 
 ---
 
-### Alternative 3: Hybrid Bash Scripts + Make Orchestration (CHOSEN)
+### Alternative 3: Structured Markdown Documentation (CHOSEN)
 **Approach:**
-- Implement core logic in well-structured bash scripts
-- Use Makefile as thin orchestration layer
-- Scripts are independently testable and reusable
-- Follow existing pattern from P002 (log rotation)
+- Create focused markdown files for each major topic
+- Maintain existing structure, add new specialized docs
+- Cross-link aggressively
+- Keep in `.oodatcaa/` for agent accessibility
+- Clear navigation hub
 
 **Pros:**
-- ✅ Separation of concerns (orchestration vs logic)
-- ✅ Scripts can be called directly or via Make
-- ✅ Consistent with existing P002 pattern
-- ✅ Easy to test and debug
-- ✅ Good error handling in bash
-- ✅ Transparent execution (scripts show progress)
+- ✅ Right balance of structure and simplicity
+- ✅ Agent-readable (markdown parsing easy)
+- ✅ Version controlled with code
+- ✅ No build infrastructure needed
+- ✅ Easy to maintain and update
+- ✅ Familiar developer workflow
 
 **Cons:**
-- Requires bash 4+ (acceptable given deployment environment)
-- More files to maintain (mitigated by good structure)
+- No built-in search (mitigated by grep/IDE search)
+- Manual cross-linking (acceptable maintenance cost)
 
-**Verdict:** ✅ **CHOSEN** - Best balance of simplicity, maintainability, and consistency with existing codebase patterns.
+**Verdict:** ✅ **CHOSEN** - Optimal for agent-driven development. Markdown keeps docs with code, easily parseable, low maintenance.
 
 ---
 
@@ -208,376 +223,437 @@ Build a comprehensive sprint management system that automates transitions, provi
 
 ### Step-by-Step Breakdown
 
-#### **Step 1: Sprint Dashboard Script (60 min)**
-**Goal:** Create `scripts/sprint-dashboard.sh` - Visualize current sprint status
+#### **Step 1: Operational Runbook Creation (90 min)**
+**Goal:** Create `.oodatcaa/RUNBOOK.md` - Practical operational procedures
 
-**Tasks:**
-1. Parse SPRINT_QUEUE.json for current sprint state
-2. Calculate progress metrics:
-   - Total tasks, completed, in-progress, blocked
-   - Sprint completion percentage
-   - Exit criteria progress
-3. Parse SPRINT_GOAL.md for sprint objectives
-4. Format output with color coding:
-   - Green: ✅ Complete
-   - Yellow: 🔄 In Progress  
-   - Red: ❌ Blocked/Failed
-5. Display WIP limits and utilization
-6. Show time estimates vs actuals (if available)
+**Scenarios to Document:**
 
-**Output Example:**
+**Sprint Operations (8 scenarios):**
+1. Starting a new sprint
+2. Monitoring sprint progress (`make sprint-status`)
+3. Completing a sprint (`make sprint-complete`)
+4. Handling sprint failures
+5. Rolling back to previous sprint state
+6. Emergency sprint reset
+7. Sprint transition troubleshooting
+8. Sprint retrospective process
+
+**Agent Operations (6 scenarios):**
+9. Launching Negotiator for first time
+10. Running planner for new work item
+11. Builder failure recovery
+12. Tester acceptance criteria negotiation
+13. Refiner quick fix vs rollback decision
+14. Integrator merge conflicts
+
+**System Maintenance (6 scenarios):**
+15. Log rotation manual trigger
+16. Archive cleanup and management
+17. Lease cleanup (stale leases)
+18. Lock recovery (broken locks >5m)
+19. SPRINT_QUEUE.json repair
+20. Git baseline tag management
+
+**Format Per Scenario:**
+   ```markdown
+### Scenario: [Name]
+
+**When:** [Situation description]
+**Goal:** [What you want to achieve]
+
+#### Procedure:
+1. Step 1 with command
+   ```bash
+   command here
+   ```
+2. Step 2...
+
+#### Expected Output:
 ```
-=======================================
-  Sprint Status: SPRINT-2025-002
-=======================================
-
-Sprint: OODATCAA Process Improvement
-Status: in_progress
-Progress: 18% complete (4 of 22 tasks)
-
-Tasks:
-  ✅ Done:       2 tasks
-  🔄 In Progress: 1 task
-  ⏳ Ready:      2 tasks
-  🚫 Blocked:    7 tasks
-  📋 Needs Plan: 4 tasks
-
-WIP Utilization:
-  Planner:    0/1 (0%)
-  Builder:    1/3 (33%)
-  Tester:     0/2 (0%)
-  Refiner:    0/1 (0%)
-  Integrator: 0/1 (0%)
-
-Exit Criteria:
-  ✅ Background Agent System Operational
-  🔄 Automatic Log Rotation Working (50%)
-  ❌ Sprint Management Enhanced
-  🔄 OODATCAA Loop Documented (75%)
-  ❌ Agent Role Completeness
-  ❌ Process Documentation Complete
-  ❌ Quality Gates Maintained
-
-Recent Activity:
-  - P002-B01 INTEGRATED (Automatic Log Rotation)
-  - P004-B01 COMPLETE (OODATCAA Docs Foundation)
-  - P002-B02 in progress (Testing + Docs)
-
-Next Actions:
-  - P004-B03 ready for integrator
-  - P003 needs planning
-=======================================
+output here
 ```
 
-**Exit Gate:** Script runs without errors, displays accurate information
+#### Troubleshooting:
+- Issue: [common problem]
+  - Solution: [how to fix]
+
+#### See Also:
+- Related scenario links
+```
+
+**Exit Gate:** 20+ scenarios documented, all commands tested
 
 ---
 
-#### **Step 2: Sprint Status JSON Generator (45 min)**
-**Goal:** Create `.oodatcaa/work/SPRINT_STATUS.json` - Machine-readable sprint metrics
+#### **Step 2: Troubleshooting Guide Creation (75 min)**
+**Goal:** Create `.oodatcaa/TROUBLESHOOTING.md` - Diagnostic procedures
 
-**Tasks:**
-1. Extract all relevant metrics from SPRINT_QUEUE.json
-2. Calculate derived metrics:
-   - Progress percentage
-   - Velocity (tasks/day)
-   - Estimated completion date
-   - Blocker analysis
-3. Generate JSON with consistent schema
-4. Include timestamp for staleness detection
-5. Document JSON schema in comments
+**Issue Categories:**
 
-**Output Schema:**
-```json
-{
-  "sprint_id": "SPRINT-2025-002",
-  "sprint_number": 2,
-  "status": "in_progress",
-  "started": "2025-10-03",
-  "target_completion": "2025-10-10",
-  "progress": {
-    "total_tasks": 22,
-    "completed": 2,
-    "in_progress": 1,
-    "ready": 2,
-    "blocked": 7,
-    "needs_plan": 4,
-    "percentage": 18
-  },
-  "wip": {
-    "planner": {"current": 0, "limit": 1},
-    "builder": {"current": 1, "limit": 3},
-    "tester": {"current": 0, "limit": 2},
-    "refiner": {"current": 0, "limit": 1},
-    "integrator": {"current": 0, "limit": 1}
-  },
-  "exit_criteria": [
-    {"name": "Background Agent System", "status": "complete", "progress": 100},
-    {"name": "Automatic Log Rotation", "status": "in_progress", "progress": 50}
-  ],
-  "velocity": {
-    "tasks_per_day": 1.5,
-    "estimated_days_remaining": 10
-  },
-  "generated_at": "2025-10-03T15:30:00+02:00"
-}
+**Agent Issues (10 issues):**
+1. Planner creates invalid AGENT_PLAN.md
+2. Builder fails quality gates repeatedly
+3. Tester rejects work unfairly
+4. Refiner recommends wrong approach
+5. Integrator merge conflicts
+6. Negotiator coordination loops
+7. Sprint Planner generates impossible sprint
+8. Stale lease prevents work
+9. Lock files not releasing
+10. Agent reports missing
+
+**System Issues (10 issues):**
+11. SPRINT_QUEUE.json corruption
+12. JSON parse errors
+13. File permission errors
+14. Disk space issues
+15. Git conflicts in working files
+16. Missing dependencies
+17. Python version incompatibility
+18. Virtual environment issues
+19. Quality gate failures (black/ruff/mypy)
+20. Test failures blocking progress
+
+**Process Issues (10 issues):**
+21. Sprint not progressing
+22. Tasks stuck in "blocked" status
+23. WIP limits preventing work
+24. Dependencies never satisfied
+25. Sprint completion criteria unclear
+26. Integration tests always skipping
+27. Coverage thresholds too high
+28. Documentation out of sync
+29. Logs growing too large
+30. Archive structure corrupted
+
+**Format Per Issue:**
+   ```markdown
+### Issue: [Problem Description]
+
+**Symptoms:**
+- What you observe
+
+**Diagnosis:**
+```bash
+# Commands to diagnose
+command to check state
 ```
 
-**Exit Gate:** JSON validates, contains all required fields, integrates with dashboard script
-
----
-
-#### **Step 3: Sprint Completion Script (90 min)**
-**Goal:** Create `scripts/sprint-complete.sh` - Automate sprint finalization
-
-**Tasks:**
-1. Validate sprint can be completed (check exit criteria)
-2. **Archive Phase:**
-   - Call `scripts/rotate-logs.sh --force` to archive all logs
-   - Copy SPRINT_QUEUE.json to archive as SPRINT_N_FINAL.json
-   - Copy SPRINT_PLAN.md to archive as SPRINT_N_FINAL.md
-3. **Status Update Phase:**
-   - Update SPRINT_QUEUE.json status to "completed"
-   - Update SPRINT_GOAL.md with completion timestamp
-   - Add completion entry to SPRINT_LOG.md
-4. **Retrospective Generation:**
-   - Create `.oodatcaa/work/SPRINT_N_RETROSPECTIVE.md` template
-   - Include: achievements, challenges, metrics, lessons learned
-   - Auto-fill with data from SPRINT_STATUS.json
-5. **Git Tagging:**
-   - Create annotated tag: `sprint-N-complete`
-   - Include sprint summary in tag annotation
-6. **Cleanup:**
-   - Remove stale leases (all expired during sprint)
-   - Clear temporary locks
-
-**Safety Features:**
-- Dry-run mode (`--dry-run`) to preview actions
-- Atomic operations (temp files + atomic renames)
-- Rollback capability if errors occur
-- Validation checks before each phase
-- Backup critical files before modification
-
-**Exit Gate:** Sprint transitions to "completed" state, all artifacts archived, git tag created
-
----
-
-#### **Step 4: Sprint Initialization Script (75 min)**
-**Goal:** Create `scripts/sprint-new.sh` - Automate next sprint setup
-
-**Tasks:**
-1. **Validation Phase:**
-   - Verify current sprint is "completed"
-   - Check no active tasks remain
-   - Ensure no active agent leases
-2. **Sprint Number Increment:**
-   - Parse current sprint number
-   - Generate new sprint ID (SPRINT-YYYY-NNN)
-   - Update all relevant files with new sprint number
-3. **Directory Setup:**
-   - Create `.oodatcaa/work/archive/sprint_N/` (if not exists)
-   - Create `.oodatcaa/work/reports/sprint_N/` (if not exists)
-4. **File Initialization:**
-   - Reset AGENT_LOG.md with sprint header
-   - Reset SPRINT_LOG.md with sprint header
-   - Reset SPRINT_PLAN.md with sprint header
-   - Create new SPRINT_QUEUE.json with empty tasks array
-5. **Sprint Goal Setup:**
-   - Update SPRINT_GOAL.md status to "needs_planning"
-   - Trigger Sprint Planner (or document manual step)
-6. **Documentation:**
-   - Update ROTATION_STATS.md with sprint transition marker
-   - Create sprint planning checklist
-
-**Safety Features:**
-- Pre-flight checks (no active work)
-- Confirmation prompt (unless --force flag)
-- Preserve sprint 1 artifacts
-- Comprehensive logging
-
-**Exit Gate:** New sprint initialized, all files reset, ready for Sprint Planner
-
----
-
-#### **Step 5: Makefile Integration (30 min)**
-**Goal:** Add sprint management commands to Makefile
-
-**Tasks:**
-1. Add target: `sprint-status`
-   - Calls `scripts/sprint-dashboard.sh`
-   - No parameters needed
-2. Add target: `sprint-complete`
-   - Calls `scripts/sprint-complete.sh`
-   - Optional: `FORCE=1` to skip checks
-3. Add target: `sprint-new`
-   - Calls `scripts/sprint-new.sh`
-   - Requires sprint-complete first
-4. Add .PHONY declarations for all new targets
-5. Update Makefile documentation (comments)
-
-**New Makefile Targets:**
-```makefile
-# Sprint Management
-sprint-status:
-	bash scripts/sprint-dashboard.sh
-
-sprint-complete:
-	bash scripts/sprint-complete.sh $(if $(FORCE),--force,)
-
-sprint-new:
-	bash scripts/sprint-new.sh
-
-.PHONY: sprint-status sprint-complete sprint-new
+**Solution:**
+```bash
+# Commands to fix
+step-by-step fix
 ```
 
-**Exit Gate:** All make targets work, integrate with existing quality gates
+**Prevention:**
+- How to avoid this issue
+
+**Related Issues:** Links to similar problems
+```
+
+**Exit Gate:** 30+ issues documented, all diagnostic commands verified
 
 ---
 
-#### **Step 6: Sprint ID Consistency Update (45 min)**
-**Goal:** Ensure sprint ID format consistency across all files
+#### **Step 3: Onboarding Guide Creation (60 min)**
+**Goal:** Create `.oodatcaa/ONBOARDING.md` - New developer quick start
 
-**Tasks:**
-1. Update SPRINT_QUEUE.json:
-   - Add `sprint_id` field to metadata
-   - Ensure consistent with `sprint` field
-2. Update SPRINT_GOAL.md:
-   - Add sprint ID to each sprint section
-3. Update template files:
-   - `.oodatcaa/templates/*` (if any)
-4. Document sprint ID format in README
-5. Create migration guide for sprint 1 → sprint 2 format
+**Structure:**
 
-**Validation:**
-- Grep all OODATCAA files for sprint references
-- Ensure consistent format (SPRINT-YYYY-NNN)
-- No orphaned sprint 1 references
+**1. Welcome (5 minutes read)**
+- What is OODATCAA?
+- System overview (100-word summary)
+- Key concepts (agents, sprints, loop)
+- Prerequisites checklist
 
-**Exit Gate:** All files use consistent sprint ID format
+**2. Quick Start (15 minutes to first sprint)**
+- Step 1: Review OBJECTIVE.md
+- Step 2: Run Negotiator
+- Step 3: Launch first agent
+- Step 4: Monitor progress
+- Step 5: First sprint completion
+
+**3. Core Concepts (20 minutes read)**
+- The OODATCAA loop explained
+- Agent roles and responsibilities
+- Sprint lifecycle
+- Task states and transitions
+- Quality gates
+
+**4. First Sprint Walkthrough (30 minutes practice)**
+- Sprint 1 case study (from actual Sprint 1)
+- Task breakdown example
+- Adaptation cycle example
+- Integration process
+
+**5. Common Tasks (Reference)**
+- How to create new work item
+- How to monitor progress
+- How to handle failures
+- How to complete sprint
+- How to generate reports
+
+**6. Next Steps**
+- Deep dive links (OODATCAA_LOOP_GUIDE, RUNBOOK)
+- Agent-specific guides
+- Architecture documentation
+
+**Exit Gate:** Complete onboarding guide, 15-minute quick start verified
 
 ---
 
-#### **Step 7: Documentation & Quality Gates (45 min)**
-**Goal:** Complete documentation and verify quality
+#### **Step 4: Enhanced Agent Protocols (90 min)**
+**Goal:** Update all `.oodatcaa/prompts/*.md` files with examples
+
+**Agents to Enhance (10 files):**
+1. negotiator.md
+2. sprint-planner.md
+3. planner.md
+4. builder.md
+5. tester.md
+6. refiner.md
+7. integrator.md
+8. project-completion-detector.md
+9. sprint-close.md
+10. triage.md
+
+**Enhancements Per Agent:**
+- **Examples Section:** 2-3 concrete examples
+- **Edge Cases:** 3-5 edge cases with handling
+- **Common Errors:** 3-5 errors with solutions
+- **Input/Output Contract:** Clear specifications
+- **Related Agents:** Links to workflow connections
+
+**Example Enhancement Template:**
+   ```markdown
+## Examples
+
+### Example 1: [Scenario Name]
+**Input State:**
+- SPRINT_QUEUE.json: [description]
+- Task status: [current state]
+
+**Actions Taken:**
+[Step-by-step what agent did]
+
+**Output:**
+[Files modified, decisions made]
+
+**Outcome:** [Result]
+
+## Edge Cases
+
+### Edge Case 1: [Situation]
+**Problem:** [What's unusual]
+**Handling:** [How agent handles it]
+**Rationale:** [Why this approach]
+
+## Common Errors
+
+### Error: [Error Message]
+**Cause:** [Why it happens]
+**Solution:** [How to fix]
+**Prevention:** [How to avoid]
+```
+
+**Exit Gate:** All 10 agent prompts enhanced, examples verified
+
+---
+
+#### **Step 5: Architecture Documentation (60 min)**
+**Goal:** Create `.oodatcaa/ARCHITECTURE.md` - System architecture
+
+**Content:**
+
+**1. System Overview**
+- High-level architecture diagram (Mermaid)
+- Component responsibilities
+- Data flow overview
+
+**2. Agent Architecture**
+- Agent interaction diagram
+- Coordination flow (Negotiator-centric)
+- Communication patterns (file-based)
+
+**3. Data Architecture**
+- File structure diagram
+- Key files and their roles
+- JSON schemas (SPRINT_QUEUE.json, SPRINT_STATUS.json)
+
+**4. Process Architecture**
+- OODATCAA loop flow diagram
+- Sprint lifecycle state machine
+- Task state transitions
+
+**5. Integration Points**
+- P001: Daemon system integration
+- P002: Log rotation integration
+- P003: Sprint management integration
+- P004: Documentation integration
+
+**6. Technical Details**
+- Lease mechanism
+- Lock mechanism
+- Baseline tagging
+- Archive structure
+
+**Diagrams (Mermaid):**
+1. System architecture (components)
+2. Agent coordination flow
+3. OODATCAA loop (from P004)
+4. Sprint lifecycle state machine
+5. Task state transitions
+
+**Exit Gate:** Architecture doc complete with 5 diagrams, all rendering correctly
+
+---
+
+#### **Step 6: Documentation Navigation & Integration (45 min)**
+**Goal:** Improve navigation across all documentation
 
 **Tasks:**
-1. **Script Documentation:**
-   - Add comprehensive header comments to all scripts
-   - Document all functions and exit codes
-   - Add usage examples
-2. **README Updates:**
-   - Add "Sprint Management" section
-   - Document all new Makefile targets
-   - Provide workflow examples
-3. **Testing Documentation:**
-   - Create test cases for each script
-   - Document expected inputs/outputs
-   - Add troubleshooting guide
-4. **Quality Gates:**
-   - Run `make gates` (black, ruff, mypy)
-   - Run `make test` (existing tests)
-   - Run `make audit` (security scan)
-   - Verify no regressions
+1. **Update `.oodatcaa/README.md`:**
+   - Add navigation index to all docs
+   - Categorize by purpose (getting started, operations, reference)
+   - Add "See Also" sections
 
-**Documentation Structure:**
-```
-docs/
-  SPRINT_MANAGEMENT.md
-    - Overview
-    - Commands Reference
-    - Workflow Examples
-    - Troubleshooting
+2. **Create Documentation Index:**
+   - Add to main README.md
+   - Link to all OODATCAA docs
+   - Categorize by user type (new user, operator, developer)
+
+3. **Cross-Linking:**
+   - Add "Related Documentation" sections to all docs
+   - Link RUNBOOK scenarios to TROUBLESHOOTING issues
+   - Link agent prompts to OODATCAA_LOOP_GUIDE stages
+
+4. **Consolidation:**
+   - Review QUICK_START.md vs ONBOARDING.md for overlap
+   - Merge or differentiate clearly
+   - Update START_HERE.md to point to ONBOARDING.md
+
+5. **Validation:**
+   - Check all markdown links (grep for `](` and verify targets exist)
+   - Verify all code examples are syntactically correct
+   - Ensure consistent formatting across all docs
+
+**Exit Gate:** All docs cross-linked, navigation clear, links validated
+
+---
+
+#### **Step 7: Documentation Quality & Polish (30 min)**
+**Goal:** Final review and quality checks
+
+**Tasks:**
+1. **Spell Check:** Run spell checker on all new documentation
+2. **Link Validation:** Verify all internal links work
+3. **Command Verification:** Test all bash/make commands in examples
+4. **Format Consistency:** Ensure consistent markdown style
+5. **Date Stamps:** Add "Last Updated" to all modified docs
+6. **Version Numbers:** Add version to new documentation files
+7. **Table of Contents:** Add TOC to long documents (RUNBOOK, TROUBLESHOOTING)
+8. **Final Read-Through:** Fresh eyes review for clarity
+
+**Quality Checks:**
+   ```bash
+# Check all markdown links
+grep -r "](\./" .oodatcaa/ docs/ | while read -r line; do
+    # Verify link target exists
+done
+
+# Check code block syntax
+grep -A 5 "^```" .oodatcaa/RUNBOOK.md
+
+# Spell check
+aspell check .oodatcaa/RUNBOOK.md
 ```
 
-**Exit Gate:** All quality gates pass, documentation complete
+**Exit Gate:** All quality checks pass, documentation polished
 
 ---
 
 ## Task Breakdown for SPRINT_QUEUE.json
 
-### P003-B01: Steps 1-3 - Dashboard + Status JSON + Completion Script
+### P006-B01: Steps 1-3 - Runbook + Troubleshooting + Onboarding
 **Complexity:** Large  
-**Estimated Time:** 195 minutes (~3.25 hours)  
+**Estimated Time:** 225 minutes (~3.75 hours)  
 **Steps:** 1, 2, 3  
 **Dependencies:** None  
 **Deliverables:**
-- `scripts/sprint-dashboard.sh` (executable, tested)
-- `.oodatcaa/work/SPRINT_STATUS.json` (schema documented)
-- `scripts/sprint-complete.sh` (executable, tested with --dry-run)
+- `.oodatcaa/RUNBOOK.md` (20+ scenarios)
+- `.oodatcaa/TROUBLESHOOTING.md` (30+ issues)
+- `.oodatcaa/ONBOARDING.md` (complete guide)
 
-**Branch:** `feat/P003-step-01-sprint-dashboard`
+**Branch:** `feat/P006-step-01-operational-docs`
 
 ---
 
-### P003-B02: Steps 4-6 - Initialization Script + Makefile + Sprint ID Consistency
+### P006-B02: Steps 4-5 - Agent Protocols + Architecture
 **Complexity:** Medium  
 **Estimated Time:** 150 minutes (~2.5 hours)  
-**Steps:** 4, 5, 6  
-**Dependencies:** P003-B01  
+**Steps:** 4, 5  
+**Dependencies:** P006-B01  
 **Deliverables:**
-- `scripts/sprint-new.sh` (executable, tested)
-- Makefile updated with new targets
-- Sprint ID consistency across all files
+- `.oodatcaa/prompts/*.md` (10 files enhanced)
+- `.oodatcaa/ARCHITECTURE.md` (complete with diagrams)
 
-**Branch:** `feat/P003-step-02-sprint-init`
+**Branch:** `feat/P006-step-02-agent-protocols`
 
 ---
 
-### P003-B03: Step 7 - Documentation + Quality Gates + Integration
+### P006-B03: Steps 6-7 - Navigation + Quality
 **Complexity:** Small  
-**Estimated Time:** 45 minutes  
-**Steps:** 7  
-**Dependencies:** P003-B02  
+**Estimated Time:** 75 minutes (~1.25 hours)  
+**Steps:** 6, 7  
+**Dependencies:** P006-B02  
 **Deliverables:**
-- `docs/SPRINT_MANAGEMENT.md` (complete)
-- README updated
-- All quality gates pass
-- Branch ready for integration
+- Updated `.oodatcaa/README.md` with navigation
+- Cross-links added to all docs
+- Quality checks complete
 
-**Branch:** `feat/P003-step-03-docs-quality`
+**Branch:** `feat/P006-step-03-doc-integration`
 
 ---
 
-### P003-T01: Testing - Verify All 10 ACs
+### P006-T01: Testing - Verify All 10 ACs
 **Complexity:** Medium  
 **Estimated Time:** 45 minutes  
-**Dependencies:** P003-B03  
+**Dependencies:** P006-B03  
 **Deliverables:**
 - All 10 acceptance criteria verified
-- Sprint transition tested end-to-end
-- No regressions confirmed
-- Performance validated (< 5s per command)
+- Documentation accuracy validated
+- Links and commands tested
 
 ---
 
 ## Exit Criteria Summary
 
 This task is complete when:
-1. ✅ Sprint ID system operational (SPRINT-YYYY-NNN format)
-2. ✅ `make sprint-status` displays accurate sprint information
-3. ✅ `make sprint-complete` finalizes sprint with full archival
-4. ✅ `make sprint-new` initializes next sprint correctly
-5. ✅ All sprint transitions are atomic (no partial states)
-6. ✅ Sprint metadata consistent across all OODATCAA files
-7. ✅ Documentation complete (README + SPRINT_MANAGEMENT.md)
-8. ✅ All quality gates pass (black, ruff, mypy, pytest)
-9. ✅ Zero regressions in existing functionality
-10. ✅ Performance targets met (< 5s per command)
+1. ✅ RUNBOOK.md with 20+ operational scenarios
+2. ✅ TROUBLESHOOTING.md with 30+ documented issues
+3. ✅ ONBOARDING.md with 15-minute quick start
+4. ✅ All 10 agent prompts enhanced with examples
+5. ✅ ARCHITECTURE.md complete with 5 diagrams
+6. ✅ Documentation navigation improved
+7. ✅ All docs cross-linked and integrated
+8. ✅ Quality checks pass (links, formatting, commands)
+9. ✅ P001-P004 systems documented
+10. ✅ New developer can onboard in < 30 minutes
 
-**Unblocks:** P006 (Process Documentation), P007 (Integration Testing)
+**Unblocks:** None (final documentation task)
 
 ---
 
 ## Notes
 
-- **Pattern Consistency:** Follows P002 (log rotation) bash script patterns
-- **Backward Compatibility:** Sprint 1 references preserved, new system additive
-- **Safety First:** All destructive operations have dry-run mode and confirmation
-- **Agent Coordination:** Scripts designed to be called by Negotiator or manually
-- **Future Enhancement:** Could add sprint analytics, burndown charts, velocity tracking
+- **Integration Focus:** Must document P001 (daemon), P002 (log rotation), P003 (sprint management), P004 (OODATCAA loop)
+- **Practical Emphasis:** Runbook and troubleshooting prioritized over theoretical documentation
+- **Agent-Friendly:** Documentation must be parseable by AI agents for self-improvement
+- **Tiered Approach:** Quick start (15 min) → Onboarding (30 min) → Runbook (reference) → Deep dive
+- **Maintenance Plan:** Date stamps, version numbers, clear ownership for updates
 
 ---
 
 **Plan Status:** ✅ Complete  
-**Ready for:** Builder (P003-B01)  
-**Estimated Total Time:** 390 minutes (~6.5 hours across 3 builder tasks)
+**Ready for:** Builder (P006-B01)  
+**Estimated Total Time:** 450 minutes (~7.5 hours across 3 builder tasks)
