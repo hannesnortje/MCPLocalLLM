@@ -640,6 +640,7 @@ Comprehensive MCP integration documentation is available in `docs/mcp/`:
 | **[CONTRIBUTING.md](docs/CONTRIBUTING.md)** | Contribution guidelines and development workflow |
 | **[SECURITY.md](docs/SECURITY.md)** | Security policy and vulnerability reporting |
 | **[BRANCH_PROTECTION.md](docs/BRANCH_PROTECTION.md)** | Git workflow and branch protection rules |
+| **[BACKGROUND_AGENTS.md](docs/BACKGROUND_AGENTS.md)** | Background agent daemon system documentation |
 
 ### OODATCAA System Documentation
 
