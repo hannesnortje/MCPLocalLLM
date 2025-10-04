@@ -8,6 +8,13 @@ This file contains executive summaries of all agent completion reports. For deta
 
 ### Sprint 2: OODATCAA Process Improvement
 
+#### P006: Process Documentation & Runbook
+- [P006: Planning](reports/P006/planner.md) - ✅ Complete
+- [P006-B01: Runbook + Troubleshooting + Onboarding](reports/P006/builder_P006-B01.md) - ✅ Complete
+- [P006-B01: Testing](reports/P006/tester_P006-B01.md) - ✅ 3/3 ACs PASS (100%)
+- [P006-B01: Integration](reports/P006/integrator.md) - ✅ Complete (SHIPPED! 🎉)
+- [P006-B02: Agent Protocols + Architecture](reports/P006-B02/builder.md) - ✅ Complete, awaiting_test
+
 #### P007: Integration Testing & Quality Validation
 - [P007: Planning](reports/P007/planner.md) - ✅ Complete
 - [P007-B01: Quality Gates + Regression + Integration Testing](reports/P007/builder_P007-B01.md) - ✅ Complete
