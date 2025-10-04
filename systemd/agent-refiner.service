@@ -1,0 +1,21 @@
+[Unit]
+Description=OODATCAA Agent Daemon - Refiner
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/storage/Code/MCPLocalLLM
+ExecStart=/usr/bin/python3 %h/storage/Code/MCPLocalLLM/scripts/agent-daemon.py --role refiner --interval 60 --owner agent-daemon-refiner
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+# Graceful shutdown
+TimeoutStopSec=30
+KillMode=mixed
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=default.target
+
