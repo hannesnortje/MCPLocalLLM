@@ -1001,6 +1001,26 @@ This onboarding guide is a living document. Help us improve it!
 
 ---
 
+## Complete Documentation Navigation
+
+**← Return to Hub:** **[START_HERE.md](START_HERE.md)** - Central documentation navigation
+
+**Next Steps After Onboarding:**
+- **[RUNBOOK.md](RUNBOOK.md)** - 20+ operational scenarios you'll use daily
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - 30+ issues when things go wrong
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Deep dive into system design
+
+**Deepen Your Understanding:**
+- **[OODATCAA_LOOP_GUIDE.md](OODATCAA_LOOP_GUIDE.md)** - Master the 8-stage loop
+- **[AGENT_ROLES_MATRIX.md](AGENT_ROLES_MATRIX.md)** - Learn all 11 agent capabilities
+- **[AGENT_INTERACTION_GUIDE.md](AGENT_INTERACTION_GUIDE.md)** - Agent communication patterns
+
+**Quality & Standards:**
+- **[QUALITY_STANDARDS.md](QUALITY_STANDARDS.md)** - 8 quality gates explained
+- **[work/sprint2_quality_certification.md](work/sprint2_quality_certification.md)** - Sprint 2 results
+
+---
+
 **Document Version:** 1.0  
 **Last Updated:** 2025-10-04  
 **Maintained By:** OODATCAA System Team  

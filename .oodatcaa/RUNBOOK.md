@@ -1464,6 +1464,26 @@ Recent activity:
 
 ---
 
+## Complete Documentation Navigation
+
+**← Return to Hub:** **[START_HERE.md](START_HERE.md)** - Central documentation navigation
+
+**Related Operational Docs:**
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - 30+ issues with diagnostic procedures
+- **[ONBOARDING.md](ONBOARDING.md)** - 15-minute quick start for new users
+- **[QUALITY_STANDARDS.md](QUALITY_STANDARDS.md)** - 8 quality gates & standards
+
+**Process Understanding:**
+- **[OODATCAA_LOOP_GUIDE.md](OODATCAA_LOOP_GUIDE.md)** - 8-stage loop with metrics
+- **[AUTONOMOUS_WORKFLOW.md](AUTONOMOUS_WORKFLOW.md)** - Agent self-coordination
+- **[PARALLEL_AGENTS_GUIDE.md](PARALLEL_AGENTS_GUIDE.md)** - Parallel execution patterns
+
+**Agent System:**
+- **[Agent Prompts](prompts/)** - All 15 agent protocol files
+- **[AGENT_MANAGEMENT.md](AGENT_MANAGEMENT.md)** - Agent lifecycle management
+
+---
+
 **Document Version:** 1.0  
 **Last Updated:** 2025-10-04  
 **Maintained By:** OODATCAA System Team

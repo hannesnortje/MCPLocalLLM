@@ -499,6 +499,28 @@ P003 (Sprint) ───> Uses Daemon ──> P001 (for automated agents)
 
 ---
 
+## Complete Documentation Navigation
+
+**← Return to Hub:** **[START_HERE.md](START_HERE.md)** - Central documentation navigation
+
+**Operational Documentation:**
+- **[RUNBOOK.md](RUNBOOK.md)** - 20+ operational scenarios & procedures
+- **[TROUBLESHOOTING.md](TROUBLESHOOTING.md)** - 30+ issues with solutions
+- **[ONBOARDING.md](ONBOARDING.md)** - 15-minute quick start guide
+
+**Process & Agent Understanding:**
+- **[OODATCAA_LOOP_GUIDE.md](OODATCAA_LOOP_GUIDE.md)** - 8-stage loop with metrics
+- **[AGENT_ROLES_MATRIX.md](AGENT_ROLES_MATRIX.md)** - 11 agents capability matrix
+- **[AGENT_INTERACTION_GUIDE.md](AGENT_INTERACTION_GUIDE.md)** - Agent workflows
+- **[AUTONOMOUS_WORKFLOW.md](AUTONOMOUS_WORKFLOW.md)** - Self-coordination patterns
+
+**System Implementation:**
+- **[work/SPRINT_QUEUE.json](work/SPRINT_QUEUE.json)** - Task queue (live state)
+- **[work/sprint2_quality_certification.md](work/sprint2_quality_certification.md)** - Sprint 2 results
+- **[QUALITY_STANDARDS.md](QUALITY_STANDARDS.md)** - 8 quality gates & standards
+
+---
+
 **Document Status:** ✅ Complete  
 **Maintainer:** Agent System  
 **Last Review:** 2025-10-05  
