@@ -606,3 +606,63 @@ Each plan should include: task breakdown, implementation steps, dependencies, ac
 **Unblocks:** None (final documentation task)
 
 ---
+
+**Planner → P005: Agent Role Assessment & Enhancement**  
+- Status: Planning Complete ✅
+- Assigned: 2025-10-03T22:45:00+02:00  
+- Completed: 2025-10-03T22:50:00+02:00
+- Artifacts: AGENT_PLAN.md (7 steps, 3 builder tasks + 1 tester task), TEST_PLAN.md (10 ACs)
+- Completion Report: `.oodatcaa/work/reports/P005/planner.md`
+
+**Next Assignment: Builder → P005-B01 (READY - No dependencies)**
+
+---
+
+### P005: Agent Role Assessment & Enhancement (Planning Complete)
+
+**Plan Version:** 1.0  
+**Branch:** `feat/P005-step-01-agent-audit`  
+**Plan Document:** `.oodatcaa/work/AGENT_PLAN.md`  
+**Test Document:** `.oodatcaa/work/TEST_PLAN.md`  
+**Planner:** agent-planner-A  
+**Completed:** 2025-10-03T22:50:00+02:00
+
+**Purpose:** Conduct comprehensive agent role assessment, document all capabilities and interactions, identify gaps, and propose enhancements to improve agent system completeness.
+
+**Implementation Steps:**
+1. **Step 1-3:** Agent Audit + Interaction Analysis + Sprint 1/2 Evidence → P005-B01 (ready, 225 min)
+2. **Step 4-5:** Gap Analysis + Communication Protocol → P005-B02 (blocked by B01, 135 min)
+3. **Step 6-7:** Recommendations + Integration → P005-B03 (blocked by B02, 75 min)
+4. **Testing:** Verify all 10 ACs → P005-T01 (blocked by B03, 45 min)
+
+**Deliverables:**
+- `.oodatcaa/AGENT_ROLES_MATRIX.md` - Comprehensive capability matrix for all 11 agents
+- `.oodatcaa/AGENT_INTERACTION_GUIDE.md` - Agent communication patterns and workflows
+- `.oodatcaa/work/AGENT_GAP_ANALYSIS.md` - Gap identification with Sprint 1/2 evidence
+- Communication protocol with structured message format
+- Decision authority boundaries for all agents
+- Conflict resolution process (5-step protocol)
+- New agent proposals evaluated (Monitor, Architect, Reviewer, Deployer)
+- Prioritized recommendations with implementation roadmap
+- Documentation cross-links with existing docs
+- Sprint 1/2 evidence analysis (91.9% success, 4 adaptations, workflow patterns)
+
+**Key Features:**
+- Agent Capability Matrix: Role, responsibilities, I/O contracts, decision authority, success criteria for all 11 agents
+- Workflow Patterns: Primary development flow, adaptation loop, sprint lifecycle, project completion
+- Gap Analysis: Monitor agent (continuous watching), Reviewer agent (beyond quality gates), enhanced Releaser
+- Communication Protocol: Structured messages, decision transparency, status reporting, conflict resolution
+- Recommendations: High priority (communication standardization), Medium (Monitor/Reviewer agents), Low (Architect/Deployer)
+- Evidence-Based: All assessments backed by Sprint 1/2 data (task IDs, metrics, reports)
+
+**Exit Criteria:** All 10 ACs pass, 11 agents documented, gaps identified with Sprint 1/2 evidence, recommendations prioritized
+
+**Dependencies:** None (analytical task, no implementation dependencies)
+
+**Estimated Timeline:** 7.25 hours (3 builder tasks in sequence + testing)
+
+**Ready for:** Builder (P005-B01) - **Can run immediately!**
+
+**Unblocks:** None (analytical task, improves future agent development)
+
+---
