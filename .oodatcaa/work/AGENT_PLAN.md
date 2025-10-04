@@ -1,221 +1,210 @@
-# AGENT_PLAN: P006 - Process Documentation & Runbook
+# AGENT_PLAN: P005 - Agent Role Assessment & Enhancement
 
 **Plan Version:** 1.0  
-**Task ID:** P006  
+**Task ID:** P005  
 **Objective:** SPRINT-2025-002 (OODATCAA Process Improvement)  
 **Sprint:** 2  
 **Complexity:** Medium  
 **Planner:** agent-planner-A  
-**Created:** 2025-10-03T22:30:00+02:00
+**Created:** 2025-10-03T22:45:00+02:00
 
 ---
 
 ## Traceability
 
-**Objective Link:** `.oodatcaa/objectives/SPRINT_2_OBJECTIVE.md` → Process Documentation Complete  
+**Objective Link:** `.oodatcaa/objectives/SPRINT_2_OBJECTIVE.md` → Agent Role Completeness  
 **Epic:** Sprint 2 - OODATCAA Process Improvement  
-**Dependencies:** P001 (daemon system), P003 (sprint management), P004 (OODATCAA loop docs)
+**Dependencies:** None (independent analysis task)
 
 **Success Criteria Addressed:**
-1. Runbook: Practical guide created with common scenarios, command reference, troubleshooting
-2. Agent Protocols: Enhanced `.oodatcaa/prompts/*.md` with examples and edge cases
-3. Onboarding Guide: New user/agent guide with system overview, quick start, architecture diagrams
+1. Agent Audit: Document current agent capabilities with role responsibilities, I/O contracts, decision authority
+2. Gap Analysis: Identify missing agent types (Monitor, Architect, Reviewer, Releaser)
+3. Agent Communication: Protocol improvements with structured communication and decision transparency
 
 ---
 
 ## Problem Statement
 
 **Current State:**
-- Sprint 2 has delivered significant infrastructure (P001 daemon, P002 log rotation, P003 sprint management, P004 OODATCAA documentation)
-- Multiple documentation files exist but lack integration and practical operational guidance
-- No comprehensive runbook for common scenarios (failures, debugging, recovery)
-- Agent prompts are functional but lack examples and edge case handling
-- Onboarding new users/developers requires reading multiple disconnected documents
+- Sprint 1 and Sprint 2 have demonstrated the OODATCAA multi-agent system successfully
+- 11 agent roles currently defined across development workflow and utilities
+- Agent interactions are functional but not formally documented
+- No comprehensive audit of agent capabilities and boundaries
+- Potential gaps in agent coverage (monitoring, architecture decisions, code review, deployment)
+- Agent communication patterns are informal and implicit
 
 **Evidence:**
-- 14 existing documentation files in `.oodatcaa/` directory
-- Agent prompts in `.oodatcaa/prompts/` are protocol-focused, light on examples
-- No centralized troubleshooting guide
-- No operational runbook with step-by-step procedures
-- Documentation scattered across README.md, QUICK_START.md, START_HERE.md, etc.
+- 11 agent prompt files in `.oodatcaa/prompts/` (negotiator, sprint-planner, planner, builder, tester, refiner, integrator, project-completion-detector, sprint-close, release, triage)
+- Sprint 1: 34 tasks completed across 37 total (91.9% success) with 4 adaptation cycles
+- Sprint 2: In progress with 4 tasks complete, demonstrating multi-agent coordination
+- No formal agent capability matrix or interaction diagram
+- Agent decision authority boundaries implicit in prompts
+- No structured conflict resolution protocol
 
 **Impact:**
-- High onboarding friction for new developers or AI agents
-- Difficult to troubleshoot issues without comprehensive guide
-- Common operational tasks undocumented (sprint failures, lease recovery, rollback procedures)
-- Agent prompts assume too much context, leading to errors
+- Unclear agent boundaries can lead to overlapping responsibilities
+- Missing agent types could create workflow gaps
+- Informal communication patterns increase coordination overhead
+- Difficult to onboard new agent types or enhance existing ones
+- No systematic way to identify agent performance issues
 
 **Goal:**
-Create comprehensive, integrated process documentation including operational runbook, enhanced agent protocols, and developer onboarding guide that consolidates existing docs and adds practical operational procedures.
+Conduct comprehensive agent role assessment, document all capabilities and interactions, identify gaps, and propose enhancements to improve agent system completeness and communication clarity.
 
 ---
 
 ## Constraints & Interfaces
 
 ### Technical Constraints
-- **Documentation Format:** Markdown for all documentation files
-- **Location:** `.oodatcaa/` directory for system docs, `docs/` for developer-facing docs
-- **Integration:** Must reference P001, P002, P003, P004 systems
-- **Accessibility:** Clear navigation, searchable, beginner-friendly
+- **No Code Changes:** This is an analytical/documentation task, no implementation required
+- **Documentation Format:** Markdown for all outputs
+- **Analysis Scope:** Current 11 agents + potential new agents
+- **Evidence-Based:** Use Sprint 1 and Sprint 2 data for assessment
 
 ### Interfaces
-**Input Documentation (Existing):**
-- `.oodatcaa/README.md` - System overview
-- `.oodatcaa/QUICK_START.md` - Quick start guide
-- `.oodatcaa/AGENT_MANAGEMENT.md` - Agent details
-- `.oodatcaa/OODATCAA_LOOP_GUIDE.md` - Loop documentation (P004)
-- `.oodatcaa/prompts/*.md` - Agent protocol files
-- `docs/SPRINT_MANAGEMENT.md` - Sprint management reference (P003)
-- Existing README.md
+**Input:**
+- `.oodatcaa/prompts/*.md` - 11 agent protocol files
+- `.oodatcaa/work/reports/` - Sprint 1 and Sprint 2 agent reports
+- `.oodatcaa/work/SPRINT_LOG.md` - Sprint execution history
+- `.oodatcaa/work/AGENT_LOG.md` - Agent activity log
+- `SPRINT_QUEUE.json` - Task workflow patterns
 
-**Output Documentation (New/Enhanced):**
-- `.oodatcaa/RUNBOOK.md` - Operational procedures
-- `.oodatcaa/TROUBLESHOOTING.md` - Common issues and solutions
-- `.oodatcaa/ONBOARDING.md` - Developer onboarding guide
-- `.oodatcaa/prompts/*.md` - Enhanced with examples
-- `.oodatcaa/ARCHITECTURE.md` - System architecture diagrams
-- Navigation improvements in existing docs
+**Output:**
+- `.oodatcaa/AGENT_ROLES_MATRIX.md` - Comprehensive agent capability matrix
+- `.oodatcaa/AGENT_INTERACTION_GUIDE.md` - Agent communication patterns
+- `.oodatcaa/work/AGENT_GAP_ANALYSIS.md` - Gap identification and recommendations
+- Enhanced agent prompt files (if needed)
 
 ### Existing Infrastructure
-- P001: Background agent daemon system
-- P002: Automatic log rotation system
-- P003: Sprint management (dashboard, transitions)
-- P004: OODATCAA loop documentation
-- Sprint 1: Complete MCP server foundation
-- Sprint 2: Process improvement infrastructure
+- 11 functional agent roles with proven track record
+- Sprint 1: Complete MCP server foundation (34 tasks)
+- Sprint 2: Process improvement in progress
+- File-based coordination system (SPRINT_QUEUE.json, leases, locks)
+- OODATCAA loop documentation (P004)
 
 ### Risks
-1. **Documentation Sprawl:** Too many docs can be as confusing as too few
-   - Mitigation: Clear navigation, consolidated index, cross-references
-2. **Maintenance Burden:** Outdated docs worse than no docs
-   - Mitigation: Link to code/prompts, date stamps, version numbers
-3. **Over-Documentation:** Too detailed = nobody reads it
-   - Mitigation: Tiered approach (quick start → runbook → deep dive)
-4. **Fragmentation:** New docs don't integrate with existing
-   - Mitigation: Navigation hub, consistent structure, cross-linking
+1. **Analysis Paralysis:** Over-analyzing without actionable outcomes
+   - Mitigation: Focus on practical gaps and concrete recommendations
+2. **Agent Proliferation:** Proposing too many new agents
+   - Mitigation: Only propose agents that fill clear gaps
+3. **Disrupting Working System:** Changes affecting successful patterns
+   - Mitigation: Document current state first, changes are recommendations only
+4. **Subjective Assessment:** Bias in identifying gaps
+   - Mitigation: Use evidence from Sprint 1/2 reports
 
 ---
 
 ## Definition of Done (DoD)
 
 ### Functional Requirements
-1. **Operational Runbook:**
-   - Common scenarios documented (20+ procedures)
-   - Step-by-step instructions with commands
-   - Troubleshooting section for each scenario
-   - Emergency procedures (rollback, recovery, cleanup)
+1. **Agent Capability Matrix:**
+   - All 11 current agents documented
+   - Responsibilities clearly defined
+   - Input/output contracts specified
+   - Decision authority boundaries mapped
+   - Success criteria for each agent
 
-2. **Enhanced Agent Protocols:**
-   - All 10 agent prompts include examples
-   - Edge cases documented
-   - Common errors and solutions
-   - Input/output contracts clear
+2. **Agent Interaction Guide:**
+   - Workflow patterns documented
+   - Communication protocols defined
+   - Handoff procedures clarified
+   - Conflict resolution process established
+   - Negotiation protocols formalized
 
-3. **Onboarding Guide:**
-   - System overview with architecture diagram
-   - 15-minute quick start path
-   - First sprint walkthrough
-   - Key concepts explained
+3. **Gap Analysis:**
+   - Current coverage assessed
+   - Missing agent types identified
+   - Recommendations with rationale
+   - Priority ranking for new agents
+   - Implementation considerations
 
-4. **Troubleshooting Guide:**
-   - 30+ common issues documented
-   - Diagnostic procedures
-   - Solution steps with commands
-   - Prevention tips
-
-5. **Architecture Documentation:**
-   - System architecture diagram (Mermaid)
-   - Agent interaction flows
-   - File structure explained
-   - Data flow diagrams
+4. **Communication Protocol:**
+   - Structured message format
+   - Decision transparency requirements
+   - Status reporting standards
+   - Error escalation paths
 
 ### Non-Functional Requirements
-- **Usability:** Findable in < 30 seconds, understandable on first read
-- **Completeness:** Covers all P001-P004 systems
-- **Accuracy:** All commands tested, examples verified
-- **Maintainability:** Modular structure, clear ownership
+- **Evidence-Based:** All assessments backed by Sprint 1/2 data
+- **Actionable:** Recommendations are implementable
+- **Comprehensive:** Covers all agent types and interactions
+- **Maintainable:** Documentation structure supports updates
 
 ### Acceptance Criteria (Detailed in TEST_PLAN.md)
-- AC1: RUNBOOK.md complete with 20+ scenarios
-- AC2: TROUBLESHOOTING.md with 30+ issues
-- AC3: ONBOARDING.md with quick start path
-- AC4: All agent prompts enhanced with examples
-- AC5: ARCHITECTURE.md with diagrams
-- AC6: Navigation improved across all docs
-- AC7: All documentation cross-linked
-- AC8: Quality gates pass (links valid, formatting correct)
-- AC9: Existing documentation consolidated
-- AC10: Sprint 2 systems (P001-P004) documented
+- AC1: Agent capability matrix complete for all 11 agents
+- AC2: Agent interaction guide with workflow patterns
+- AC3: Gap analysis with recommendations
+- AC4: Communication protocol documented
+- AC5: Sprint 1/2 evidence analysis complete
+- AC6: Decision authority boundaries clear
+- AC7: Conflict resolution process defined
+- AC8: New agent proposals evaluated
+- AC9: Documentation cross-linked with existing docs
+- AC10: Recommendations prioritized and feasible
 
 ---
 
 ## Alternatives Considered
 
-### Alternative 1: Minimal Documentation Updates
+### Alternative 1: Survey-Based Agent Assessment
 **Approach:**
-- Only update agent prompts with examples
-- Add troubleshooting section to existing README
-- No new documentation files
+- Create survey of agent capabilities
+- Score each agent on various dimensions
+- Statistical analysis of results
 
 **Pros:**
-- Minimal work (~2 hours)
-- Less maintenance burden
-- Familiar structure
+- Quantitative assessment
+- Repeatable methodology
+- Objective scoring
 
 **Cons:**
-- Doesn't address runbook need
-- README becomes bloated
-- No dedicated onboarding path
-- Troubleshooting buried in large file
+- Overkill for 11 agents
+- Requires metrics framework
+- May not capture nuanced interactions
 
-**Verdict:** ❌ **Rejected** - Insufficient for operational needs. Troubleshooting and runbook critical for autonomous operation.
+**Verdict:** ❌ **Rejected** - Too formal for internal process improvement. Qualitative analysis more appropriate for this scale.
 
 ---
 
-### Alternative 2: Comprehensive Documentation Portal
+### Alternative 2: Agent Performance Benchmarking
 **Approach:**
-- Build HTML documentation site (Sphinx/MkDocs)
-- Interactive tutorials
-- Search functionality
-- Version-controlled docs
+- Define performance metrics for each agent
+- Measure agent execution times, success rates, adaptation cycles
+- Compare against target benchmarks
 
 **Pros:**
-- Professional presentation
-- Excellent searchability
-- Multi-version support
-- Interactive examples
+- Data-driven assessment
+- Performance optimization focus
+- Clear success metrics
 
 **Cons:**
-- Significant implementation time (~3-4 days)
-- Additional build/deploy infrastructure
-- Overkill for internal tool
-- Maintenance complexity
+- Requires extensive metric collection infrastructure
+- Performance != completeness (different goals)
+- Doesn't address role gaps or communication
 
-**Verdict:** ❌ **Rejected** - Over-engineering for current needs. Markdown files sufficient for agent-driven development.
+**Verdict:** ❌ **Rejected** - Focuses on optimization rather than role completeness. Good future enhancement but not P005's goal.
 
 ---
 
-### Alternative 3: Structured Markdown Documentation (CHOSEN)
+### Alternative 3: Qualitative Analysis with Evidence (CHOSEN)
 **Approach:**
-- Create focused markdown files for each major topic
-- Maintain existing structure, add new specialized docs
-- Cross-link aggressively
-- Keep in `.oodatcaa/` for agent accessibility
-- Clear navigation hub
+- Systematic review of each agent prompt
+- Analysis of Sprint 1/2 reports for actual behavior
+- Gap identification through workflow coverage analysis
+- Recommendations based on observed needs
 
 **Pros:**
-- ✅ Right balance of structure and simplicity
-- ✅ Agent-readable (markdown parsing easy)
-- ✅ Version controlled with code
-- ✅ No build infrastructure needed
-- ✅ Easy to maintain and update
-- ✅ Familiar developer workflow
+- ✅ Appropriate for 11-agent system
+- ✅ Evidence-based from real sprints
+- ✅ Identifies both structural and operational gaps
+- ✅ Actionable recommendations
+- ✅ No new infrastructure needed
 
 **Cons:**
-- No built-in search (mitigated by grep/IDE search)
-- Manual cross-linking (acceptable maintenance cost)
+- Subjective elements in assessment
+- Depends on quality of existing documentation
 
-**Verdict:** ✅ **CHOSEN** - Optimal for agent-driven development. Markdown keeps docs with code, easily parseable, low maintenance.
+**Verdict:** ✅ **CHOSEN** - Right balance of rigor and practicality. Uses proven Sprint 1/2 evidence to identify real gaps.
 
 ---
 
@@ -223,437 +212,361 @@ Create comprehensive, integrated process documentation including operational run
 
 ### Step-by-Step Breakdown
 
-#### **Step 1: Operational Runbook Creation (90 min)**
-**Goal:** Create `.oodatcaa/RUNBOOK.md` - Practical operational procedures
+#### **Step 1: Current Agent Audit (90 min)**
+**Goal:** Document all 11 current agents comprehensively
 
-**Scenarios to Document:**
+**Tasks:**
+1. **Create Agent Capability Matrix:**
+   - For each of 11 agents, document:
+     - **Role Name & Purpose:** What the agent does
+     - **Responsibilities:** Specific duties
+     - **Inputs:** What files/data the agent reads
+     - **Outputs:** What files the agent writes/modifies
+     - **Decision Authority:** What the agent can decide independently
+     - **Success Criteria:** How to measure agent effectiveness
+     - **Current Status:** Used in Sprint 1/2? How many times?
 
-**Sprint Operations (8 scenarios):**
-1. Starting a new sprint
-2. Monitoring sprint progress (`make sprint-status`)
-3. Completing a sprint (`make sprint-complete`)
-4. Handling sprint failures
-5. Rolling back to previous sprint state
-6. Emergency sprint reset
-7. Sprint transition troubleshooting
-8. Sprint retrospective process
+2. **Analyze Agent Prompts:**
+   - negotiator.md: Coordination & sprint lifecycle
+   - sprint-planner.md: Sprint goal generation
+   - planner.md: Detailed task planning
+   - builder.md: Code implementation
+   - tester.md: Acceptance validation
+   - refiner.md: Adaptation decisions
+   - integrator.md: PR merging & archiving
+   - project-completion-detector.md: Objective completion
+   - sprint-close.md: Sprint retrospectives
+   - release.md: Release finalization
+   - triage.md: Bug triage
 
-**Agent Operations (6 scenarios):**
-9. Launching Negotiator for first time
-10. Running planner for new work item
-11. Builder failure recovery
-12. Tester acceptance criteria negotiation
-13. Refiner quick fix vs rollback decision
-14. Integrator merge conflicts
+3. **Extract I/O Contracts:**
+   - SPRINT_QUEUE.json: Who reads? Who writes? What fields?
+   - AGENT_PLAN.md / TEST_PLAN.md: Who creates? Who consumes?
+   - AGENT_LOG.md: Who appends? What format?
+   - Leases & Locks: Who manages?
 
-**System Maintenance (6 scenarios):**
-15. Log rotation manual trigger
-16. Archive cleanup and management
-17. Lease cleanup (stale leases)
-18. Lock recovery (broken locks >5m)
-19. SPRINT_QUEUE.json repair
-20. Git baseline tag management
+**Deliverable:** `.oodatcaa/AGENT_ROLES_MATRIX.md` (comprehensive matrix)
 
-**Format Per Scenario:**
-   ```markdown
-### Scenario: [Name]
+**Exit Gate:** All 11 agents documented with complete information
 
-**When:** [Situation description]
-**Goal:** [What you want to achieve]
+---
 
-#### Procedure:
-1. Step 1 with command
-   ```bash
-   command here
+#### **Step 2: Agent Interaction Analysis (75 min)**
+**Goal:** Document agent communication and workflow patterns
+
+**Tasks:**
+1. **Map Workflow Patterns:**
+   - Primary Development Flow: Negotiator → Sprint Planner → Planner → Builder → Tester → (Refiner) → Integrator
+   - Adaptation Loop: Tester → Refiner → Builder → Tester
+   - Sprint Lifecycle: Sprint Planner → Negotiator → Sprint Close
+   - Project Completion: Project Completion Detector → Final Report
+
+2. **Analyze Sprint 1/2 Interactions:**
+   - Review agent reports from `.oodatcaa/work/reports/`
+   - Identify successful handoffs (e.g., Planner → Builder)
+   - Identify problematic handoffs (coordination issues)
+   - Document adaptation cycles (how many? why?)
+
+3. **Document Communication Patterns:**
+   - File-based messages (SPRINT_QUEUE.json updates)
+   - Lease protocol (acquisition, heartbeat, release)
+   - Lock protocol (file locking for writes)
+   - Log entries (structured vs unstructured)
+
+4. **Identify Decision Points:**
+   - Negotiator: Task assignment, dependency resolution
+   - Planner: Alternative selection, task breakdown
+   - Tester: Accept/reject decisions, negotiation
+   - Refiner: Quick fix vs rollback decisions
+   - Integrator: Merge decisions
+
+**Deliverable:** `.oodatcaa/AGENT_INTERACTION_GUIDE.md`
+
+**Exit Gate:** Complete workflow documentation with Sprint 1/2 examples
+
+---
+
+#### **Step 3: Sprint 1/2 Evidence Analysis (60 min)**
+**Goal:** Extract lessons from actual agent performance
+
+**Tasks:**
+1. **Sprint 1 Analysis:**
+   - 34 tasks completed, 91.9% success rate
+   - 4 adaptation cycles (W004, W005, W006-B01, W007-B01, W008-B01)
+   - Identify: What worked well? Where were challenges?
+   - Agent coordination issues? Missing capabilities?
+
+2. **Sprint 2 Analysis:**
+   - Current progress: P001-P006 planning
+   - P002-B01: Perfect implementation (zero adaptations)
+   - P004: Complete OODATCAA documentation
+   - Identify: Process improvements? Coordination smoother?
+
+3. **Adaptation Pattern Analysis:**
+   - Why did adaptations occur? (API mismatches, import issues, quality gates)
+   - How were they resolved? (Refiner quick fixes)
+   - Could a different agent type have prevented them?
+
+4. **Performance Metrics:**
+   - Average task completion time per agent role
+   - Adaptation success rate (100% in Sprint 1)
+   - Handoff efficiency (any delays or miscommunication?)
+
+**Deliverable:** Evidence section in AGENT_GAP_ANALYSIS.md
+
+**Exit Gate:** Sprint 1/2 lessons documented with specific examples
+
+---
+
+#### **Step 4: Gap Analysis (75 min)**
+**Goal:** Identify missing agent types and capability gaps
+
+**Tasks:**
+1. **Workflow Coverage Analysis:**
+   - Development workflow: Well covered (Planner → Builder → Tester → Refiner → Integrator)
+   - Monitoring: ❌ No continuous monitoring agent
+   - Architecture: ❌ No dedicated architecture decision agent (currently implicit in Planner)
+   - Code Review: ❌ No dedicated review agent (quality gates automatic, but no human-style review)
+   - Deployment: ⚠️ Release agent exists but light on deployment automation
+
+2. **Evaluate Suggested Agent Types:**
+   - **Monitor Agent:** Continuous watching of sprint progress, alerts for stale tasks
+     - Gap: Yes - currently manual Negotiator runs
+     - Priority: Medium (Sprint 2 daemon system helps)
+     - Recommendation: Defer until P001 complete
+   
+   - **Architect Agent:** Design decisions, system architecture guidance
+     - Gap: Unclear - Planner handles some, may need separate for complex decisions
+     - Priority: Low (Planner sufficient for current needs)
+     - Recommendation: Monitor Planner workload
+   
+   - **Reviewer Agent:** Code review beyond quality gates, style, patterns
+     - Gap: Yes - quality gates catch errors but not design issues
+     - Priority: Medium (especially for complex features)
+     - Recommendation: Consider for Sprint 3+
+   
+   - **Releaser/Deployer Agent:** Full deployment automation
+     - Gap: Yes - Release agent exists but limited
+     - Priority: Low (project not production-ready yet)
+     - Recommendation: Enhance Release agent when needed
+
+3. **Communication Gap Analysis:**
+   - Structured message format: ❌ No formal standard
+   - Decision rationale: ⚠️ Logged but not structured
+   - Status reporting: ⚠️ Inconsistent across agents
+   - Conflict resolution: ⚠️ Informal (SPRINT_DISCUSS.md used but not formalized)
+
+**Deliverable:** Gap analysis section in AGENT_GAP_ANALYSIS.md
+
+**Exit Gate:** All gaps identified with priority and recommendations
+
+---
+
+#### **Step 5: Communication Protocol Design (60 min)**
+**Goal:** Propose structured communication improvements
+
+**Tasks:**
+1. **Structured Message Format:**
+   ```json
+   {
+     "from_agent": "builder",
+     "to_agent": "tester",
+     "task_id": "P003-B01",
+     "timestamp": "2025-10-03T10:00:00Z",
+     "message_type": "handoff",
+     "content": {
+       "status": "awaiting_test",
+       "deliverables": ["scripts/sprint-dashboard.sh"],
+       "quality_gates": {"black": "pass", "ruff": "pass"}
+     },
+     "decision_required": false
+   }
    ```
-2. Step 2...
 
-#### Expected Output:
-```
-output here
-```
+2. **Decision Transparency Requirements:**
+   - All agent decisions must include:
+     - Decision made
+     - Rationale (why this choice?)
+     - Alternatives considered
+     - Evidence/data used
+     - Confidence level
+   - Example: Refiner "quick fix vs rollback" decision
 
-#### Troubleshooting:
-- Issue: [common problem]
-  - Solution: [how to fix]
+3. **Status Reporting Standards:**
+   - Standardize AGENT_LOG.md entries
+   - Required fields: timestamp, agent, task, action, outcome, metrics
+   - Completion reports: Use template consistently
+   - Executive summaries: Max 3 sentences in AGENT_REPORTS.md
 
-#### See Also:
-- Related scenario links
-```
+4. **Conflict Resolution Protocol:**
+   - When agents disagree (e.g., Tester rejects, Builder disagrees):
+     - Document disagreement in SPRINT_DISCUSS.md
+     - Each agent states position with rationale
+     - Negotiator decides based on DoD alignment
+     - Decision logged with rationale
+   - Escalation: If Negotiator can't decide, defer to human
 
-**Exit Gate:** 20+ scenarios documented, all commands tested
+**Deliverable:** Communication protocol section in AGENT_INTERACTION_GUIDE.md
 
----
-
-#### **Step 2: Troubleshooting Guide Creation (75 min)**
-**Goal:** Create `.oodatcaa/TROUBLESHOOTING.md` - Diagnostic procedures
-
-**Issue Categories:**
-
-**Agent Issues (10 issues):**
-1. Planner creates invalid AGENT_PLAN.md
-2. Builder fails quality gates repeatedly
-3. Tester rejects work unfairly
-4. Refiner recommends wrong approach
-5. Integrator merge conflicts
-6. Negotiator coordination loops
-7. Sprint Planner generates impossible sprint
-8. Stale lease prevents work
-9. Lock files not releasing
-10. Agent reports missing
-
-**System Issues (10 issues):**
-11. SPRINT_QUEUE.json corruption
-12. JSON parse errors
-13. File permission errors
-14. Disk space issues
-15. Git conflicts in working files
-16. Missing dependencies
-17. Python version incompatibility
-18. Virtual environment issues
-19. Quality gate failures (black/ruff/mypy)
-20. Test failures blocking progress
-
-**Process Issues (10 issues):**
-21. Sprint not progressing
-22. Tasks stuck in "blocked" status
-23. WIP limits preventing work
-24. Dependencies never satisfied
-25. Sprint completion criteria unclear
-26. Integration tests always skipping
-27. Coverage thresholds too high
-28. Documentation out of sync
-29. Logs growing too large
-30. Archive structure corrupted
-
-**Format Per Issue:**
-   ```markdown
-### Issue: [Problem Description]
-
-**Symptoms:**
-- What you observe
-
-**Diagnosis:**
-```bash
-# Commands to diagnose
-command to check state
-```
-
-**Solution:**
-```bash
-# Commands to fix
-step-by-step fix
-```
-
-**Prevention:**
-- How to avoid this issue
-
-**Related Issues:** Links to similar problems
-```
-
-**Exit Gate:** 30+ issues documented, all diagnostic commands verified
+**Exit Gate:** Complete protocol with examples from Sprint 1/2
 
 ---
 
-#### **Step 3: Onboarding Guide Creation (60 min)**
-**Goal:** Create `.oodatcaa/ONBOARDING.md` - New developer quick start
-
-**Structure:**
-
-**1. Welcome (5 minutes read)**
-- What is OODATCAA?
-- System overview (100-word summary)
-- Key concepts (agents, sprints, loop)
-- Prerequisites checklist
-
-**2. Quick Start (15 minutes to first sprint)**
-- Step 1: Review OBJECTIVE.md
-- Step 2: Run Negotiator
-- Step 3: Launch first agent
-- Step 4: Monitor progress
-- Step 5: First sprint completion
-
-**3. Core Concepts (20 minutes read)**
-- The OODATCAA loop explained
-- Agent roles and responsibilities
-- Sprint lifecycle
-- Task states and transitions
-- Quality gates
-
-**4. First Sprint Walkthrough (30 minutes practice)**
-- Sprint 1 case study (from actual Sprint 1)
-- Task breakdown example
-- Adaptation cycle example
-- Integration process
-
-**5. Common Tasks (Reference)**
-- How to create new work item
-- How to monitor progress
-- How to handle failures
-- How to complete sprint
-- How to generate reports
-
-**6. Next Steps**
-- Deep dive links (OODATCAA_LOOP_GUIDE, RUNBOOK)
-- Agent-specific guides
-- Architecture documentation
-
-**Exit Gate:** Complete onboarding guide, 15-minute quick start verified
-
----
-
-#### **Step 4: Enhanced Agent Protocols (90 min)**
-**Goal:** Update all `.oodatcaa/prompts/*.md` files with examples
-
-**Agents to Enhance (10 files):**
-1. negotiator.md
-2. sprint-planner.md
-3. planner.md
-4. builder.md
-5. tester.md
-6. refiner.md
-7. integrator.md
-8. project-completion-detector.md
-9. sprint-close.md
-10. triage.md
-
-**Enhancements Per Agent:**
-- **Examples Section:** 2-3 concrete examples
-- **Edge Cases:** 3-5 edge cases with handling
-- **Common Errors:** 3-5 errors with solutions
-- **Input/Output Contract:** Clear specifications
-- **Related Agents:** Links to workflow connections
-
-**Example Enhancement Template:**
-   ```markdown
-## Examples
-
-### Example 1: [Scenario Name]
-**Input State:**
-- SPRINT_QUEUE.json: [description]
-- Task status: [current state]
-
-**Actions Taken:**
-[Step-by-step what agent did]
-
-**Output:**
-[Files modified, decisions made]
-
-**Outcome:** [Result]
-
-## Edge Cases
-
-### Edge Case 1: [Situation]
-**Problem:** [What's unusual]
-**Handling:** [How agent handles it]
-**Rationale:** [Why this approach]
-
-## Common Errors
-
-### Error: [Error Message]
-**Cause:** [Why it happens]
-**Solution:** [How to fix]
-**Prevention:** [How to avoid]
-```
-
-**Exit Gate:** All 10 agent prompts enhanced, examples verified
-
----
-
-#### **Step 5: Architecture Documentation (60 min)**
-**Goal:** Create `.oodatcaa/ARCHITECTURE.md` - System architecture
-
-**Content:**
-
-**1. System Overview**
-- High-level architecture diagram (Mermaid)
-- Component responsibilities
-- Data flow overview
-
-**2. Agent Architecture**
-- Agent interaction diagram
-- Coordination flow (Negotiator-centric)
-- Communication patterns (file-based)
-
-**3. Data Architecture**
-- File structure diagram
-- Key files and their roles
-- JSON schemas (SPRINT_QUEUE.json, SPRINT_STATUS.json)
-
-**4. Process Architecture**
-- OODATCAA loop flow diagram
-- Sprint lifecycle state machine
-- Task state transitions
-
-**5. Integration Points**
-- P001: Daemon system integration
-- P002: Log rotation integration
-- P003: Sprint management integration
-- P004: Documentation integration
-
-**6. Technical Details**
-- Lease mechanism
-- Lock mechanism
-- Baseline tagging
-- Archive structure
-
-**Diagrams (Mermaid):**
-1. System architecture (components)
-2. Agent coordination flow
-3. OODATCAA loop (from P004)
-4. Sprint lifecycle state machine
-5. Task state transitions
-
-**Exit Gate:** Architecture doc complete with 5 diagrams, all rendering correctly
-
----
-
-#### **Step 6: Documentation Navigation & Integration (45 min)**
-**Goal:** Improve navigation across all documentation
+#### **Step 6: Recommendations & Prioritization (45 min)**
+**Goal:** Prioritize agent enhancements and new agents
 
 **Tasks:**
-1. **Update `.oodatcaa/README.md`:**
-   - Add navigation index to all docs
-   - Categorize by purpose (getting started, operations, reference)
+1. **Prioritize Gap Recommendations:**
+   - **High Priority:**
+     - Communication protocol standardization (improves all agents)
+     - Decision transparency requirements (improves coordination)
+   - **Medium Priority:**
+     - Monitor agent (after P001 daemon system complete)
+     - Reviewer agent (for complex features in future sprints)
+   - **Low Priority:**
+     - Architect agent (Planner sufficient for now)
+     - Enhanced Releaser (not needed until production-ready)
+
+2. **Create Implementation Roadmap:**
+   - **Sprint 2 (Immediate):**
+     - Document current agents (P005 deliverable)
+     - Standardize communication patterns
+   - **Sprint 3:**
+     - Implement Monitor agent (if P001 enables)
+     - Enhance Negotiator with formal conflict resolution
+   - **Sprint 4+:**
+     - Consider Reviewer agent
+     - Enhance Release agent for deployment
+
+3. **Feasibility Assessment:**
+   - Each recommendation:
+     - Effort estimate (hours)
+     - Dependencies
+     - Risk level
+     - Expected benefit
+
+**Deliverable:** Recommendations section in AGENT_GAP_ANALYSIS.md
+
+**Exit Gate:** Prioritized roadmap with feasibility assessment
+
+---
+
+#### **Step 7: Documentation Integration (30 min)**
+**Goal:** Integrate agent assessment with existing documentation
+
+**Tasks:**
+1. **Cross-Link with Existing Docs:**
+   - OODATCAA_LOOP_GUIDE.md: Reference agent roles in each stage
+   - ARCHITECTURE.md: Link to AGENT_ROLES_MATRIX.md
+   - Prompt files: Add links to capability matrix
+   - README.md: Reference agent interaction guide
+
+2. **Update Agent Prompts (If Needed):**
+   - Add I/O contract sections to prompts
+   - Clarify decision authority boundaries
+   - Add examples of successful handoffs
+   - Note: No protocol changes, just clarifications
+
+3. **Create Navigation:**
    - Add "See Also" sections
+   - Link between matrix, guide, and gap analysis
+   - Reference Sprint 1/2 evidence
 
-2. **Create Documentation Index:**
-   - Add to main README.md
-   - Link to all OODATCAA docs
-   - Categorize by user type (new user, operator, developer)
+4. **Final Quality Check:**
+   - All links valid
+   - Consistent terminology
+   - Date stamps on all docs
+   - Formatting consistent
 
-3. **Cross-Linking:**
-   - Add "Related Documentation" sections to all docs
-   - Link RUNBOOK scenarios to TROUBLESHOOTING issues
-   - Link agent prompts to OODATCAA_LOOP_GUIDE stages
+**Deliverable:** Updated navigation and cross-links
 
-4. **Consolidation:**
-   - Review QUICK_START.md vs ONBOARDING.md for overlap
-   - Merge or differentiate clearly
-   - Update START_HERE.md to point to ONBOARDING.md
-
-5. **Validation:**
-   - Check all markdown links (grep for `](` and verify targets exist)
-   - Verify all code examples are syntactically correct
-   - Ensure consistent formatting across all docs
-
-**Exit Gate:** All docs cross-linked, navigation clear, links validated
-
----
-
-#### **Step 7: Documentation Quality & Polish (30 min)**
-**Goal:** Final review and quality checks
-
-**Tasks:**
-1. **Spell Check:** Run spell checker on all new documentation
-2. **Link Validation:** Verify all internal links work
-3. **Command Verification:** Test all bash/make commands in examples
-4. **Format Consistency:** Ensure consistent markdown style
-5. **Date Stamps:** Add "Last Updated" to all modified docs
-6. **Version Numbers:** Add version to new documentation files
-7. **Table of Contents:** Add TOC to long documents (RUNBOOK, TROUBLESHOOTING)
-8. **Final Read-Through:** Fresh eyes review for clarity
-
-**Quality Checks:**
-   ```bash
-# Check all markdown links
-grep -r "](\./" .oodatcaa/ docs/ | while read -r line; do
-    # Verify link target exists
-done
-
-# Check code block syntax
-grep -A 5 "^```" .oodatcaa/RUNBOOK.md
-
-# Spell check
-aspell check .oodatcaa/RUNBOOK.md
-```
-
-**Exit Gate:** All quality checks pass, documentation polished
+**Exit Gate:** All documentation integrated and linked
 
 ---
 
 ## Task Breakdown for SPRINT_QUEUE.json
 
-### P006-B01: Steps 1-3 - Runbook + Troubleshooting + Onboarding
+### P005-B01: Steps 1-3 - Agent Audit + Interaction Analysis + Evidence
 **Complexity:** Large  
 **Estimated Time:** 225 minutes (~3.75 hours)  
 **Steps:** 1, 2, 3  
 **Dependencies:** None  
 **Deliverables:**
-- `.oodatcaa/RUNBOOK.md` (20+ scenarios)
-- `.oodatcaa/TROUBLESHOOTING.md` (30+ issues)
-- `.oodatcaa/ONBOARDING.md` (complete guide)
+- `.oodatcaa/AGENT_ROLES_MATRIX.md` (11 agents documented)
+- `.oodatcaa/AGENT_INTERACTION_GUIDE.md` (workflow patterns)
+- Sprint 1/2 evidence analysis
 
-**Branch:** `feat/P006-step-01-operational-docs`
+**Branch:** `feat/P005-step-01-agent-audit` (documentation only, no code changes)
 
 ---
 
-### P006-B02: Steps 4-5 - Agent Protocols + Architecture
+### P005-B02: Steps 4-5 - Gap Analysis + Communication Protocol
 **Complexity:** Medium  
-**Estimated Time:** 150 minutes (~2.5 hours)  
+**Estimated Time:** 135 minutes (~2.25 hours)  
 **Steps:** 4, 5  
-**Dependencies:** P006-B01  
+**Dependencies:** P005-B01  
 **Deliverables:**
-- `.oodatcaa/prompts/*.md` (10 files enhanced)
-- `.oodatcaa/ARCHITECTURE.md` (complete with diagrams)
+- `.oodatcaa/work/AGENT_GAP_ANALYSIS.md` (gap identification)
+- Communication protocol design in AGENT_INTERACTION_GUIDE.md
 
-**Branch:** `feat/P006-step-02-agent-protocols`
+**Branch:** `feat/P005-step-02-gap-analysis`
 
 ---
 
-### P006-B03: Steps 6-7 - Navigation + Quality
+### P005-B03: Steps 6-7 - Recommendations + Integration
 **Complexity:** Small  
 **Estimated Time:** 75 minutes (~1.25 hours)  
 **Steps:** 6, 7  
-**Dependencies:** P006-B02  
+**Dependencies:** P005-B02  
 **Deliverables:**
-- Updated `.oodatcaa/README.md` with navigation
-- Cross-links added to all docs
-- Quality checks complete
+- Prioritized recommendations in AGENT_GAP_ANALYSIS.md
+- Documentation cross-links and integration
+- Updated agent prompt clarifications (if needed)
 
-**Branch:** `feat/P006-step-03-doc-integration`
+**Branch:** `feat/P005-step-03-recommendations`
 
 ---
 
-### P006-T01: Testing - Verify All 10 ACs
+### P005-T01: Testing - Verify All 10 ACs
 **Complexity:** Medium  
 **Estimated Time:** 45 minutes  
-**Dependencies:** P006-B03  
+**Dependencies:** P005-B03  
 **Deliverables:**
 - All 10 acceptance criteria verified
 - Documentation accuracy validated
-- Links and commands tested
+- Recommendations feasibility assessed
 
 ---
 
 ## Exit Criteria Summary
 
 This task is complete when:
-1. ✅ RUNBOOK.md with 20+ operational scenarios
-2. ✅ TROUBLESHOOTING.md with 30+ documented issues
-3. ✅ ONBOARDING.md with 15-minute quick start
-4. ✅ All 10 agent prompts enhanced with examples
-5. ✅ ARCHITECTURE.md complete with 5 diagrams
-6. ✅ Documentation navigation improved
-7. ✅ All docs cross-linked and integrated
-8. ✅ Quality checks pass (links, formatting, commands)
-9. ✅ P001-P004 systems documented
-10. ✅ New developer can onboard in < 30 minutes
+1. ✅ Agent capability matrix complete for all 11 agents
+2. ✅ Agent interaction guide with workflow patterns
+3. ✅ Gap analysis with Sprint 1/2 evidence
+4. ✅ Communication protocol documented
+5. ✅ Decision authority boundaries clear
+6. ✅ Conflict resolution process defined
+7. ✅ New agent proposals evaluated and prioritized
+8. ✅ Recommendations with implementation roadmap
+9. ✅ Documentation integrated with existing docs
+10. ✅ All findings evidence-based from Sprint 1/2
 
-**Unblocks:** None (final documentation task)
+**Unblocks:** None (analytical task, no dependencies for other tasks)
 
 ---
 
 ## Notes
 
-- **Integration Focus:** Must document P001 (daemon), P002 (log rotation), P003 (sprint management), P004 (OODATCAA loop)
-- **Practical Emphasis:** Runbook and troubleshooting prioritized over theoretical documentation
-- **Agent-Friendly:** Documentation must be parseable by AI agents for self-improvement
-- **Tiered Approach:** Quick start (15 min) → Onboarding (30 min) → Runbook (reference) → Deep dive
-- **Maintenance Plan:** Date stamps, version numbers, clear ownership for updates
+- **No Code Changes:** This is pure analysis and documentation
+- **Evidence-Based:** All assessments grounded in Sprint 1/2 actual performance
+- **Practical Focus:** Recommendations must be actionable and prioritized
+- **Current System Works:** Don't propose changes that disrupt successful patterns
+- **Sprint 1 Success:** 91.9% completion rate, 100% adaptation success - system is effective
+- **Future Vision:** Recommendations for Sprint 3+ based on current trajectory
 
 ---
 
 **Plan Status:** ✅ Complete  
-**Ready for:** Builder (P006-B01)  
-**Estimated Total Time:** 450 minutes (~7.5 hours across 3 builder tasks)
+**Ready for:** Builder (P005-B01)  
+**Estimated Total Time:** 435 minutes (~7.25 hours across 3 builder tasks)

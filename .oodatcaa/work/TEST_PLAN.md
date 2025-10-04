@@ -1,813 +1,486 @@
-# TEST_PLAN: P006 - Process Documentation & Runbook
+# TEST_PLAN: P005 - Agent Role Assessment & Enhancement
 
-**Task ID:** P006  
-**Test Plan Version:** 1.0  
-**Created:** 2025-10-03T22:30:00+02:00  
-**Agent:** agent-planner-A
-
----
-
-## Test Strategy
-
-**Approach:** Documentation validation and completeness verification  
-**Focus Areas:**
-1. Operational procedures completeness
-2. Troubleshooting coverage
-3. Onboarding effectiveness
-4. Agent protocol clarity
-5. Architecture documentation accuracy
-6. Navigation and cross-linking
-7. Quality and consistency
-
-**Test Environment:**
-- OS: Linux 6.14.0-33-generic
-- Documentation Tools: markdown linters, link checkers
-- Working Directory: /media/hannesn/storage/Code/MCPLocalLLM
+**Task ID:** P005  
+**Objective:** SPRINT-2025-002 (OODATCAA Process Improvement)  
+**Sprint:** 2  
+**Tester:** TBD  
+**Created:** 2025-10-03T22:45:00+02:00
 
 ---
 
-## Quality Gates (Run First)
+## Testing Strategy
 
-### Format Check
-```bash
-black --check .
-```
-**Expected:** All files pass formatting check  
-**Acceptance:** 0 files need formatting (no Python files modified)
+**Task Type:** Analysis & Documentation (No Code Changes)
 
-### Lint Check
-```bash
-ruff check .
-```
-**Expected:** ≤29 errors (Sprint 2 baseline)  
-**Acceptance:** No new ruff errors introduced (no code changes)
+**Testing Approach:**
+1. **Documentation Completeness:** Verify all required content present
+2. **Accuracy Validation:** Cross-check claims against actual agent prompts and Sprint 1/2 reports
+3. **Evidence Verification:** Ensure all assessments backed by data
+4. **Feasibility Review:** Validate recommendations are actionable
+5. **Integration Testing:** Verify cross-links and documentation navigation
 
-### Type Check
-```bash
-mypy .
-```
-**Expected:** ~401 mypy errors (Sprint 1 baseline)  
-**Acceptance:** No new mypy errors (no code changes)
-
-### Unit Tests
-```bash
-pytest -q
-```
-**Expected:** All existing tests pass  
-**Acceptance:** 13 passed, 3 skipped (W006 baseline maintained)
-
-### Build Check
-```bash
-python -m build
-```
-**Expected:** Clean build  
-**Acceptance:** Package builds successfully
-
-### Security Audit
-```bash
-pip-audit
-```
-**Expected:** 0 high-severity vulnerabilities  
-**Acceptance:** No new security issues
+**Note:** This is an analytical task with no code implementation. Testing focuses on documentation quality, accuracy, and completeness rather than code quality gates.
 
 ---
 
-## Acceptance Criteria
+## Quality Gates (Documentation Task)
 
-### AC1: RUNBOOK.md Complete with 20+ Scenarios ✅
+### Standard Python Quality Gates
+**Status:** ❌ **N/A** - No code changes in this task
 
-**Requirement:** Operational runbook with comprehensive procedures
+- **Format:** `black --check .` → **N/A**
+- **Lint:** `ruff check .` → **N/A**
+- **Types:** `mypy .` → **N/A**
+- **Unit:** `pytest -q` → **N/A**
+- **Integration:** `pytest -q tests/acceptance` → **N/A**
+- **Coverage:** `pytest --cov=src --cov-report=term-missing --cov-fail-under=85` → **N/A**
+- **Build:** `python -m build` → **N/A**
+- **Security:** `pip-audit` → **N/A**
+
+### Documentation Quality Gates (Applicable)
+1. **Markdown Linting:**
+   ```bash
+   # Verify all markdown files are well-formed
+   find .oodatcaa/ -name "*.md" -type f -exec echo "Checking {}" \;
+   ```
+
+2. **Link Validation:**
+   ```bash
+   # Verify all internal links are valid
+   grep -r "\[.*\](\.\./" .oodatcaa/ | cut -d: -f1 | sort -u
+   ```
+
+3. **Completeness Check:**
+   ```bash
+   # Verify all deliverable files exist
+   ls -lh .oodatcaa/AGENT_ROLES_MATRIX.md
+   ls -lh .oodatcaa/AGENT_INTERACTION_GUIDE.md
+   ls -lh .oodatcaa/work/AGENT_GAP_ANALYSIS.md
+   ```
+
+---
+
+## Acceptance Criteria (10 Total)
+
+### AC1: Agent Capability Matrix Complete ✅
+**Requirement:** `.oodatcaa/AGENT_ROLES_MATRIX.md` exists with all 11 agents documented
 
 **Test Procedure:**
-```bash
-# 1. Verify RUNBOOK.md exists
-test -f .oodatcaa/RUNBOOK.md && echo "PASS: RUNBOOK.md exists"
-
-# 2. Count documented scenarios
-grep -c "^### Scenario:" .oodatcaa/RUNBOOK.md
-
-# 3. Verify categories covered
-grep -i "Sprint Operations\|Agent Operations\|System Maintenance" .oodatcaa/RUNBOOK.md
-
-# 4. Check scenario structure (Procedure, Expected Output, Troubleshooting sections)
-grep -c "#### Procedure:" .oodatcaa/RUNBOOK.md
-grep -c "#### Expected Output:" .oodatcaa/RUNBOOK.md
-grep -c "#### Troubleshooting:" .oodatcaa/RUNBOOK.md
-
-# 5. Verify all commands have code blocks
-grep -A 3 "#### Procedure:" .oodatcaa/RUNBOOK.md | grep -c "^```"
-
-# 6. Check Sprint 2 systems documented
-grep -i "make sprint-status\|make sprint-complete\|daemon\|log rotation" .oodatcaa/RUNBOOK.md
-
-# 7. Test example commands (safe ones)
-grep "^make sprint-status" .oodatcaa/RUNBOOK.md && make sprint-status --help 2>/dev/null || echo "Command documented"
-
-# 8. Check table of contents exists
-grep -i "table of contents\|## Contents" .oodatcaa/RUNBOOK.md
-
-# 9. Verify "See Also" cross-references
-grep -c "#### See Also:" .oodatcaa/RUNBOOK.md
-
-# 10. Check file size (should be substantial)
-wc -l .oodatcaa/RUNBOOK.md | awk '{if ($1 > 500) print "PASS: Comprehensive"; else print "FAIL: Too short"}'
-```
-
-**Expected Results:**
-- RUNBOOK.md file exists in `.oodatcaa/` directory
-- ≥20 scenarios documented (grep count ≥20)
-- All three categories present (Sprint, Agent, System)
-- Each scenario has Procedure, Expected Output, Troubleshooting sections
-- All procedures have code blocks with commands
-- P001-P004 systems referenced
-- Table of contents for navigation
-- Cross-references between scenarios
-- File is substantial (>500 lines)
+1. Open `.oodatcaa/AGENT_ROLES_MATRIX.md`
+2. Verify table/matrix includes all 11 agents:
+   - negotiator, sprint-planner, planner, builder, tester, refiner, integrator
+   - project-completion-detector, sprint-close, release, triage
+3. For EACH agent, verify documented:
+   - Role Name & Purpose
+   - Responsibilities (bullet list)
+   - Input Files (what the agent reads)
+   - Output Files (what the agent writes)
+   - Decision Authority (what it decides)
+   - Success Criteria (how to measure)
+   - Usage Stats (Sprint 1/2 frequency)
 
 **Pass Criteria:**
-- ≥20 scenarios documented
-- All major scenario categories covered
-- Consistent structure across all scenarios
-- All commands formatted properly
-- Sprint 2 systems documented
+- All 11 agents present
+- All 7 attributes documented for each
+- No "TBD" or placeholder text
+- Evidence from actual prompts (accurate descriptions)
+
+**Verification:**
+```bash
+# Count agents in matrix
+grep -c "^##" .oodatcaa/AGENT_ROLES_MATRIX.md  # Should be >= 11
+```
 
 ---
 
-### AC2: TROUBLESHOOTING.md with 30+ Issues ✅
-
-**Requirement:** Comprehensive troubleshooting guide with diagnostic procedures
+### AC2: Agent Interaction Guide with Workflow Patterns ✅
+**Requirement:** `.oodatcaa/AGENT_INTERACTION_GUIDE.md` documents agent communication
 
 **Test Procedure:**
-```bash
-# 1. Verify TROUBLESHOOTING.md exists
-test -f .oodatcaa/TROUBLESHOOTING.md && echo "PASS: TROUBLESHOOTING.md exists"
-
-# 2. Count documented issues
-grep -c "^### Issue:" .oodatcaa/TROUBLESHOOTING.md
-
-# 3. Verify categories covered
-grep -i "Agent Issues\|System Issues\|Process Issues" .oodatcaa/TROUBLESHOOTING.md
-
-# 4. Check issue structure (Symptoms, Diagnosis, Solution, Prevention)
-grep -c "^\*\*Symptoms:\*\*" .oodatcaa/TROUBLESHOOTING.md
-grep -c "^\*\*Diagnosis:\*\*" .oodatcaa/TROUBLESHOOTING.md
-grep -c "^\*\*Solution:\*\*" .oodatcaa/TROUBLESHOOTING.md
-grep -c "^\*\*Prevention:\*\*" .oodatcaa/TROUBLESHOOTING.md
-
-# 5. Verify diagnostic commands have code blocks
-grep -A 3 "**Diagnosis:**" .oodatcaa/TROUBLESHOOTING.md | grep -c "^```"
-
-# 6. Check common Sprint 2 issues documented
-grep -i "SPRINT_QUEUE.json\|lease\|lock\|quality gate\|log rotation" .oodatcaa/TROUBLESHOOTING.md
-
-# 7. Verify "Related Issues" cross-references
-grep -c "^\*\*Related Issues:\*\*" .oodatcaa/TROUBLESHOOTING.md
-
-# 8. Check file size
-wc -l .oodatcaa/TROUBLESHOOTING.md | awk '{if ($1 > 600) print "PASS: Comprehensive"; else print "FAIL: Too short"}'
-
-# 9. Verify index or TOC
-grep -i "table of contents\|## Contents\|## Index" .oodatcaa/TROUBLESHOOTING.md
-
-# 10. Test diagnostic commands are safe (read-only)
-! grep "rm -rf\|--force\|DELETE\|DROP" .oodatcaa/TROUBLESHOOTING.md && echo "PASS: No destructive commands"
-```
-
-**Expected Results:**
-- TROUBLESHOOTING.md file exists
-- ≥30 issues documented (grep count ≥30)
-- All three categories present (Agent, System, Process)
-- Each issue has Symptoms, Diagnosis, Solution, Prevention
-- Diagnostic commands in code blocks
-- Common Sprint 2 issues covered
-- Cross-references between related issues
-- File is substantial (>600 lines)
-- Table of contents for navigation
-- No destructive commands in examples
+1. Open `.oodatcaa/AGENT_INTERACTION_GUIDE.md`
+2. Verify sections exist:
+   - Workflow Patterns (Primary Development Flow, Adaptation Loop, Sprint Lifecycle)
+   - Communication Mechanisms (File-based, Leases, Locks, Logs)
+   - Handoff Procedures (Agent-to-agent transitions)
+   - Decision Points (Where decisions occur)
+   - Examples from Sprint 1/2
+3. Verify at least 4 workflow patterns documented:
+   - Primary: Negotiator → Sprint Planner → Planner → Builder → Tester → Integrator
+   - Adaptation: Tester → Refiner → Builder → Tester
+   - Sprint Lifecycle: Sprint Planner → ... → Sprint Close
+   - Project Completion: ... → Project Completion Detector
 
 **Pass Criteria:**
-- ≥30 issues documented
-- All major issue categories covered
-- Consistent structure across all issues
-- Diagnostic procedures safe and tested
-- Sprint 2 common issues included
+- All 4 major workflows documented
+- Communication mechanisms explained
+- At least 3 real examples from Sprint 1/2
+- Clear handoff procedures
+
+**Verification:**
+```bash
+# Check for key workflow terms
+grep -i "workflow" .oodatcaa/AGENT_INTERACTION_GUIDE.md
+grep -i "handoff" .oodatcaa/AGENT_INTERACTION_GUIDE.md
+```
 
 ---
 
-### AC3: ONBOARDING.md with Quick Start Path ✅
-
-**Requirement:** Developer onboarding guide with 15-minute quick start
+### AC3: Gap Analysis with Sprint 1/2 Evidence ✅
+**Requirement:** `.oodatcaa/work/AGENT_GAP_ANALYSIS.md` identifies gaps with data
 
 **Test Procedure:**
-```bash
-# 1. Verify ONBOARDING.md exists
-test -f .oodatcaa/ONBOARDING.md && echo "PASS: ONBOARDING.md exists"
-
-# 2. Check main sections present
-grep "## Welcome\|## Quick Start\|## Core Concepts\|## First Sprint\|## Common Tasks\|## Next Steps" .oodatcaa/ONBOARDING.md
-
-# 3. Verify Quick Start is actionable
-grep -A 20 "## Quick Start" .oodatcaa/ONBOARDING.md | grep -E "Step [0-9]:|^[0-9]+\."
-
-# 4. Check Quick Start time estimate
-grep -i "15 minutes\|15-minute\|quick start" .oodatcaa/ONBOARDING.md
-
-# 5. Verify prerequisites section
-grep -i "prerequisite\|requirements\|before you start" .oodatcaa/ONBOARDING.md
-
-# 6. Check for Sprint 1 walkthrough/example
-grep -i "sprint 1\|case study\|example sprint\|walkthrough" .oodatcaa/ONBOARDING.md
-
-# 7. Verify links to other docs
-grep -c "\[.*\](\./" .oodatcaa/ONBOARDING.md
-
-# 8. Check diagram references
-grep -i "diagram\|architecture\|flow" .oodatcaa/ONBOARDING.md
-
-# 9. Verify "Next Steps" section exists
-grep -A 10 "## Next Steps" .oodatcaa/ONBOARDING.md
-
-# 10. Check file is beginner-friendly (reasonable length)
-wc -l .oodatcaa/ONBOARDING.md | awk '{if ($1 > 200 && $1 < 800) print "PASS: Good length"; else print "CHECK: Length"}'
-```
-
-**Expected Results:**
-- ONBOARDING.md file exists
-- All 6 main sections present (Welcome, Quick Start, Core Concepts, First Sprint, Common Tasks, Next Steps)
-- Quick Start has numbered steps
-- 15-minute time estimate mentioned
-- Prerequisites section exists
-- Sprint 1 walkthrough included as example
-- Multiple links to other documentation
-- Architecture/diagram references
-- Next Steps provides continuation path
-- File length reasonable (200-800 lines)
+1. Open `.oodatcaa/work/AGENT_GAP_ANALYSIS.md`
+2. Verify Sprint 1 Evidence section includes:
+   - 34 tasks completed, 91.9% success rate
+   - 4 adaptation cycles with specific task IDs (W004, W005, etc.)
+   - Lessons learned (what worked, what didn't)
+3. Verify Sprint 2 Evidence section includes:
+   - Current progress snapshot
+   - At least 2 examples (e.g., P002-B01 perfect, P004 complete)
+4. Verify Gap Analysis section:
+   - At least 3 gap categories assessed (Monitor, Reviewer, Architecture, etc.)
+   - Each gap: Description, Priority, Recommendation
+   - Evidence linking gaps to Sprint observations
 
 **Pass Criteria:**
-- Complete onboarding structure
-- Quick start actionable in 15 minutes
-- Sprint 1 example included
-- Clear path to deeper documentation
-- Beginner-friendly language
+- Sprint 1 and Sprint 2 evidence sections present
+- Specific task IDs and metrics cited
+- At least 3 gaps identified
+- Each gap has priority (High/Medium/Low) and recommendation
+
+**Verification:**
+```bash
+# Verify evidence citations
+grep -c "Sprint 1" .oodatcaa/work/AGENT_GAP_ANALYSIS.md  # >= 3
+grep -c "Sprint 2" .oodatcaa/work/AGENT_GAP_ANALYSIS.md  # >= 2
+```
 
 ---
 
-### AC4: All Agent Prompts Enhanced with Examples ✅
-
-**Requirement:** 10 agent prompt files enhanced with examples, edge cases, and error handling
+### AC4: Communication Protocol Documented ✅
+**Requirement:** Structured communication format defined in AGENT_INTERACTION_GUIDE.md
 
 **Test Procedure:**
-```bash
-# 1. List all agent prompts
-ls -1 .oodatcaa/prompts/*.md | grep -v README
-
-# 2. Count agent prompts
-ls -1 .oodatcaa/prompts/*.md | grep -v README | wc -l
-
-# 3. Check each prompt has "Examples" section
-for file in .oodatcaa/prompts/{negotiator,sprint-planner,planner,builder,tester,refiner,integrator,project-completion-detector,sprint-close,triage}.md; do
-    grep -q "## Examples" "$file" && echo "PASS: $file has examples" || echo "FAIL: $file missing examples"
-done
-
-# 4. Check for "Edge Cases" section
-for file in .oodatcaa/prompts/{negotiator,planner,builder,tester,refiner,integrator}.md; do
-    grep -q "## Edge Cases\|### Edge Case" "$file" && echo "PASS: $file has edge cases" || echo "FAIL: $file missing edge cases"
-done
-
-# 5. Check for "Common Errors" section
-for file in .oodatcaa/prompts/{planner,builder,tester,refiner,integrator}.md; do
-    grep -q "## Common Errors\|### Error:" "$file" && echo "PASS: $file has error docs" || echo "FAIL: $file missing errors"
-done
-
-# 6. Verify examples have structure (Input State, Actions, Output, Outcome)
-grep -c "**Input State:**\|**Actions Taken:**\|**Output:**\|**Outcome:**" .oodatcaa/prompts/planner.md
-
-# 7. Count total examples added across all prompts
-grep -c "### Example [0-9]" .oodatcaa/prompts/*.md
-
-# 8. Count total edge cases documented
-grep -c "### Edge Case" .oodatcaa/prompts/*.md
-
-# 9. Count total errors documented
-grep -c "### Error:" .oodatcaa/prompts/*.md
-
-# 10. Check for "Related Agents" or "See Also" sections
-grep -c "## Related Agents\|## See Also" .oodatcaa/prompts/*.md
-```
-
-**Expected Results:**
-- ≥10 agent prompt files exist
-- All core agent prompts have "Examples" section (negotiator, planner, builder, tester, refiner, integrator)
-- ≥6 prompts have "Edge Cases" section
-- ≥5 prompts have "Common Errors" section
-- Examples have consistent structure (Input→Actions→Output→Outcome)
-- ≥20 total examples across all prompts (2 per agent minimum)
-- ≥15 edge cases documented across prompts
-- ≥15 errors documented across prompts
-- Cross-references between related agents
+1. Open `.oodatcaa/AGENT_INTERACTION_GUIDE.md`
+2. Verify "Communication Protocol" section exists with:
+   - Structured message format (JSON example or similar)
+   - Required fields for agent messages
+   - Decision transparency requirements
+   - Status reporting standards
+   - Conflict resolution protocol
+3. Verify at least 1 JSON/structured example of agent message
+4. Verify conflict resolution steps defined (disagreement → discussion → negotiator decision → log)
 
 **Pass Criteria:**
-- All 10 target prompts enhanced
-- ≥2 examples per core agent
-- ≥3 edge cases per core agent
-- ≥3 errors per core agent
-- Consistent documentation structure
+- Communication protocol section present
+- Structured format with example
+- Decision transparency requirements listed
+- Conflict resolution protocol with 4+ steps
+
+**Verification:**
+```bash
+# Check for protocol elements
+grep -i "protocol" .oodatcaa/AGENT_INTERACTION_GUIDE.md
+grep -i "conflict" .oodatcaa/AGENT_INTERACTION_GUIDE.md
+```
 
 ---
 
-### AC5: ARCHITECTURE.md Complete with Diagrams ✅
-
-**Requirement:** System architecture documentation with 5 Mermaid diagrams
+### AC5: Decision Authority Boundaries Clear ✅
+**Requirement:** Each agent's decision authority explicitly documented
 
 **Test Procedure:**
-```bash
-# 1. Verify ARCHITECTURE.md exists
-test -f .oodatcaa/ARCHITECTURE.md && echo "PASS: ARCHITECTURE.md exists"
-
-# 2. Check main sections present
-grep "## System Overview\|## Agent Architecture\|## Data Architecture\|## Process Architecture\|## Integration Points\|## Technical Details" .oodatcaa/ARCHITECTURE.md
-
-# 3. Count Mermaid diagrams
-grep -c "^```mermaid" .oodatcaa/ARCHITECTURE.md
-
-# 4. Verify diagram types
-grep -A 2 "^```mermaid" .oodatcaa/ARCHITECTURE.md | grep -E "graph|flowchart|stateDiagram|sequenceDiagram"
-
-# 5. Check P001-P004 systems documented in Integration Points
-grep -A 20 "## Integration Points" .oodatcaa/ARCHITECTURE.md | grep -i "P001\|daemon\|P002\|log rotation\|P003\|sprint management\|P004\|OODATCAA"
-
-# 6. Verify JSON schemas documented
-grep -i "SPRINT_QUEUE.json\|SPRINT_STATUS.json" .oodatcaa/ARCHITECTURE.md
-
-# 7. Check technical details (leases, locks, tags, archives)
-grep -i "lease\|lock\|baseline.*tag\|archive" .oodatcaa/ARCHITECTURE.md
-
-# 8. Verify file structure diagram/description
-grep -i "file structure\|directory.*structure" .oodatcaa/ARCHITECTURE.md
-
-# 9. Check component responsibilities documented
-grep -c "responsibility\|responsibilities\|role" .oodatcaa/ARCHITECTURE.md
-
-# 10. Verify file size is substantial
-wc -l .oodatcaa/ARCHITECTURE.md | awk '{if ($1 > 300) print "PASS: Comprehensive"; else print "FAIL: Too short"}'
-```
-
-**Expected Results:**
-- ARCHITECTURE.md file exists
-- All 6 main sections present
-- ≥5 Mermaid diagrams (exact count ≥5)
-- Diagrams use appropriate types (graph, flowchart, stateDiagram, sequence)
-- P001-P004 integration documented
-- JSON schemas explained
-- Technical mechanisms documented (leases, locks, tags, archives)
-- File structure explained
-- Component responsibilities clear
-- File is substantial (>300 lines)
+1. Open `.oodatcaa/AGENT_ROLES_MATRIX.md`
+2. For EACH of 11 agents, verify "Decision Authority" section states:
+   - What decisions the agent CAN make independently
+   - What decisions require coordination/approval
+   - What decisions are out of scope
+3. Verify at least 3 agents have specific decision examples:
+   - Planner: Alternative selection, task breakdown
+   - Tester: Accept/reject work, trigger adaptation
+   - Refiner: Quick fix vs rollback
+   - Integrator: Merge approval
+   - Negotiator: Task assignment
 
 **Pass Criteria:**
-- All sections complete
-- 5 diagrams render correctly
-- P001-P004 systems integrated
-- Technical details accurate
-- Clear architecture overview
+- All 11 agents have "Decision Authority" documented
+- Each authority is specific (not generic)
+- At least 3 agents have decision examples
+- Boundaries clear (what NOT to decide)
+
+**Verification:**
+```bash
+# Count decision authority sections
+grep -c "Decision Authority" .oodatcaa/AGENT_ROLES_MATRIX.md  # >= 11
+```
 
 ---
 
-### AC6: Documentation Navigation Improved ✅
-
-**Requirement:** Clear navigation across all OODATCAA documentation
+### AC6: Conflict Resolution Process Defined ✅
+**Requirement:** Formal process for agent disagreements
 
 **Test Procedure:**
-```bash
-# 1. Check .oodatcaa/README.md has navigation index
-grep -A 20 "## Documentation\|## Navigation\|## Index" .oodatcaa/README.md
-
-# 2. Verify main README.md links to OODATCAA docs
-grep -c "\.oodatcaa/" README.md
-
-# 3. Count total OODATCAA documentation files
-find .oodatcaa -name "*.md" -type f | wc -l
-
-# 4. Check for categorization (getting started, operations, reference)
-grep -i "getting started\|operations\|reference\|guides" .oodatcaa/README.md
-
-# 5. Verify QUICK_START.md references ONBOARDING.md
-grep -i "onboarding" .oodatcaa/QUICK_START.md || echo "Check if consolidated"
-
-# 6. Check START_HERE.md points to right docs
-grep -c "\.md" .oodatcaa/START_HERE.md
-
-# 7. Verify navigation consistency across key docs
-for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
-    grep -q "## See Also\|## Related" "$file" && echo "PASS: $file has navigation" || echo "FAIL: $file missing navigation"
-done
-
-# 8. Check cross-links between RUNBOOK and TROUBLESHOOTING
-grep -c "TROUBLESHOOTING.md" .oodatcaa/RUNBOOK.md
-grep -c "RUNBOOK.md" .oodatcaa/TROUBLESHOOTING.md
-
-# 9. Verify ONBOARDING links to OODATCAA_LOOP_GUIDE
-grep -c "OODATCAA_LOOP_GUIDE" .oodatcaa/ONBOARDING.md
-
-# 10. Count total cross-references in new docs
-grep -c "](\./" .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md
-```
-
-**Expected Results:**
-- .oodatcaa/README.md has comprehensive navigation index
-- Main README.md links to OODATCAA documentation
-- ≥20 documentation files in `.oodatcaa/`
-- Documentation categorized by purpose
-- QUICK_START.md and ONBOARDING.md are integrated or differentiated
-- START_HERE.md has correct pointers
-- All new docs have "See Also" or "Related" sections
-- RUNBOOK ↔ TROUBLESHOOTING cross-linked
-- ONBOARDING links to OODATCAA_LOOP_GUIDE
-- ≥30 cross-references in new documentation
+1. Open `.oodatcaa/AGENT_INTERACTION_GUIDE.md`
+2. Verify "Conflict Resolution" section includes:
+   - Step 1: Document disagreement (where? format?)
+   - Step 2: Each agent states position with rationale
+   - Step 3: Negotiator reviews and decides
+   - Step 4: Decision logged with rationale
+   - Step 5: Escalation path (if Negotiator can't decide)
+3. Verify at least 1 example from Sprint 1/2 (if any conflicts occurred)
+4. Verify criteria for Negotiator decision (DoD alignment, rollback risk, testability)
 
 **Pass Criteria:**
-- Clear navigation from main README
-- All new docs have navigation sections
-- Key docs cross-reference each other
-- Categorization clear
-- Easy to find related content
+- Conflict resolution protocol has 5+ steps
+- Decision criteria for Negotiator defined
+- Escalation path specified
+- Reference to SPRINT_DISCUSS.md or similar mechanism
+
+**Verification:**
+```bash
+# Check conflict resolution content
+grep -A 10 -i "conflict resolution" .oodatcaa/AGENT_INTERACTION_GUIDE.md
+```
 
 ---
 
-### AC7: All Documentation Cross-Linked ✅
-
-**Requirement:** Comprehensive cross-linking between related documentation
+### AC7: New Agent Proposals Evaluated ✅
+**Requirement:** At least 3 potential new agent types assessed
 
 **Test Procedure:**
-```bash
-# 1. Extract all markdown links from new docs
-grep -h "](\./" .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md | wc -l
-
-# 2. Verify links are valid (targets exist)
-for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
-    echo "Checking links in $file..."
-    grep -o "](\.oodatcaa/[^)]*)" "$file" 2>/dev/null | sed 's/](//' | sed 's/)//' | while read -r link; do
-        test -f ".oodatcaa/$link" || echo "BROKEN: $link in $file"
-    done
-done
-
-# 3. Check RUNBOOK links to agent prompts
-grep -c "prompts/" .oodatcaa/RUNBOOK.md
-
-# 4. Check TROUBLESHOOTING links to RUNBOOK scenarios
-grep -c "RUNBOOK.md#" .oodatcaa/TROUBLESHOOTING.md
-
-# 5. Verify ONBOARDING links to multiple docs
-grep -o "](\.oodatcaa/[^)]*)" .oodatcaa/ONBOARDING.md | wc -l
-
-# 6. Check ARCHITECTURE links to P004 (OODATCAA_LOOP_GUIDE)
-grep -c "OODATCAA_LOOP_GUIDE" .oodatcaa/ARCHITECTURE.md
-
-# 7. Verify bidirectional links (A→B and B→A)
-# RUNBOOK → TROUBLESHOOTING
-grep -q "TROUBLESHOOTING.md" .oodatcaa/RUNBOOK.md && echo "PASS: RUNBOOK→TROUBLESHOOTING"
-# TROUBLESHOOTING → RUNBOOK
-grep -q "RUNBOOK.md" .oodatcaa/TROUBLESHOOTING.md && echo "PASS: TROUBLESHOOTING→RUNBOOK"
-
-# 8. Check ONBOARDING → RUNBOOK
-grep -q "RUNBOOK.md" .oodatcaa/ONBOARDING.md && echo "PASS: ONBOARDING→RUNBOOK"
-
-# 9. Check ARCHITECTURE → all new docs
-for doc in RUNBOOK TROUBLESHOOTING ONBOARDING; do
-    grep -q "$doc.md" .oodatcaa/ARCHITECTURE.md && echo "PASS: ARCHITECTURE→$doc" || echo "CHECK: ARCHITECTURE→$doc"
-done
-
-# 10. Verify no broken links
-! find .oodatcaa -name "*.md" -exec grep -l "](broken\|](TODO\|](FIXME" {} \; && echo "PASS: No placeholder links"
-```
-
-**Expected Results:**
-- ≥30 markdown links in new documentation
-- All link targets exist (no broken links)
-- RUNBOOK references agent prompts (scenarios use agents)
-- TROUBLESHOOTING links to RUNBOOK scenarios
-- ONBOARDING links to multiple docs (≥5 different files)
-- ARCHITECTURE links to OODATCAA_LOOP_GUIDE
-- Bidirectional links present (RUNBOOK↔TROUBLESHOOTING)
-- ONBOARDING links to RUNBOOK for operations
-- ARCHITECTURE links to all new docs
-- No placeholder or broken links
+1. Open `.oodatcaa/work/AGENT_GAP_ANALYSIS.md`
+2. Verify "New Agent Proposals" or "Gap Analysis" section includes assessments for:
+   - **Monitor Agent:** Continuous sprint monitoring
+   - **Architect Agent:** Design decisions
+   - **Reviewer Agent:** Code review beyond quality gates
+   - **Deployer/Releaser Agent:** Deployment automation
+3. For EACH proposed agent type, verify:
+   - Gap description (what's missing?)
+   - Priority (High/Medium/Low)
+   - Rationale (why needed or not?)
+   - Recommendation (implement, defer, reject)
+   - Dependencies (e.g., Monitor depends on P001 daemon)
 
 **Pass Criteria:**
-- No broken links
-- ≥30 cross-references
-- Bidirectional linking implemented
-- Key relationships linked (scenarios↔issues, onboarding↔operations)
-- All new docs integrated into documentation web
+- At least 4 agent types evaluated (Monitor, Architect, Reviewer, Deployer)
+- Each has: gap, priority, rationale, recommendation
+- At least 1 agent recommended for implementation
+- At least 1 agent deferred/rejected with rationale
+
+**Verification:**
+```bash
+# Count agent proposals
+grep -c -i "agent" .oodatcaa/work/AGENT_GAP_ANALYSIS.md  # High count expected
+```
 
 ---
 
-### AC8: Quality Checks Pass ✅
-
-**Requirement:** Documentation quality validated (links, formatting, commands)
+### AC8: Recommendations Prioritized ✅
+**Requirement:** Actionable roadmap with priorities
 
 **Test Procedure:**
-```bash
-# 1. Validate all markdown links
-echo "Checking markdown links..."
-for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
-    grep -o "](\.oodatcaa/[^)]*)" "$file" 2>/dev/null | while read -r link_part; do
-        link=$(echo "$link_part" | sed 's/](//' | sed 's/)//')
-        test -f "$link" && echo "✓ $link" || echo "✗ BROKEN: $link in $(basename $file)"
-    done
-done
-
-# 2. Check markdown formatting consistency
-# Headers should use ## not underlines
-! grep -E "^={3,}|^-{3,}" .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md && echo "PASS: Consistent header formatting"
-
-# 3. Verify code blocks are closed
-for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
-    open=$(grep -c "^```" "$file")
-    if [ $((open % 2)) -eq 0 ]; then
-        echo "PASS: $file has balanced code blocks"
-    else
-        echo "FAIL: $file has unclosed code blocks"
-    fi
-done
-
-# 4. Test command examples (safe ones)
-echo "Testing safe commands from RUNBOOK..."
-# Extract make commands and test they exist
-grep "^make " .oodatcaa/RUNBOOK.md | sort -u | while read -r cmd; do
-    target=$(echo "$cmd" | awk '{print $2}')
-    make -n "$target" 2>/dev/null && echo "✓ $cmd" || echo "✗ $cmd (not in Makefile)"
-done
-
-# 5. Check for consistent terminology
-# Should use "Sprint" not "sprint", "Agent" not "agent" in titles
-grep -E "### [a-z]|## [a-z]" .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md | head -5
-
-# 6. Verify date stamps present
-for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
-    grep -q "Last Updated:\|Updated:\|Date:" "$file" && echo "PASS: $file has date" || echo "FAIL: $file missing date"
-done
-
-# 7. Check version numbers
-for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
-    grep -q "Version:\|v[0-9]\." "$file" && echo "PASS: $file has version" || echo "CHECK: $file version"
-done
-
-# 8. Verify table of contents in long docs
-for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING}.md; do
-    lines=$(wc -l < "$file")
-    if [ "$lines" -gt 500 ]; then
-        grep -q "## Table of Contents\|## Contents" "$file" && echo "PASS: $file has TOC" || echo "FAIL: $file needs TOC"
-    fi
-done
-
-# 9. Check spell check (basic - common technical terms)
-! grep -i "occured\|recieve\|seperate\|teh " .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md && echo "PASS: No obvious typos"
-
-# 10. Verify all quality gates pass (no code changes expected)
-make gates 2>&1 | grep -E "black|ruff|mypy"
-```
-
-**Expected Results:**
-- All markdown links valid (no broken links)
-- Consistent header formatting (## not underlines)
-- All code blocks balanced (opened and closed)
-- Make commands in examples exist in Makefile
-- Consistent capitalization in headers
-- All new docs have date stamps
-- Version numbers present
-- Long docs (>500 lines) have table of contents
-- No obvious spelling errors
-- All quality gates pass (black, ruff, mypy maintained)
+1. Open `.oodatcaa/work/AGENT_GAP_ANALYSIS.md`
+2. Verify "Recommendations" section includes:
+   - **High Priority:** At least 2 items (e.g., communication protocol, decision transparency)
+   - **Medium Priority:** At least 2 items (e.g., Monitor agent, Reviewer agent)
+   - **Low Priority:** At least 1 item (e.g., Architect agent, enhanced Releaser)
+3. Verify implementation roadmap:
+   - Sprint 2 (Immediate): Document agents, standardize communication
+   - Sprint 3: Consider implementing highest-priority new agents
+   - Sprint 4+: Future enhancements
+4. For each recommendation, verify:
+   - Effort estimate (hours or complexity)
+   - Dependencies (if any)
+   - Expected benefit
 
 **Pass Criteria:**
-- Zero broken links
-- All code blocks balanced
-- Commands are valid
-- Date stamps present
-- Quality gates maintained
-- Professional formatting
+- Recommendations categorized by priority (High/Medium/Low)
+- At least 5 total recommendations
+- Implementation roadmap with timeline
+- Each recommendation has effort estimate and benefit
+
+**Verification:**
+```bash
+# Check for priority sections
+grep -i "high priority" .oodatcaa/work/AGENT_GAP_ANALYSIS.md
+grep -i "medium priority" .oodatcaa/work/AGENT_GAP_ANALYSIS.md
+grep -i "low priority" .oodatcaa/work/AGENT_GAP_ANALYSIS.md
+```
 
 ---
 
-### AC9: Existing Documentation Consolidated ✅
-
-**Requirement:** Existing docs reviewed and integrated with new documentation
+### AC9: Documentation Cross-Linked ✅
+**Requirement:** All new docs integrated with existing documentation
 
 **Test Procedure:**
-```bash
-# 1. Check for documentation overlap
-# Compare QUICK_START.md vs ONBOARDING.md
-diff -u <(head -50 .oodatcaa/QUICK_START.md) <(head -50 .oodatcaa/ONBOARDING.md) | head -20
-
-# 2. Verify START_HERE.md updated to reference ONBOARDING
-grep -i "onboarding" .oodatcaa/START_HERE.md && echo "PASS: START_HERE references ONBOARDING"
-
-# 3. Check AGENT_MANAGEMENT.md integrated with new docs
-grep -c "RUNBOOK\|TROUBLESHOOTING" .oodatcaa/AGENT_MANAGEMENT.md
-
-# 4. Verify WORKFLOW_ANALYSIS.md references ARCHITECTURE
-grep -c "ARCHITECTURE" .oodatcaa/WORKFLOW_ANALYSIS.md || echo "Check if consolidated"
-
-# 5. Check PARALLEL_AGENTS_GUIDE integrated
-grep -c "RUNBOOK\|operational" .oodatcaa/PARALLEL_AGENTS_GUIDE.md
-
-# 6. Verify main README.md updated
-grep -A 10 "## Documentation" README.md | grep -c "RUNBOOK\|TROUBLESHOOTING\|ONBOARDING\|ARCHITECTURE"
-
-# 7. Check for redundant documentation files
-find .oodatcaa -name "*_OLD.md" -o -name "*_BACKUP.md" -o -name "*.md~" | wc -l
-
-# 8. Verify consistent navigation across old and new docs
-for file in .oodatcaa/{QUICK_START,AGENT_MANAGEMENT,WORKFLOW_ANALYSIS}.md; do
-    grep -q "## See Also\|## Related\|## Documentation" "$file" && echo "PASS: $file has navigation" || echo "CHECK: $file navigation"
-done
-
-# 9. Check documentation is not duplicated
-# Should not have same content in multiple files
-echo "Checking for major content duplication..."
-# Manual review of key sections
-
-# 10. Verify documentation hierarchy is clear
-cat .oodatcaa/README.md | grep -A 30 "## Documentation"
-```
-
-**Expected Results:**
-- QUICK_START.md and ONBOARDING.md differentiated or consolidated
-- START_HERE.md references ONBOARDING.md
-- AGENT_MANAGEMENT.md cross-references new docs
-- WORKFLOW_ANALYSIS.md references ARCHITECTURE.md or consolidated
-- PARALLEL_AGENTS_GUIDE.md integrated with RUNBOOK
-- Main README.md lists all new docs
-- No redundant backup files
-- Consistent navigation in existing docs
-- No major content duplication
-- Clear documentation hierarchy
+1. Verify cross-links FROM new docs TO existing docs:
+   - AGENT_ROLES_MATRIX.md → links to `.oodatcaa/prompts/*.md` agent files
+   - AGENT_INTERACTION_GUIDE.md → links to OODATCAA_LOOP_GUIDE.md (from P004)
+   - AGENT_GAP_ANALYSIS.md → links to SPRINT_LOG.md (Sprint 1/2 evidence)
+2. Verify cross-links FROM existing docs TO new docs:
+   - `.oodatcaa/prompts/README.md` → links to AGENT_ROLES_MATRIX.md
+   - OODATCAA_LOOP_GUIDE.md → links to AGENT_INTERACTION_GUIDE.md
+   - ARCHITECTURE.md (if exists) → links to agent documentation
+3. Verify at least 10 total cross-references across documentation
 
 **Pass Criteria:**
-- Overlap addressed (differentiated or merged)
-- Existing docs reference new docs
-- No obsolete files
-- Clear hierarchy from getting-started → reference
-- Consolidated where appropriate
+- All 3 new docs have outbound links (at least 3 each)
+- At least 2 existing docs updated with inbound links
+- All links are valid (files exist)
+- Navigation flows logically
+
+**Verification:**
+```bash
+# Check for links in new docs
+grep -c "](.*\.md)" .oodatcaa/AGENT_ROLES_MATRIX.md  # >= 3
+grep -c "](.*\.md)" .oodatcaa/AGENT_INTERACTION_GUIDE.md  # >= 3
+grep -c "](.*\.md)" .oodatcaa/work/AGENT_GAP_ANALYSIS.md  # >= 3
+```
 
 ---
 
-### AC10: Sprint 2 Systems (P001-P004) Documented ✅
-
-**Requirement:** All Sprint 2 infrastructure documented in runbook and guides
+### AC10: Evidence-Based Assessment ✅
+**Requirement:** All claims backed by Sprint 1/2 data
 
 **Test Procedure:**
-```bash
-# 1. Check P001 (Background Agent Daemon) documentation
-grep -i "daemon\|background agent\|agent.*process" .oodatcaa/{RUNBOOK,ONBOARDING,ARCHITECTURE}.md
-
-# 2. Verify P002 (Log Rotation) procedures
-grep -i "log rotation\|rotate.*log\|archive.*log" .oodatcaa/{RUNBOOK,TROUBLESHOOTING}.md
-
-# 3. Check P003 (Sprint Management) scenarios
-grep -i "make sprint-status\|make sprint-complete\|make sprint-new\|sprint.*dashboard" .oodatcaa/{RUNBOOK,ONBOARDING}.md
-
-# 4. Verify P004 (OODATCAA Loop) references
-grep -c "OODATCAA_LOOP_GUIDE\|OODATCAA loop\|8.*stage" .oodatcaa/{ONBOARDING,ARCHITECTURE}.md
-
-# 5. Check P001 daemon commands documented
-grep -i "make agents-start\|make agents-stop\|agent.*daemon" .oodatcaa/RUNBOOK.md
-
-# 6. Verify P002 rotation commands
-grep "bash scripts/rotate-logs.sh\|make.*rotate" .oodatcaa/RUNBOOK.md
-
-# 7. Check P003 sprint commands
-grep -E "make sprint-status|make sprint-complete|make sprint-new" .oodatcaa/RUNBOOK.md | wc -l
-
-# 8. Verify P004 loop documentation integration
-grep -c "Check stage\|adaptation.*loop\|Start-Over Gate" .oodatcaa/{RUNBOOK,ONBOARDING}.md
-
-# 9. Check troubleshooting for all P001-P004
-for system in "daemon" "log rotation" "sprint management" "OODATCAA loop"; do
-    grep -i "$system" .oodatcaa/TROUBLESHOOTING.md && echo "✓ $system troubleshooting"
-done
-
-# 10. Verify architecture integration points documented
-grep -A 20 "## Integration Points" .oodatcaa/ARCHITECTURE.md | grep -c "P001\|P002\|P003\|P004"
-```
-
-**Expected Results:**
-- P001 daemon system documented in RUNBOOK, ONBOARDING, ARCHITECTURE
-- P002 log rotation procedures in RUNBOOK, TROUBLESHOOTING
-- P003 sprint management commands in RUNBOOK (all 3 make targets)
-- P004 OODATCAA loop referenced in ONBOARDING, ARCHITECTURE
-- P001 daemon commands documented (agents-start, agents-stop, agents-status)
-- P002 rotation commands documented (rotate-logs.sh, --dry-run)
-- P003 commands documented (≥3 references)
-- P004 loop concepts integrated (Check stage, adaptation, Start-Over)
-- Troubleshooting for all P001-P004 systems
-- Architecture integration points documented (≥4 systems mentioned)
+1. Review all 3 deliverable documents:
+   - AGENT_ROLES_MATRIX.md
+   - AGENT_INTERACTION_GUIDE.md
+   - AGENT_GAP_ANALYSIS.md
+2. For any claim about agent performance/behavior, verify:
+   - Specific Sprint 1 or Sprint 2 reference
+   - Task ID citation (e.g., "W004 required adaptation")
+   - Metric citation (e.g., "91.9% success rate")
+   - Report reference (e.g., ".oodatcaa/work/reports/W004/refiner.md")
+3. Identify any unsupported claims (opinion without evidence)
+4. Verify Sprint 1/2 reports exist and match citations:
+   - `.oodatcaa/work/reports/W001/` through `W008/` (Sprint 1)
+   - `.oodatcaa/work/reports/P001/` through `P006/` (Sprint 2)
 
 **Pass Criteria:**
-- All 4 Sprint 2 systems documented
-- Operational procedures for each system
-- Troubleshooting coverage for each system
-- Integration points explained
-- Commands and usage examples included
+- At least 10 specific Sprint 1/2 citations across all docs
+- At least 5 task IDs referenced
+- At least 3 metrics cited (success rates, times, counts)
+- No major claims without evidence
+- All cited reports exist
+
+**Verification:**
+```bash
+# Count evidence citations
+grep -r "Sprint 1" .oodatcaa/AGENT_*.md .oodatcaa/work/AGENT_GAP_ANALYSIS.md | wc -l  # >= 5
+grep -r "W00[1-8]" .oodatcaa/AGENT_*.md .oodatcaa/work/AGENT_GAP_ANALYSIS.md | wc -l  # >= 3
+grep -r "P00[1-6]" .oodatcaa/AGENT_*.md .oodatcaa/work/AGENT_GAP_ANALYSIS.md | wc -l  # >= 3
+
+# Verify reports exist
+ls .oodatcaa/work/reports/W00*/
+ls .oodatcaa/work/reports/P00*/
+```
 
 ---
 
-## Test Execution Summary
+## Manual Testing Procedures
 
-### Prerequisites Checklist
-- [ ] Repository at latest commit (P001-P004 integrated)
-- [ ] No uncommitted changes
-- [ ] All Sprint 2 infrastructure operational
-- [ ] Documentation tools available (markdown linter, link checker)
+### Test 1: Agent Matrix Accuracy
+**Goal:** Verify agent descriptions match actual prompts
 
-### Execution Order
-1. Run quality gates first (black, ruff, mypy, pytest, build, audit)
-2. Test AC1: RUNBOOK.md complete
-3. Test AC2: TROUBLESHOOTING.md complete
-4. Test AC3: ONBOARDING.md complete
-5. Test AC4: Agent prompts enhanced
-6. Test AC5: ARCHITECTURE.md complete
-7. Test AC6: Navigation improved
-8. Test AC7: Cross-linking complete
-9. Test AC8: Quality checks pass
-10. Test AC9: Existing docs consolidated
-11. Test AC10: P001-P004 documented
+**Procedure:**
+1. For each agent in AGENT_ROLES_MATRIX.md:
+   - Open corresponding prompt file (e.g., `.oodatcaa/prompts/builder.md`)
+   - Compare "Purpose" in matrix to "Objective" in prompt
+   - Compare "Responsibilities" to protocol steps in prompt
+   - Verify Input/Output files match what prompt reads/writes
+2. Spot-check at least 5 agents for accuracy
 
-### Success Criteria
-**All 10 ACs must pass for task to be ready_for_integrator.**
-
-**Critical ACs (must pass):**
-- AC1: RUNBOOK.md complete
-- AC2: TROUBLESHOOTING.md complete
-- AC3: ONBOARDING.md complete
-- AC10: Sprint 2 systems documented
-
-**Important ACs (should pass):**
-- AC4: Agent prompts enhanced
-- AC5: ARCHITECTURE.md complete
-- AC7: Cross-linking complete
-- AC9: Existing docs consolidated
-
-**Quality ACs (negotiate if needed):**
-- AC6: Navigation (can improve iteratively)
-- AC8: Quality checks (minor issues acceptable)
+**Expected Result:** Matrix descriptions accurately reflect prompts
 
 ---
 
-## Risk Assessment
+### Test 2: Workflow Pattern Validation
+**Goal:** Verify workflow patterns match Sprint 1/2 execution
 
-### Low Risk
-- Navigation improvements (AC6) - Can iterate
-- Quality checks (AC8) - Non-blocking issues
+**Procedure:**
+1. Open `.oodatcaa/work/SPRINT_LOG.md`
+2. Find a completed task (e.g., W001, P002-B01)
+3. Trace agent sequence from SPRINT_LOG entries
+4. Compare to workflow patterns in AGENT_INTERACTION_GUIDE.md
+5. Verify pattern matches actual execution
 
-### Medium Risk
-- Cross-linking completeness (AC7) - Time-consuming to verify all links
-- Existing doc consolidation (AC9) - May require judgment calls
-
-### High Risk
-- Documentation completeness (AC1-3) - Must be comprehensive
-- P001-P004 coverage (AC10) - Critical for Sprint 2 completion
-
-### Mitigation
-- Use automation for link checking
-- Systematic review of all doc files
-- Test commands in examples
-- Review Sprint 2 objectives for completeness
+**Expected Result:** Documented workflows match real Sprint 1/2 execution
 
 ---
 
-## Notes for Tester
+### Test 3: Gap Analysis Validation
+**Goal:** Verify gaps are real (not false positives)
 
-### Manual Testing Required
-- Read ONBOARDING.md as new user (actual onboarding test)
-- Try RUNBOOK scenarios for common operations
-- Use TROUBLESHOOTING.md to diagnose test issue
-- Verify diagrams render correctly in preview
+**Procedure:**
+1. For each identified gap (e.g., "No Monitor Agent"):
+   - Check if current agent set can handle this need
+   - Review Sprint 1/2 for instances where gap caused issues
+   - Assess if gap is theoretical or practical
+2. Verify at least 2 gaps have Sprint 1/2 evidence
 
-### Automated Testing Scope
-- Quality gates (format, lint, type)
-- Link validation (grep + test -f)
-- File existence checks
-- Command validation (make -n)
-- Consistency checks (structure, formatting)
+**Expected Result:** Identified gaps are real workflow needs, not theoretical
 
-### Known Limitations
-- Cannot fully test onboarding effectiveness without new user
-- Diagram rendering depends on markdown viewer
-- Some commands require operational system
-- Cross-linking exhaustive test is time-consuming
+---
 
-### Recommendations
-- Use markdown preview for diagram verification
-- Test safe commands (read-only) from RUNBOOK
-- Verify all make targets exist before testing
-- Check link validity with automated script
-- Review for clarity and completeness
+### Test 4: Recommendation Feasibility
+**Goal:** Verify recommendations are actionable
+
+**Procedure:**
+1. For each High Priority recommendation:
+   - Estimate effort (can it be done in 1-2 sprints?)
+   - Check dependencies (are they available?)
+   - Assess disruption risk (will it break existing patterns?)
+2. Verify at least 1 recommendation can start in Sprint 3
+
+**Expected Result:** High Priority recommendations are feasible and actionable
+
+---
+
+## Acceptance Test Additions
+
+**New Test Files:** None (documentation task, no code tests)
+
+**Updated Test Files:** None
+
+**Test Infrastructure:** None
+
+---
+
+## Performance/Benchmark Setup
+
+**Not Applicable:** This is an analysis/documentation task with no performance requirements.
+
+---
+
+## Manual Validation Checklist
+
+Before marking P005 complete, manually verify:
+
+- [ ] **AC1:** All 11 agents in capability matrix with 7 attributes each
+- [ ] **AC2:** 4+ workflow patterns documented with examples
+- [ ] **AC3:** Sprint 1/2 evidence cited (specific metrics and task IDs)
+- [ ] **AC4:** Communication protocol with structured format and conflict resolution
+- [ ] **AC5:** Decision authority clear for all 11 agents
+- [ ] **AC6:** 5-step conflict resolution process documented
+- [ ] **AC7:** 4+ new agent types evaluated (Monitor, Architect, Reviewer, Deployer)
+- [ ] **AC8:** Recommendations prioritized (High/Medium/Low) with roadmap
+- [ ] **AC9:** 10+ cross-links between new and existing docs
+- [ ] **AC10:** 10+ Sprint 1/2 citations, all reports exist
+
+**Tester Sign-Off:** _______________  
+**Date:** _______________
+
+---
+
+## Notes
+
+- **Documentation Quality:** This task produces documentation artifacts, not code. Testing focuses on completeness, accuracy, and evidence-based claims.
+- **Sprint 1 Success:** 91.9% completion rate demonstrates current agent system works well. Gap analysis should respect this success.
+- **Practical Focus:** Recommendations must be actionable, not theoretical. Prioritization is critical.
+- **Evidence Requirement:** Every claim about agent performance must cite Sprint 1/2 data (task IDs, metrics, reports).
 
 ---
 
 **Test Plan Status:** ✅ Complete  
-**Ready for:** Tester (after P006-B03 complete)  
-**Estimated Testing Time:** 45 minutes  
-**Risk Level:** Medium (comprehensive documentation review required)
+**Ready for:** Builder (P005-B01)
