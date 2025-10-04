@@ -1,27 +1,27 @@
 # Agent Gap Analysis — OODATCAA Multi-Agent System
 
-**Version:** 1.0 (Evidence Phase)  
+**Version:** 2.0 (Gap Analysis Complete)  
 **Last Updated:** 2025-10-04  
-**Status:** In Progress (P005-B01)
+**Status:** In Progress (P005-B02)
 
 ---
 
 ## Document Status
 
-**Current Phase:** Evidence Analysis (P005-B01 Step 3)  
-**Next Phase:** Gap Analysis + Communication Protocol (P005-B02)  
-**Final Phase:** Recommendations + Integration (P005-B03)
+**Current Phase:** Gap Analysis Complete (P005-B02 Step 4-5)  
+**Next Phase:** Recommendations + Integration (P005-B03)  
+**Final Phase:** Documentation Integration (P005-B03)
 
 **Sections Complete:**
 - ✅ Sprint 1 Evidence Summary
-- ✅ Sprint 2 Evidence Summary (partial, in progress)
+- ✅ Sprint 2 Evidence Summary
 - ✅ Agent Usage Patterns
 - ✅ Success Metrics & Patterns
 - ✅ Lessons Learned from Sprint 1/2
+- ✅ Gap Analysis (Workflow Coverage, Agent Type Gaps, Communication Gaps) - P005-B02
+- ✅ Communication Protocol Design (4 protocols) - P005-B02
 
 **Sections Pending:**
-- ⏳ Gap Analysis (Workflow Coverage, Agent Type Gaps, Communication Gaps) - P005-B02
-- ⏳ Communication Protocol Design - P005-B02
 - ⏳ Prioritized Recommendations - P005-B03
 - ⏳ Implementation Roadmap - P005-B03
 
@@ -865,16 +865,819 @@
 
 ---
 
-## Next Steps (P005-B02 and P005-B03)
+## Gap Analysis
 
-**P005-B02 (Gap Analysis + Communication Protocol):**
-1. Workflow coverage analysis (identify gaps: monitoring, review, architecture)
-2. Agent type gap evaluation (Monitor, Reviewer, Architect, Releaser/Deployer)
-3. Communication gap analysis (structured message format, decision transparency, conflict resolution)
-4. Communication protocol design (JSON message format, decision transparency requirements, conflict resolution process)
+### Workflow Coverage Analysis
+
+The current 11-agent system provides comprehensive coverage for development workflows but has identified gaps in monitoring, review, and deployment automation.
+
+#### Well-Covered Workflows ✅
+
+**1. Primary Development Flow (Fully Covered)**
+- **Coverage:** Sprint Planner → Planner → Builder → Tester → Integrator
+- **Evidence:** 100% of Sprint 1/2 tasks (39/39) followed this flow
+- **Success Rate:** 92.3% first-attempt success (36/39 tasks)
+- **Gap Assessment:** No gaps, workflow proven effective
+
+**2. Adaptation Loop (Fully Covered)**
+- **Coverage:** Tester → Refiner → Builder → Tester
+- **Evidence:** 4 adaptations in Sprint 1 (W004, W005, W006-B01, W007-B01, W008-B01)
+- **Success Rate:** 100% adaptation success (4/4 resolved on first retry)
+- **Gap Assessment:** No gaps, Refiner highly effective
+
+**3. Sprint Lifecycle Management (Fully Covered)**
+- **Coverage:** Sprint Planner → Negotiator → Development Agents → Sprint Close
+- **Evidence:** Sprint 1 and Sprint 2 transitions successful
+- **Success Rate:** 100% sprint transitions (2/2)
+- **Gap Assessment:** No gaps, automation working well
+
+**4. Project Completion Detection (Fully Covered)**
+- **Coverage:** Sprint Planner → Project Completion Detector → Sprint Planner
+- **Evidence:** Invoked after Sprint 1 (37.5% objective complete)
+- **Success Rate:** 100% (1/1)
+- **Gap Assessment:** No gaps, detection logic sound
+
+---
+
+#### Workflow Gaps Identified
+
+**Gap 1: Continuous Monitoring (Medium Priority)**
+
+**Current State:**
+- Negotiator monitors sprint progress through periodic heartbeats (~15 min intervals)
+- No continuous real-time monitoring of agent health, task progress, or system metrics
+- Manual intervention required to detect stuck tasks or slow progress
+
+**Evidence:**
+- Sprint 1: 5 manual interventions for protocol coordination issues
+- No automated alerting for stale leases (Negotiator detects but doesn't alert)
+- No early warning for tasks exceeding estimated time
+
+**Impact:** Medium
+- System remains functional without continuous monitoring
+- Manual checks required for proactive issue detection
+- Delayed response to issues (15-minute intervals)
+
+**Proposed Solution:** Monitor Agent (defer until P001 daemon complete)
+- Continuous monitoring of SPRINT_QUEUE.json (1-minute intervals)
+- Alert on anomalies (tasks exceeding 150% estimated time, stale leases, blocked dependency chains)
+- System health metrics (WIP utilization trends, adaptation rate spikes)
+- Integration with P001 daemon for background operation
+
+**Dependencies:** P001 (Background Agent Daemon System) must complete first
+
+---
+
+**Gap 2: Code Review Beyond Quality Gates (Medium Priority)**
+
+**Current State:**
+- Quality gates automated (black, ruff, mypy, pytest, coverage, pip-audit)
+- No human-like code review (readability, maintainability, design patterns)
+- Integrator checks DoD but doesn't review code quality subjectively
+
+**Evidence:**
+- Sprint 1/2: All 39 tasks passed quality gates
+- However: No review for code smell, duplications, over-engineering, or under-engineering
+- Tester validates functional ACs, not code quality
+
+**Impact:** Medium
+- Current gates sufficient for correctness and test coverage
+- May miss architectural issues, tech debt accumulation
+- No detection of suboptimal design choices
+
+**Proposed Solution:** Reviewer Agent (consider for Sprint 3+)
+- Runs between Tester and Integrator
+- Reviews code for: readability, maintainability, design patterns, DRY violations, complexity
+- Provides suggestions (not blocking, advisory)
+- Learns from accepted/rejected suggestions
+
+**Dependencies:** None, but low priority given current 92.3% success rate
+
+---
+
+**Gap 3: Architecture & Design Decisions (Low Priority)**
+
+**Current State:**
+- Planner makes design decisions during planning phase
+- Evaluates 2-4 alternatives, chooses approach
+- No dedicated architecture review for complex features
+
+**Evidence:**
+- Sprint 1/2: 14 planning tasks, all included alternatives analysis
+- Planner 100% acceptance rate by Builder (no architectural issues)
+- Current approach sufficient for 11-agent internal system
+
+**Impact:** Low
+- Planner role sufficiently handles architecture decisions
+- No evidence of architectural issues in Sprint 1/2
+- Overkill to add dedicated Architect agent for current scale
+
+**Proposed Solution:** Enhance Planner (not new agent)
+- Add architecture review checklist to AGENT_PLAN.md template
+- For complex features (>1 week), require explicit architectural justification
+- Document design patterns used
+
+**Dependencies:** None
+
+---
+
+**Gap 4: Deployment & Release Automation (Low Priority)**
+
+**Current State:**
+- Releaser agent exists but underutilized (0 invocations Sprint 1/2)
+- Basic release process (Integrator creates baseline tags, updates CHANGELOG)
+- No automated deployment pipeline (not production-ready)
+
+**Evidence:**
+- Sprint 1/2: No releases (internal development sprints)
+- Releaser defined in prompts but no RELEASE_CHECKLIST.md
+- Focus on development workflow, not deployment
+
+**Impact:** Low
+- Not production-ready yet (training system, not deployed product)
+- Manual release process acceptable for current phase
+- Will become critical when deploying trained models
+
+**Proposed Solution:** Enhance Releaser (defer to production readiness)
+- Create RELEASE_CHECKLIST.md template
+- Add deployment automation (staging → production)
+- Integrate with CI/CD pipeline
+- Add smoke tests and rollback capability
+
+**Dependencies:** Project maturity (not yet production-ready)
+
+---
+
+### Agent Type Gaps
+
+Analysis of proposed new agent types based on Sprint 1/2 evidence.
+
+#### Gap 5: Monitor Agent (Medium Priority, Defer)
+
+**Purpose:** Continuous sprint and agent health monitoring
+
+**Responsibilities:**
+- Monitor SPRINT_QUEUE.json continuously (1-minute intervals)
+- Detect anomalies: tasks exceeding estimated time (150% threshold), stale leases, blocked dependency chains
+- Alert Negotiator on issues requiring intervention
+- Track system metrics: WIP utilization trends, adaptation rate, success rate per agent
+- Generate health reports (daily summaries)
+
+**Inputs:**
+- SPRINT_QUEUE.json (task statuses, timestamps, estimated times)
+- .leases/*.json (active leases, heartbeats)
+- AGENT_LOG.md (agent activity)
+- SPRINT_STATUS.json (sprint metrics)
+
+**Outputs:**
+- Alerts to Negotiator (SPRINT_ALERTS.md or direct status update)
+- Health reports (SYSTEM_HEALTH.md, daily)
+- Metrics dashboard (integration with sprint-dashboard.sh)
+
+**Decision Authority:**
+- **Medium:** Alert generation, anomaly detection thresholds
+- **Low:** Cannot change task statuses, cannot intervene directly (alerts only)
+
+**Evidence for Need:**
+- Sprint 1: 5 manual interventions (could have been detected earlier)
+- Sprint 2: 0 issues (protocol fix), but continuous monitoring would provide confidence
+- Pattern: Reactive intervention > Proactive monitoring
+
+**Priority Justification:** Medium
+- **Pros:** Early issue detection, reduced manual monitoring, system health visibility
+- **Cons:** Requires P001 daemon infrastructure, adds complexity, may generate alert noise
+- **Decision:** Defer until P001 complete, then implement in Sprint 3
+
+**Implementation Estimate:** ~2 hours (after P001 daemon available)
+
+---
+
+#### Gap 6: Reviewer Agent (Medium Priority, Consider Sprint 3+)
+
+**Purpose:** Code review beyond automated quality gates
+
+**Responsibilities:**
+- Review code for readability, maintainability, design patterns
+- Check for: DRY violations, code smells, over-complexity, under-engineering
+- Provide advisory suggestions (not blocking)
+- Learn from accepted/rejected suggestions over time
+
+**Inputs:**
+- Feature branch (code changes)
+- AGENT_PLAN.md (intended design)
+- Builder completion report (implementation notes)
+
+**Outputs:**
+- Code review report (REVIEW_<task_id>.md)
+- Advisory suggestions (optional improvements)
+- Approval or concerns (non-blocking)
+
+**Decision Authority:**
+- **Low:** Advisory only, cannot block merges
+- Integrator decides whether to act on suggestions
+
+**Evidence for Need:**
+- Sprint 1/2: No major code quality issues detected
+- Current quality gates (black, ruff, mypy, coverage) sufficient for correctness
+- However: No detection of design patterns, maintainability issues
+- Pattern: Quality gates enforce standards, but not subjective quality
+
+**Priority Justification:** Medium
+- **Pros:** Catches tech debt early, improves code maintainability, educates Builder
+- **Cons:** Adds review cycle time (~15 min per task), may introduce subjective disagreements
+- **Decision:** Consider for Sprint 3+ when codebase grows, features become more complex
+
+**Implementation Estimate:** ~3 hours (define review criteria, integrate into workflow)
+
+---
+
+#### Gap 7: Architect Agent (Low Priority, Not Recommended)
+
+**Purpose:** Dedicated architecture and design decisions
+
+**Responsibilities:**
+- Evaluate architectural alternatives for complex features
+- Define system-level design patterns
+- Review high-level designs before implementation
+
+**Evidence Against Need:**
+- Planner already performs architecture evaluation (2-4 alternatives per plan)
+- Sprint 1/2: 14 plans, 0 architectural issues
+- Planner 100% acceptance rate by Builder
+- Current system (11 agents) manageable without dedicated architect
+
+**Priority Justification:** Low (Not Recommended)
+- **Pros:** Dedicated focus on architecture
+- **Cons:** Overlaps with Planner, adds complexity, overkill for current scale
+- **Decision:** Enhance Planner role instead (add architecture checklist), do not create new agent
+
+**Alternative:** Add architecture review section to AGENT_PLAN.md template
+
+---
+
+#### Gap 8: Enhanced Releaser/Deployer (Low Priority, Defer)
+
+**Purpose:** Full deployment automation (staging → production)
+
+**Responsibilities:**
+- Automated deployment pipeline (CI/CD integration)
+- Environment-specific configurations
+- Smoke tests post-deployment
+- Rollback capability
+- Production monitoring integration
+
+**Evidence for Need:**
+- Sprint 1/2: No production deployments (internal development)
+- Current Releaser: Basic (version bump, git tag, CHANGELOG)
+- System not production-ready yet (training system development phase)
+
+**Priority Justification:** Low (Defer)
+- **Pros:** Full automation, production readiness
+- **Cons:** Not needed until production deployment, requires significant infrastructure
+- **Decision:** Defer until project reaches production readiness (not Sprint 2/3)
+
+**Implementation Estimate:** ~8 hours (deployment pipeline, smoke tests, rollback, monitoring)
+
+---
+
+### Communication Gaps
+
+Analysis of communication and coordination issues based on Sprint 1/2 evidence.
+
+#### Gap 9: Structured Message Format (High Priority)
+
+**Current State:**
+- File-based communication works but lacks standard structure
+- Messages embedded in logs (AGENT_LOG.md) in free-form markdown
+- No standard fields: from_agent, to_agent, message_type, priority
+- Difficult to parse programmatically
+
+**Evidence:**
+- Sprint 1/2: All coordination successful, but log parsing manual
+- No programmatic message extraction (relies on human reading)
+- Handoff information buried in free-form text
+
+**Impact:** Medium
+- Current approach functional but not scalable
+- Difficult to build automation on top of logs
+- Hard to trace message threads
+
+**Proposed Solution:** Structured message format (see Communication Protocol Design below)
+
+**Priority:** High (implement in P005-B02)
+
+---
+
+#### Gap 10: Decision Transparency (High Priority)
+
+**Current State:**
+- Agents log decisions in AGENT_LOG.md but format inconsistent
+- Refiner documents "Quick fix vs Rollback" decision
+- Planner documents alternative selection
+- No standard format: decision, rationale, alternatives considered, evidence, confidence
+
+**Evidence:**
+- Sprint 1: Refiner 4 decisions (all quick fixes) - rationale clear but format varies
+- Sprint 2: Planner 6 decisions (alternative selections) - rationale documented but inconsistent format
+- Pattern: Decisions documented but not standardized
+
+**Impact:** Medium
+- Current approach sufficient for review
+- Inconsistent format makes comparison difficult
+- Hard to audit decision quality over time
+
+**Proposed Solution:** Decision transparency template (see Communication Protocol Design below)
+
+**Priority:** High (implement in P005-B02)
+
+---
+
+#### Gap 11: Conflict Resolution Protocol (High Priority)
+
+**Current State:**
+- No formal conflict resolution process
+- If Tester rejects: Refiner decides fix approach
+- If multiple agents disagree: No documented escalation path
+- Negotiator coordinates but no explicit conflict resolution protocol
+
+**Evidence:**
+- Sprint 1/2: No conflicts detected (all agents aligned)
+- However: Protocol undefined for future disagreements
+- Example scenarios not covered:
+  - Builder disagrees with Tester rejection
+  - Refiner chooses rollback, Builder wants to retry
+  - Negotiator assigns task, agent believes wrong agent type
+
+**Impact:** Low (current), High (future scalability)
+- No conflicts yet, but will occur as system scales
+- Undefined escalation path could lead to deadlock
+
+**Proposed Solution:** 5-step conflict resolution protocol (see Communication Protocol Design below)
+
+**Priority:** High (define in P005-B02, implement when needed)
+
+---
+
+#### Gap 12: Status Reporting Standardization (Medium Priority)
+
+**Current State:**
+- Agents log status updates in AGENT_LOG.md
+- Format varies: some include metrics, others don't
+- No standard fields: timestamp, agent, task, action, outcome, duration, errors
+
+**Evidence:**
+- Sprint 1/2: All agents log activity, but format inconsistent
+- Example: Builder logs "All gates passed" vs "Quality gates: black ✅, ruff ✅, mypy ✅, pytest ✅, coverage 87%"
+- Inconsistency makes aggregation difficult
+
+**Impact:** Low
+- Current logging sufficient for audit
+- Inconsistent format reduces metric collection efficiency
+
+**Proposed Solution:** Standardized status reporting template (see Communication Protocol Design below)
+
+**Priority:** Medium (define in P005-B02, gradual adoption)
+
+---
+
+#### Gap 13: Heartbeat Standardization (Low Priority)
+
+**Current State:**
+- Long-running agents (Builder, Tester, Refiner) should send heartbeats
+- Current: Lease heartbeat updates (last_heartbeat timestamp)
+- No heartbeat content (progress indicators, current step, blockers)
+
+**Evidence:**
+- Sprint 1/2: Lease heartbeats sufficient for stale detection
+- No progress visibility during long tasks (90-minute Builder tasks)
+- Negotiator knows task alive, but not progress
+
+**Impact:** Low
+- Current heartbeats sufficient for lease management
+- No evidence of progress tracking need
+
+**Proposed Solution:** Enhanced heartbeat format (optional, low priority)
+
+**Priority:** Low (not critical, defer)
+
+---
+
+## Communication Protocol Design
+
+Based on gaps identified, propose structured communication protocols to enhance agent coordination and transparency.
+
+---
+
+### Protocol 1: Structured Message Format
+
+**Purpose:** Standardize inter-agent messages for parsing, tracing, and automation.
+
+**Message Schema (JSON):**
+
+```json
+{
+  "message_id": "MSG-<UUID>",
+  "timestamp": "2025-10-04T10:30:00Z",
+  "from_agent": "builder",
+  "from_instance": "agent-builder-A",
+  "to_agent": "tester",
+  "to_instance": null,
+  "task_id": "P005-B01",
+  "message_type": "handoff",
+  "priority": "normal",
+  "content": {
+    "summary": "P005-B01 implementation complete, awaiting validation",
+    "details": "Created AGENT_ROLES_MATRIX.md (810 lines), AGENT_INTERACTION_GUIDE.md (1828 lines), AGENT_GAP_ANALYSIS.md (902 lines)",
+    "branch": "feat/P005-step-01-agent-audit",
+    "status_from": "ready",
+    "status_to": "awaiting_test",
+    "gate_results": {
+      "markdown_syntax": "pass",
+      "cross_references": "pass",
+      "completeness": "pass"
+    }
+  },
+  "decision_required": false,
+  "response_expected": true,
+  "thread_id": "THREAD-P005-B01"
+}
+```
+
+**Field Definitions:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `message_id` | string | Yes | Unique message identifier (MSG-<UUID>) |
+| `timestamp` | ISO8601 | Yes | Message creation time |
+| `from_agent` | string | Yes | Sending agent role (builder, tester, etc.) |
+| `from_instance` | string | No | Specific agent instance (for parallel agents) |
+| `to_agent` | string | Yes | Receiving agent role (or "all" for broadcast) |
+| `to_instance` | string | No | Specific agent instance (null = any instance) |
+| `task_id` | string | Yes | Associated task ID |
+| `message_type` | enum | Yes | handoff, alert, decision, query, response, status_update |
+| `priority` | enum | Yes | low, normal, high, urgent |
+| `content` | object | Yes | Message payload (structure varies by message_type) |
+| `decision_required` | boolean | Yes | Does recipient need to make a decision? |
+| `response_expected` | boolean | Yes | Is a response expected? |
+| `thread_id` | string | No | For message threading (multiple messages in conversation) |
+
+**Message Types:**
+
+1. **handoff:** Agent completed work, passing to next agent
+2. **alert:** Anomaly or issue requiring attention
+3. **decision:** Agent made a decision, documenting for transparency
+4. **query:** Agent requesting information from another agent
+5. **response:** Reply to query or handoff
+6. **status_update:** Progress update during long-running task
+
+**Usage Example (Builder → Tester Handoff):**
+
+```markdown
+## Message: Builder → Tester Handoff
+
+**Message ID:** MSG-a1b2c3d4  
+**Timestamp:** 2025-10-04T10:30:00Z  
+**From:** builder (agent-builder-A)  
+**To:** tester  
+**Task:** P005-B01  
+**Type:** handoff  
+**Priority:** normal
+
+**Content:**
+- Summary: P005-B01 implementation complete, awaiting validation
+- Branch: feat/P005-step-01-agent-audit
+- Status Transition: ready → awaiting_test
+- Gate Results: All pass (markdown_syntax, cross_references, completeness)
+
+**Action Required:** Validate 5 acceptance criteria from TEST_PLAN.md
+
+**Thread:** THREAD-P005-B01
+```
+
+**Storage:**
+- Messages logged in AGENT_LOG.md (human-readable format)
+- Optional: JSON messages in `.messages/<task_id>.jsonl` for programmatic parsing
+
+**Benefits:**
+- Programmatic message parsing
+- Traceability (thread_id links related messages)
+- Priority-based processing (urgent alerts handled first)
+- Automation enablement (Monitor agent can parse alert messages)
+
+**Implementation Effort:** ~1 hour (define schema, update agent prompts)
+
+---
+
+### Protocol 2: Decision Transparency Template
+
+**Purpose:** Standardize decision documentation for auditability and learning.
+
+**Decision Schema:**
+
+```json
+{
+  "decision_id": "DEC-<UUID>",
+  "timestamp": "2025-10-04T09:45:00Z",
+  "agent": "refiner",
+  "agent_instance": "agent-refiner-A",
+  "task_id": "W004-B01",
+  "decision_type": "adaptation_approach",
+  "decision": "quick_fix",
+  "rationale": "Performance issue isolated to query caching layer. Adding LRU cache resolves issue without architectural changes. Estimated fix time: 30 minutes.",
+  "alternatives_considered": [
+    {
+      "option": "rollback",
+      "pros": ["Clean slate", "Rethink approach"],
+      "cons": ["Wastes 90 min of work", "No fundamental flaw identified"],
+      "rejected_reason": "Issue too narrow for rollback"
+    },
+    {
+      "option": "defer",
+      "pros": ["Avoid immediate work", "Wait for more data"],
+      "cons": ["Blocks sprint progress", "Issue clear enough to fix now"],
+      "rejected_reason": "Clear fix available, no reason to defer"
+    }
+  ],
+  "evidence": [
+    "Tester report: p95 latency 180ms (target: 150ms)",
+    "Profiling shows 80% time in repeated query execution",
+    "LRU cache standard pattern for this scenario"
+  ],
+  "confidence": "high",
+  "outcome": "success",
+  "outcome_notes": "Quick fix applied, p95 latency reduced to 120ms, AC5 passed on re-test"
+}
+```
+
+**Field Definitions:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `decision_id` | string | Yes | Unique decision identifier |
+| `timestamp` | ISO8601 | Yes | Decision made time |
+| `agent` | string | Yes | Agent making decision |
+| `task_id` | string | Yes | Associated task |
+| `decision_type` | enum | Yes | adaptation_approach, alternative_selection, priority_change, etc. |
+| `decision` | string | Yes | Chosen decision/option |
+| `rationale` | string | Yes | Why this decision? |
+| `alternatives_considered` | array | Yes | Other options evaluated (≥2) |
+| `evidence` | array | Yes | Supporting data/citations |
+| `confidence` | enum | Yes | low, medium, high |
+| `outcome` | enum | No | success, failure, unknown (filled after decision plays out) |
+| `outcome_notes` | string | No | Retrospective notes on decision quality |
+
+**Usage Example (Refiner Decision):**
+
+```markdown
+## Decision: Quick Fix vs Rollback (W004-B01)
+
+**Decision ID:** DEC-w004-001  
+**Timestamp:** 2025-09-20T09:45:00Z  
+**Agent:** Refiner (agent-refiner-A)  
+**Task:** W004-B01  
+**Type:** adaptation_approach
+
+**Decision:** Quick Fix (add LRU cache)
+
+**Rationale:**  
+Performance issue isolated to query caching layer. Adding LRU cache resolves issue without architectural changes. Estimated fix time: 30 minutes.
+
+**Alternatives Considered:**
+1. **Rollback to baseline**
+   - Pros: Clean slate, rethink approach
+   - Cons: Wastes 90 min of work, no fundamental flaw identified
+   - Rejected: Issue too narrow for rollback
+
+2. **Defer to next sprint**
+   - Pros: Avoid immediate work, wait for more data
+   - Cons: Blocks sprint progress, issue clear enough to fix now
+   - Rejected: Clear fix available, no reason to defer
+
+**Evidence:**
+- Tester report: p95 latency 180ms (target: 150ms)
+- Profiling shows 80% time in repeated query execution
+- LRU cache standard pattern for this scenario
+
+**Confidence:** High
+
+**Outcome:** Success  
+Quick fix applied, p95 latency reduced to 120ms, AC5 passed on re-test.
+```
+
+**Storage:**
+- Decisions logged in AGENT_LOG.md (human-readable format)
+- Optional: JSON decisions in `.decisions/<task_id>.jsonl`
+
+**Benefits:**
+- Transparent decision-making
+- Audit trail for retrospectives
+- Learning from past decisions (pattern analysis)
+- Confidence tracking (calibrate decision quality)
+
+**Implementation Effort:** ~30 minutes (define template, update Refiner/Planner/Negotiator prompts)
+
+---
+
+### Protocol 3: Status Reporting Standard
+
+**Purpose:** Consistent status updates for metrics aggregation and monitoring.
+
+**Status Report Schema:**
+
+```json
+{
+  "timestamp": "2025-10-04T10:15:00Z",
+  "agent": "builder",
+  "agent_instance": "agent-builder-A",
+  "task_id": "P005-B01",
+  "action": "implementation",
+  "status": "in_progress",
+  "progress_pct": 60,
+  "outcome": null,
+  "duration_elapsed": "50 minutes",
+  "duration_remaining": "35 minutes",
+  "metrics": {
+    "lines_written": 1500,
+    "files_created": 2,
+    "gates_passed": 2,
+    "gates_total": 4
+  },
+  "errors": [],
+  "blockers": [],
+  "next_steps": "Complete AGENT_INTERACTION_GUIDE.md, then run quality gates"
+}
+```
+
+**Field Definitions:**
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `timestamp` | ISO8601 | Yes | Report time |
+| `agent` | string | Yes | Reporting agent |
+| `task_id` | string | Yes | Associated task |
+| `action` | string | Yes | Current action (implementation, testing, integration) |
+| `status` | enum | Yes | in_progress, complete, blocked, needs_adapt |
+| `progress_pct` | integer | No | Completion percentage (0-100) |
+| `outcome` | enum | No | success, failure (for complete status) |
+| `duration_elapsed` | string | Yes | Time spent so far |
+| `duration_remaining` | string | No | Estimated time remaining |
+| `metrics` | object | No | Task-specific metrics |
+| `errors` | array | No | Errors encountered |
+| `blockers` | array | No | Current blockers |
+| `next_steps` | string | No | Planned next actions |
+
+**Usage Example (Builder Progress Update):**
+
+```markdown
+## Status Update: P005-B01 Implementation
+
+**Timestamp:** 2025-10-04T10:15:00Z  
+**Agent:** Builder (agent-builder-A)  
+**Task:** P005-B01  
+**Action:** Implementation  
+**Status:** in_progress (60% complete)
+
+**Duration:**
+- Elapsed: 50 minutes
+- Remaining: ~35 minutes (estimated)
+
+**Progress:**
+- ✅ AGENT_ROLES_MATRIX.md complete (810 lines, 11 agents)
+- 🔄 AGENT_INTERACTION_GUIDE.md in progress (50% done, 4 workflow patterns)
+- ⏳ AGENT_GAP_ANALYSIS.md pending
+
+**Metrics:**
+- Files created: 2/3
+- Lines written: 1,500
+- Quality gates passed: 2/4
+
+**Blockers:** None
+
+**Next Steps:** Complete AGENT_INTERACTION_GUIDE.md, then start AGENT_GAP_ANALYSIS.md evidence section.
+```
+
+**Benefits:**
+- Visibility into long-running tasks (Builder 90-minute tasks)
+- Early detection of delays (progress < expected)
+- Metrics aggregation (average duration per agent, gate pass rates)
+- Monitor agent can parse status updates for anomaly detection
+
+**Implementation Effort:** ~30 minutes (define template, add to agent prompts)
+
+---
+
+### Protocol 4: Conflict Resolution Process
+
+**Purpose:** Define 5-step escalation process for agent disagreements.
+
+**5-Step Conflict Resolution Protocol:**
+
+**Step 1: Direct Communication**
+- Agents attempt to resolve disagreement directly
+- Log discussion in AGENT_LOG.md (message exchange)
+- Timeframe: 15 minutes
+
+**Step 2: Evidence Review**
+- Both agents present evidence for their position
+- Review TEST_PLAN.md acceptance criteria, AGENT_PLAN.md design, OBJECTIVE.md goals
+- Check for misunderstanding or missing information
+- Timeframe: 15 minutes
+
+**Step 3: Third-Party Review**
+- Escalate to relevant agent:
+  - Planning conflicts → Sprint Planner
+  - Technical conflicts → Planner (or Refiner if adaptation-related)
+  - Process conflicts → Negotiator
+- Third party reviews evidence, provides recommendation
+- Timeframe: 30 minutes
+
+**Step 4: Negotiator Decision**
+- If Step 3 doesn't resolve, escalate to Negotiator
+- Negotiator makes binding decision based on:
+  - Objective alignment (does it advance OBJECTIVE.md?)
+  - Sprint goal alignment (does it complete sprint exit criteria?)
+  - Evidence quality (which position has stronger support?)
+  - System health (what's best for overall progress?)
+- Decision logged in SPRINT_DISCUSS.md with full rationale
+- Timeframe: 30 minutes
+
+**Step 5: Human Escalation**
+- If Negotiator cannot decide (rare), escalate to human
+- Create ESCALATION.md with:
+  - Conflict description
+  - Agent positions
+  - Evidence summary
+  - Negotiator analysis
+  - Recommendation
+- Human makes final decision
+- Timeframe: Variable (human availability)
+
+**Conflict Logging Format:**
+
+```markdown
+## Conflict Resolution: <Task ID>
+
+**Conflict ID:** CONFLICT-<UUID>  
+**Timestamp:** 2025-10-04T11:00:00Z  
+**Participants:** Builder (agent-builder-A) vs Tester (agent-tester-A)  
+**Task:** P005-B01  
+**Issue:** Disagreement on AC2 acceptance (Tester rejected, Builder disputes)
+
+### Step 1: Direct Communication
+- **Builder Position:** AC2 requires "4+ workflow patterns". Implemented 4 patterns (Primary Dev, Adaptation, Sprint Lifecycle, Completion). Criteria met.
+- **Tester Position:** AC2 requires "4+ workflow patterns with examples". Only 3 patterns have examples (Primary Dev, Adaptation, Sprint Lifecycle). Completion pattern missing examples.
+- **Outcome:** No resolution, escalate to Step 2
+
+### Step 2: Evidence Review
+- **TEST_PLAN.md AC2:** "Agent interaction guide with 4+ workflow patterns **with examples**"
+- **Evidence:** Tester interpretation correct, examples required for all patterns
+- **Outcome:** Builder acknowledges, will add examples to Completion pattern
+
+### Resolution
+- **Decision:** Tester rejection valid
+- **Action:** Builder adds examples to Completion pattern (15 minutes)
+- **Status:** Resolved at Step 2 (no escalation needed)
+```
+
+**Usage Statistics (Sprint 1/2):**
+- Conflicts: 0
+- Escalations: 0
+- Protocol defined but not yet tested
+
+**Benefits:**
+- Clear escalation path (prevents deadlocks)
+- Evidence-based resolution (not arbitrary)
+- Negotiator as final arbiter (system-level decision authority)
+- Human escalation as safety valve
+
+**Implementation Effort:** ~30 minutes (document protocol, add to agent prompts)
+
+---
+
+## Communication Gap Summary
+
+| Gap | Current State | Proposed Solution | Priority | Effort |
+|-----|--------------|-------------------|----------|--------|
+| **Gap 9: Structured Message Format** | Free-form logs | JSON message schema | High | ~1 hour |
+| **Gap 10: Decision Transparency** | Inconsistent format | Decision template | High | ~30 min |
+| **Gap 11: Conflict Resolution** | Undefined | 5-step protocol | High | ~30 min |
+| **Gap 12: Status Reporting** | Varies by agent | Standard template | Medium | ~30 min |
+| **Gap 13: Heartbeat Content** | Timestamp only | Progress indicators | Low | ~30 min |
+
+**Total Implementation Effort:** ~3.5 hours (all communication protocols)
+
+**Recommended Phasing:**
+- **Sprint 2 (P005):** Define all protocols (documentation only)
+- **Sprint 3:** Implement structured messages and decision transparency (high priority)
+- **Sprint 4:** Implement status reporting standardization (medium priority)
+- **Future:** Implement heartbeat enhancements as needed (low priority)
+
+---
+
+## Next Steps (P005-B03)
 
 **P005-B03 (Recommendations + Integration):**
-1. Prioritize gaps (High/Medium/Low priority)
+1. Prioritize all 13 gaps (High/Medium/Low priority)
 2. Create implementation roadmap (Sprint 2/3/4+ timeline)
 3. Feasibility assessment (effort, dependencies, risk, benefit)
 4. Documentation integration (cross-link with OODATCAA_LOOP_GUIDE, ARCHITECTURE, README, prompts)

@@ -1806,11 +1806,624 @@ fi
 
 ---
 
+## Communication Protocols
+
+Standardized protocols for agent coordination, decision transparency, and conflict resolution based on Sprint 1/2 evidence and gap analysis (P005-B02).
+
+---
+
+### Protocol 1: Structured Message Format
+
+**Purpose:** Standardize inter-agent messages for parsing, tracing, and automation.
+
+**When to Use:**
+- Builder → Tester handoff (task complete, awaiting validation)
+- Tester → Refiner escalation (test failure requiring adaptation)
+- Monitor → Negotiator alert (anomaly detected)
+- Any agent → Any agent query/response
+
+**Message Template:**
+
+```markdown
+## Message: <From Agent> → <To Agent> <Type>
+
+**Message ID:** MSG-<UUID>  
+**Timestamp:** <ISO8601>  
+**From:** <agent_role> (<agent_instance>)  
+**To:** <agent_role> (<agent_instance or "any">)  
+**Task:** <task_id>  
+**Type:** handoff | alert | decision | query | response | status_update  
+**Priority:** low | normal | high | urgent
+
+**Content:**
+- Summary: <one-line summary>
+- Details: <additional context>
+- [Type-specific fields]
+
+**Action Required:** <what recipient should do>
+
+**Thread:** THREAD-<task_id>
+```
+
+**Message Types:**
+
+1. **handoff:** Agent completed work, passing to next agent
+   - Required fields: summary, branch, status_from, status_to, gate_results
+   - Example: Builder → Tester after implementation complete
+
+2. **alert:** Anomaly or issue requiring attention
+   - Required fields: alert_type, severity, details, recommended_action
+   - Example: Monitor → Negotiator when task exceeds 150% estimated time
+
+3. **decision:** Agent made a decision, documenting for transparency
+   - Required fields: decision, rationale, alternatives_considered, confidence
+   - Example: Refiner → Builder quick fix decision
+
+4. **query:** Agent requesting information from another agent
+   - Required fields: question, context, urgency
+   - Example: Builder → Planner asking for design clarification
+
+5. **response:** Reply to query or handoff
+   - Required fields: response_to (message_id), answer/status
+   - Example: Tester → Builder test results
+
+6. **status_update:** Progress update during long-running task
+   - Required fields: progress_pct, duration_elapsed, duration_remaining, blockers
+   - Example: Builder mid-implementation progress report
+
+**Storage:**
+- Primary: AGENT_LOG.md (human-readable markdown format)
+- Optional: `.messages/<task_id>.jsonl` (machine-readable JSON for automation)
+
+**Benefits:**
+- Programmatic message parsing enables automation (Monitor agent can parse alerts)
+- Traceability via thread_id links related messages across agents
+- Priority-based processing (urgent alerts handled before normal handoffs)
+- Audit trail for retrospectives and debugging
+
+**JSON Schema (for .messages/*.jsonl):**
+
+```json
+{
+  "message_id": "MSG-<UUID>",
+  "timestamp": "2025-10-04T10:30:00Z",
+  "from_agent": "builder",
+  "from_instance": "agent-builder-A",
+  "to_agent": "tester",
+  "to_instance": null,
+  "task_id": "P005-B01",
+  "message_type": "handoff",
+  "priority": "normal",
+  "content": { ... },
+  "decision_required": false,
+  "response_expected": true,
+  "thread_id": "THREAD-P005-B01"
+}
+```
+
+**Implementation Status:** Defined in Sprint 2 (P005-B02), implement in Sprint 3
+
+---
+
+### Protocol 2: Decision Transparency Template
+
+**Purpose:** Standardize decision documentation for auditability, learning, and confidence calibration.
+
+**When to Use:**
+- Refiner: Quick fix vs Rollback decision
+- Planner: Alternative selection (design approach)
+- Negotiator: Priority change, agent assignment, conflict resolution
+- Sprint Planner: Sprint goal definition, objective completion assessment
+
+**Decision Template:**
+
+```markdown
+## Decision: <Decision Type> (<Task ID>)
+
+**Decision ID:** DEC-<UUID>  
+**Timestamp:** <ISO8601>  
+**Agent:** <agent_role> (<agent_instance>)  
+**Task:** <task_id>  
+**Type:** adaptation_approach | alternative_selection | priority_change | conflict_resolution
+
+**Decision:** <chosen option>
+
+**Rationale:**  
+<Why this decision? 2-3 sentences explaining reasoning>
+
+**Alternatives Considered:**
+1. **<Option 1>**
+   - Pros: <benefits>
+   - Cons: <drawbacks>
+   - Rejected: <reason>
+
+2. **<Option 2>**
+   - Pros: <benefits>
+   - Cons: <drawbacks>
+   - Rejected: <reason>
+
+[Minimum 2 alternatives required]
+
+**Evidence:**
+- <Citation 1>
+- <Citation 2>
+- <Citation 3>
+
+[Minimum 2 evidence items required]
+
+**Confidence:** low | medium | high
+
+**Outcome:** [To be filled retrospectively]  
+<After decision plays out, document outcome: success, failure, or mixed. Include metrics/observations.>
+```
+
+**Decision Types:**
+
+| Decision Type | Agent | Typical Choices | Evidence Sources |
+|---------------|-------|-----------------|------------------|
+| **adaptation_approach** | Refiner | quick_fix, rollback, defer | Tester report, failure analysis, time estimates |
+| **alternative_selection** | Planner | Approach A/B/C/D | Design patterns, performance, complexity, maintainability |
+| **priority_change** | Negotiator | Increase/decrease priority | Sprint goals, dependencies, blockers |
+| **conflict_resolution** | Negotiator | Agent A/B position, compromise | TEST_PLAN.md, OBJECTIVE.md, evidence from both sides |
+
+**Examples:**
+
+**Example 1: Refiner Adaptation Decision (W004-B01)**
+
+```markdown
+## Decision: Adaptation Approach (W004-B01)
+
+**Decision ID:** DEC-w004-001  
+**Timestamp:** 2025-09-20T09:45:00Z  
+**Agent:** Refiner (agent-refiner-A)  
+**Task:** W004-B01  
+**Type:** adaptation_approach
+
+**Decision:** Quick Fix (add LRU cache)
+
+**Rationale:**  
+Performance issue isolated to query caching layer. Adding LRU cache resolves issue without architectural changes. Estimated fix time: 30 minutes.
+
+**Alternatives Considered:**
+1. **Rollback to baseline**
+   - Pros: Clean slate, rethink approach
+   - Cons: Wastes 90 min of work, no fundamental flaw identified
+   - Rejected: Issue too narrow for rollback
+
+2. **Defer to next sprint**
+   - Pros: Avoid immediate work, wait for more data
+   - Cons: Blocks sprint progress, issue clear enough to fix now
+   - Rejected: Clear fix available, no reason to defer
+
+**Evidence:**
+- Tester report: p95 latency 180ms (target: 150ms)
+- Profiling shows 80% time in repeated query execution
+- LRU cache standard pattern for this scenario
+
+**Confidence:** High
+
+**Outcome:** Success  
+Quick fix applied, p95 latency reduced to 120ms, AC5 passed on re-test. Fix time: 28 minutes (within estimate).
+```
+
+**Example 2: Planner Alternative Selection (P003)**
+
+```markdown
+## Decision: Dashboard Implementation Approach (P003)
+
+**Decision ID:** DEC-p003-001  
+**Timestamp:** 2025-10-02T14:15:00Z  
+**Agent:** Planner (agent-planner-A)  
+**Task:** P003  
+**Type:** alternative_selection
+
+**Decision:** Bash script with jq JSON processing
+
+**Rationale:**  
+Bash + jq aligns with existing script pattern (P002 log rotation). Provides real-time status without requiring daemon infrastructure. Simpler than Python for file parsing tasks.
+
+**Alternatives Considered:**
+1. **Python script**
+   - Pros: Better JSON handling, easier testing, type safety
+   - Cons: Requires venv, adds dependency complexity
+   - Rejected: Overkill for simple file parsing
+
+2. **Python daemon (integrate with P001)**
+   - Pros: Continuous monitoring, push notifications
+   - Cons: P001 incomplete, adds scope, blocks P003 on P001
+   - Rejected: P003 needs delivery before P001 complete
+
+3. **Web dashboard (Flask/FastAPI)**
+   - Pros: Rich UI, real-time updates
+   - Cons: Significant complexity, not sprint-scoped
+   - Rejected: Over-engineering for internal tool
+
+**Evidence:**
+- P002: Bash log rotation successful (400 lines, all gates passed)
+- SPRINT_QUEUE.json: JSON structure well-suited for jq
+- Project patterns: 5 existing bash scripts, consistent style
+
+**Confidence:** High
+
+**Outcome:** Success  
+P003 completed in 90% of estimated time (parallel subtasks). Dashboard generates accurate SPRINT_STATUS.json, bash + jq combination effective. Confirmed: appropriate choice for this use case.
+```
+
+**Storage:**
+- Primary: AGENT_LOG.md (human-readable markdown)
+- Optional: `.decisions/<task_id>.jsonl` (machine-readable JSON for pattern analysis)
+
+**Benefits:**
+- **Transparency:** All decisions documented with rationale
+- **Learning:** Pattern analysis identifies high-confidence decisions vs low-confidence
+- **Calibration:** Compare confidence levels to outcomes, improve decision quality
+- **Auditability:** Retrospectives can review decision quality
+
+**Implementation Status:** Defined in Sprint 2 (P005-B02), implement in Sprint 3
+
+---
+
+### Protocol 3: Status Reporting Standard
+
+**Purpose:** Consistent status updates for metrics aggregation, progress visibility, and anomaly detection.
+
+**When to Use:**
+- Long-running tasks (>60 minutes): Progress update every 30 minutes
+- Completion report: Always (all agents)
+- Blocked status: Immediately when blocker encountered
+- Adaptation loop: Before and after adaptation
+
+**Status Report Template:**
+
+```markdown
+## Status Update: <Task ID> <Action>
+
+**Timestamp:** <ISO8601>  
+**Agent:** <agent_role> (<agent_instance>)  
+**Task:** <task_id>  
+**Action:** <current_action>  
+**Status:** in_progress | complete | blocked | needs_adapt
+
+**Duration:**
+- Elapsed: <time_spent>
+- Remaining: <estimated_remaining> (estimated)
+
+**Progress:**
+- ✅ <completed_step_1>
+- 🔄 <in_progress_step>
+- ⏳ <pending_step_1>
+- ⏳ <pending_step_2>
+
+**Metrics:**
+- <metric_1>: <value>
+- <metric_2>: <value>
+
+**Blockers:** <None | blocker description>
+
+**Next Steps:** <planned actions>
+```
+
+**Status Values:**
+
+| Status | Meaning | Required Fields | Next Agent |
+|--------|---------|-----------------|------------|
+| **in_progress** | Task actively being worked | progress_pct, duration_elapsed, duration_remaining | Same agent (update) |
+| **complete** | Task finished successfully | outcome (success), final_metrics | Next agent in flow |
+| **blocked** | Cannot proceed, waiting on external | blocker description, expected_resolution_time | Negotiator (escalation) |
+| **needs_adapt** | Tests failed, adaptation required | failure_summary, gate_failures | Refiner |
+
+**Metrics by Agent:**
+
+| Agent | Key Metrics | Example Values |
+|-------|------------|----------------|
+| **Builder** | lines_written, files_created, gates_passed | 1500 lines, 3 files, 4/5 gates pass |
+| **Tester** | acs_tested, acs_passed, coverage | 8 ACs tested, 7 passed, 88% coverage |
+| **Integrator** | commits_merged, prs_closed, conflicts | 2 commits, 1 PR, 0 conflicts |
+| **Refiner** | adaptations_analyzed, fix_time_estimated | 1 adaptation, 30 min estimate |
+
+**Example: Builder Progress Update (Long-Running Task)**
+
+```markdown
+## Status Update: P005-B01 Implementation
+
+**Timestamp:** 2025-10-04T10:15:00Z  
+**Agent:** Builder (agent-builder-A)  
+**Task:** P005-B01  
+**Action:** Implementation  
+**Status:** in_progress (60% complete)
+
+**Duration:**
+- Elapsed: 50 minutes
+- Remaining: ~35 minutes (estimated)
+
+**Progress:**
+- ✅ AGENT_ROLES_MATRIX.md complete (810 lines, 11 agents)
+- 🔄 AGENT_INTERACTION_GUIDE.md in progress (50% done, 4 workflow patterns)
+- ⏳ AGENT_GAP_ANALYSIS.md pending (evidence section)
+
+**Metrics:**
+- Files created: 2/3
+- Lines written: 1,500
+- Quality gates passed: 2/5 (markdown, cross-ref pass; completeness, accuracy, integration pending)
+
+**Blockers:** None
+
+**Next Steps:** Complete AGENT_INTERACTION_GUIDE.md (20 min), then start AGENT_GAP_ANALYSIS.md evidence section (15 min).
+```
+
+**Example: Tester Completion Report**
+
+```markdown
+## Status Update: P005-T01 Validation Complete
+
+**Timestamp:** 2025-10-04T12:00:00Z  
+**Agent:** Tester (agent-tester-A)  
+**Task:** P005-T01  
+**Action:** Validation  
+**Status:** complete (success)
+
+**Duration:**
+- Elapsed: 45 minutes
+- Estimated: 45 minutes (100% accurate)
+
+**Progress:**
+- ✅ AC1: Agent capability matrix complete (11 agents, 7 attributes each)
+- ✅ AC2: Agent interaction guide (4 workflow patterns, 15+ examples)
+- ✅ AC3: Sprint 1/2 evidence analysis (116 citations, 7 lessons)
+- ✅ AC4: Descriptions accurate (verified against prompts)
+- ✅ AC5: Cross-references valid (20+ links checked)
+
+**Metrics:**
+- ACs tested: 5/5
+- ACs passed: 5/5 (100%)
+- Validation time: 9 min/AC average
+
+**Blockers:** None
+
+**Next Steps:** Handoff to Integrator for PR creation and merge.
+```
+
+**Storage:**
+- Primary: AGENT_LOG.md (all status updates)
+- Optional: `.status/<task_id>.jsonl` (machine-readable for monitoring)
+
+**Benefits:**
+- **Visibility:** Progress updates during long tasks (Builder 90-minute tasks)
+- **Early Detection:** Monitor agent can detect delays (elapsed > 150% estimated)
+- **Metrics Aggregation:** Average duration per agent, gate pass rates, adaptation rate
+- **Retrospectives:** Analyze which agents consistently over/under-estimate
+
+**Implementation Status:** Defined in Sprint 2 (P005-B02), gradual adoption Sprint 3+
+
+---
+
+### Protocol 4: Conflict Resolution Process
+
+**Purpose:** Define 5-step escalation process for agent disagreements, preventing deadlocks and ensuring evidence-based resolution.
+
+**When to Use:**
+- Builder disagrees with Tester rejection
+- Refiner chooses rollback, Builder wants to retry
+- Negotiator assigns task, agent believes wrong agent type
+- Planner and Refiner disagree on adaptation approach
+
+**5-Step Conflict Resolution Protocol:**
+
+**Step 1: Direct Communication (15 minutes)**
+- Agents attempt to resolve disagreement directly
+- Log discussion in AGENT_LOG.md (message exchange using Protocol 1 format)
+- Both agents present their positions
+- Look for misunderstanding or missing information
+
+**Exit Criteria:**
+- Agreement reached → Conflict resolved
+- No agreement → Escalate to Step 2
+
+---
+
+**Step 2: Evidence Review (15 minutes)**
+- Both agents gather and present evidence
+- Review authoritative sources:
+  - TEST_PLAN.md (acceptance criteria)
+  - AGENT_PLAN.md (design specifications)
+  - OBJECTIVE.md (project goals)
+  - Agent prompts (role boundaries)
+- Check for interpretation differences or missing context
+
+**Exit Criteria:**
+- Evidence clearly supports one position → Conflict resolved
+- Evidence ambiguous or contradictory → Escalate to Step 3
+
+---
+
+**Step 3: Third-Party Review (30 minutes)**
+- Escalate to relevant agent based on conflict type:
+
+| Conflict Type | Third-Party Reviewer | Rationale |
+|---------------|---------------------|-----------|
+| **Planning conflicts** | Sprint Planner | Ensures sprint goal alignment |
+| **Technical conflicts** | Planner (or Refiner if adaptation-related) | Design expertise |
+| **Process conflicts** | Negotiator | OODATCAA protocol authority |
+| **Acceptance criteria disputes** | Tester | Quality assurance expertise |
+
+- Third party reviews evidence from both sides
+- Provides non-binding recommendation
+- Documents analysis in AGENT_LOG.md
+
+**Exit Criteria:**
+- Both agents accept recommendation → Conflict resolved
+- Recommendation rejected by one/both agents → Escalate to Step 4
+
+---
+
+**Step 4: Negotiator Decision (30 minutes)**
+- Escalate to Negotiator (if not already reviewer)
+- Negotiator makes **binding decision** based on:
+  1. **Objective alignment:** Which position better advances OBJECTIVE.md?
+  2. **Sprint goal alignment:** Which completes sprint exit criteria faster?
+  3. **Evidence quality:** Which position has stronger supporting data?
+  4. **System health:** What's best for overall sprint progress?
+- Decision logged in `.oodatcaa/work/SPRINT_DISCUSS.md` with full rationale
+- Includes decision template from Protocol 2 (alternatives, evidence, confidence)
+
+**Exit Criteria:**
+- Negotiator makes decision → Conflict resolved (binding)
+- Negotiator cannot decide (rare) → Escalate to Step 5
+
+---
+
+**Step 5: Human Escalation (Variable)**
+- **RARE:** Only if Negotiator cannot make decision (e.g., requires policy change, outside OODATCAA scope)
+- Create `.oodatcaa/work/ESCALATION.md` with:
+  - Conflict description
+  - Agent positions (both sides)
+  - Evidence summary
+  - Third-party review outcome
+  - Negotiator analysis
+  - Negotiator recommendation (but unable to decide)
+- Human reviews and makes final decision
+- Decision recorded in ESCALATION.md and SPRINT_LOG.md
+
+**Exit Criteria:**
+- Human makes decision → Conflict resolved (final)
+
+---
+
+**Conflict Logging Format:**
+
+```markdown
+## Conflict Resolution: <Task ID>
+
+**Conflict ID:** CONFLICT-<UUID>  
+**Timestamp:** <ISO8601>  
+**Participants:** <Agent 1> vs <Agent 2>  
+**Task:** <task_id>  
+**Issue:** <brief description of disagreement>
+
+### Step 1: Direct Communication
+- **<Agent 1> Position:** <position summary>
+- **<Agent 2> Position:** <position summary>
+- **Outcome:** <Resolved | Escalate to Step 2>
+
+[If escalated:]
+
+### Step 2: Evidence Review
+- **Authoritative Source(s):** <TEST_PLAN.md AC3, OBJECTIVE.md, etc.>
+- **Evidence:** <what evidence says>
+- **Outcome:** <Resolved | Escalate to Step 3>
+
+[If escalated:]
+
+### Step 3: Third-Party Review
+- **Reviewer:** <agent_role>
+- **Analysis:** <reviewer's assessment>
+- **Recommendation:** <non-binding suggestion>
+- **Outcome:** <Resolved | Escalate to Step 4>
+
+[If escalated:]
+
+### Step 4: Negotiator Decision
+- **Decision:** <chosen position or compromise>
+- **Rationale:** <why this decision?>
+- **Alternatives Considered:** <list>
+- **Evidence:** <supporting data>
+- **Confidence:** <high/medium/low>
+- **Outcome:** Resolved (binding)
+
+[If escalated:]
+
+### Step 5: Human Escalation
+- **Escalation Reason:** <why Negotiator couldn't decide>
+- **Human Decision:** <final decision>
+- **Rationale:** <explanation>
+- **Outcome:** Resolved (final)
+
+---
+
+### Resolution Summary
+- **Decision:** <final outcome>
+- **Action:** <what happens next>
+- **Status:** Resolved at Step <N>
+- **Time to Resolution:** <duration>
+```
+
+**Example: Builder vs Tester Conflict (Hypothetical)**
+
+```markdown
+## Conflict Resolution: P005-B01
+
+**Conflict ID:** CONFLICT-p005-001  
+**Timestamp:** 2025-10-04T11:00:00Z  
+**Participants:** Builder (agent-builder-A) vs Tester (agent-tester-A)  
+**Task:** P005-B01  
+**Issue:** Disagreement on AC2 acceptance (Tester rejected, Builder disputes)
+
+### Step 1: Direct Communication
+- **Builder Position:** AC2 requires "4+ workflow patterns". Implemented 4 patterns (Primary Dev, Adaptation, Sprint Lifecycle, Completion). Criteria met.
+- **Tester Position:** AC2 requires "4+ workflow patterns with examples". Only 3 patterns have examples. Completion pattern missing examples. Criteria NOT met.
+- **Outcome:** No resolution, escalate to Step 2
+
+### Step 2: Evidence Review
+- **Authoritative Source:** TEST_PLAN.md AC2
+- **Evidence:** "Agent interaction guide with 4+ workflow patterns **with examples** from Sprint 1/2"
+- **Analysis:** "with examples" is part of AC2 requirement. Tester interpretation correct.
+- **Outcome:** Builder acknowledges, will add examples to Completion pattern
+
+### Resolution Summary
+- **Decision:** Tester rejection valid
+- **Action:** Builder adds examples to Completion pattern (15 minutes)
+- **Status:** Resolved at Step 2 (no escalation needed)
+- **Time to Resolution:** 20 minutes
+```
+
+**Conflict Statistics (Sprint 1/2):**
+
+| Sprint | Conflicts | Step 1 Resolution | Step 2 Resolution | Step 3 Resolution | Step 4+ |
+|--------|-----------|------------------|-------------------|-------------------|---------|
+| Sprint 1 | 0 | 0 | 0 | 0 | 0 |
+| Sprint 2 | 0 | 0 | 0 | 0 | 0 |
+| **Total** | **0** | **0** | **0** | **0** | **0** |
+
+**Pattern:** No conflicts in first 2 sprints. Protocol defined preventatively for future scalability.
+
+**Benefits:**
+- **Clear escalation path:** Prevents deadlocks, always moves forward
+- **Evidence-based:** Not arbitrary, decisions grounded in authoritative sources
+- **Negotiator authority:** System-level decision-making when needed
+- **Human safety valve:** Rare but available for policy/scope issues
+- **Audit trail:** Full conflict history logged
+
+**Implementation Status:** Defined in Sprint 2 (P005-B02), ready to use if conflicts arise
+
+---
+
+## Communication Protocol Summary
+
+| Protocol | Purpose | Priority | Implementation Status | Adoption Timeline |
+|----------|---------|----------|----------------------|-------------------|
+| **Protocol 1: Structured Message Format** | Parsing, tracing, automation | High | Defined (P005-B02) | Sprint 3 |
+| **Protocol 2: Decision Transparency** | Auditability, learning | High | Defined (P005-B02) | Sprint 3 |
+| **Protocol 3: Status Reporting** | Metrics, monitoring | Medium | Defined (P005-B02) | Sprint 3+ (gradual) |
+| **Protocol 4: Conflict Resolution** | Prevent deadlocks | High | Defined (P005-B02) | Ready (use as needed) |
+
+**Total Implementation Effort:** ~3.5 hours (all protocols, Sprint 3)
+
+**Phasing Strategy:**
+- **Sprint 2 (Current):** Define all protocols (documentation complete ✅)
+- **Sprint 3:** Implement Protocols 1 & 2 (high priority, structured messages + decision templates)
+- **Sprint 4:** Implement Protocol 3 (medium priority, status reporting standardization)
+- **Ongoing:** Use Protocol 4 as needed (already ready, no implementation required)
+
+**Detailed Schema Documentation:**  
+For full JSON schemas and additional examples, see [`.oodatcaa/work/AGENT_GAP_ANALYSIS.md`](.oodatcaa/work/AGENT_GAP_ANALYSIS.md) Communication Protocol Design section.
+
+---
+
 ## Cross-References
 
 **Agent Prompts:** [`.oodatcaa/prompts/`](.oodatcaa/prompts/)  
 **Agent Roles Matrix:** [`.oodatcaa/AGENT_ROLES_MATRIX.md`](.oodatcaa/AGENT_ROLES_MATRIX.md)  
-**Agent Gap Analysis:** [`.oodatcaa/work/AGENT_GAP_ANALYSIS.md`](.oodatcaa/work/AGENT_GAP_ANALYSIS.md) (to be created in P005-B01 Step 3)  
+**Agent Gap Analysis:** [`.oodatcaa/work/AGENT_GAP_ANALYSIS.md`](.oodatcaa/work/AGENT_GAP_ANALYSIS.md)  
 **OODATCAA Loop Guide:** [`.oodatcaa/OODATCAA_LOOP_GUIDE.md`](.oodatcaa/OODATCAA_LOOP_GUIDE.md)
 
 **Sprint Evidence:**
@@ -1821,8 +2434,8 @@ fi
 
 ---
 
-**Guide Version:** 1.0  
+**Guide Version:** 2.0 (Communication Protocols Added)  
 **Last Updated:** 2025-10-04  
 **Next Review:** End of Sprint 2  
-**Maintainer:** Builder (P005-B01)
+**Maintainer:** Builder (P005-B02)
 
