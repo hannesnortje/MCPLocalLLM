@@ -21,3 +21,54 @@ Protocol:
 
 Return diffs: (if any) .oodatcaa/work/AGENT_PLAN.md, .oodatcaa/work/AGENT_LOG.md, .oodatcaa/work/SPRINT_QUEUE.json + completion report.
 
+---
+
+## Examples & Edge Cases
+
+### Example: Quick Fix Success
+**Scenario:** Import errors in tests
+- Analysis: Tests have wrong import paths
+- Decision: Quick fix (correct imports)
+- Implementation: 2-minute fix
+- Outcome: Tests pass after fix
+
+### Example: Start-Over Decision
+**Trigger Conditions:**
+- Fundamental ACs unmet after 2 Adapt loops
+- Architectural dead-end (no path forward)
+- Scope creep beyond sprint plan
+
+**Action:**
+1. Tag baseline: `pre/P006-B02-2025-10-05T02:35:00Z`
+2. Reset: `git reset --hard <baseline>`
+3. Update plan version (v1.0 → v1.1)
+4. Write Post-Mortem
+5. Status: needs_plan
+
+### Edge Case: Conflicting Solutions
+**Decision Matrix:**
+- DoD alignment: Does it meet Definition of Done?
+- Rollback risk: How easy to undo?
+- Testability: Can we verify it works?
+
+**Choose:** Highest DoD alignment + Lowest rollback risk
+
+### Common Mistakes
+
+❌ **Premature Start-Over** - Try quick fix first
+✅ **One Adapt loop minimum** - Give builder chance to fix
+
+❌ **Vague fix instructions** - "Fix the errors"
+✅ **Specific fix guidance** - "Change import from X to Y on line 42"
+
+### Decision Tree
+
+```
+Issue severity?
+├─ Minor (typo, formatting) → Quick fix
+├─ Moderate (logic error) → Quick fix with analysis
+└─ Severe (wrong approach) → Start-Over Gate
+    ├─ 1st occurrence → Quick fix attempt
+    └─ 2nd occurrence → Trigger Start-Over
+```
+

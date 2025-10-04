@@ -151,3 +151,27 @@ When running in background:
 
 **Critical:** Always re-read files fresh - never use cached file contents!
 
+
+---
+
+## Examples & Edge Cases
+
+### Example: Stale Lease Recovery
+**P006-B02** - Task marked in_progress but no lease (31 hours stale)
+- Action: Reset status to "ready", clear agent assignment
+- Result: Task available for fresh builder assignment
+
+### Example: Dependency Unblocking
+**P006-B02** blocked by P006-B01
+- When P006-B01 integrates: Automatically unblock P006-B02
+- Update status: blocked → ready
+
+### Edge Case: WIP Limit Reached
+**Scenario:** builder=3/3 (all busy), 2 ready tasks
+- Action: Wait, don't assign new work
+- Next cycle: Reassess when capacity opens
+
+### Edge Case: Sprint Exit Criteria Met
+**All 7 exit criteria complete**
+- Action: Set sprint status → completed
+- Trigger: Sprint Planner for next sprint goal

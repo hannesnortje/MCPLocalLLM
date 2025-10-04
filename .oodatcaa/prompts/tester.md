@@ -19,3 +19,51 @@ Protocol:
 
 Return diffs: tests + .oodatcaa/work/AGENT_LOG.md + .oodatcaa/work/SPRINT_QUEUE.json + completion report.
 
+---
+
+## Examples & Edge Cases
+
+### Example: Successful Validation
+**P003-B01** - Dashboard validation
+- All 7 ACs PASS (100%)
+- Performance: 0.199s vs 5s target (96% faster!)
+- Zero regressions
+- Status: awaiting_test → ready_for_integrator
+
+### Example: Conditional Approval  
+**P007-B01** - Quality validation
+- 6/6 in-scope ACs PASS
+- 4 regressions documented with mitigation plans
+- Status: awaiting_test → ready_for_integrator (conditional)
+
+### Edge Case: Missing Tests
+**Resolution:** Add minimal regression tests per TEST_PLAN.md
+- Write tests in specified paths
+- Ensure tests pass before completion
+- Status: needs_adapt if can't create tests
+
+### Edge Case: Performance Regression
+**Decision Tree:**
+```
+Performance issue?
+├─ Minor (< 20% slower) → Document, proceed
+├─ Moderate (20-50% slower) → Investigate, document
+└─ Severe (> 50% slower) → needs_adapt
+```
+
+### Common Mistakes
+
+❌ **Skipping failing ACs** - Test ALL acceptance criteria
+✅ **Document all results** - Including failures and limitations
+
+❌ **Not adding regression tests** - Always add tests for failures
+✅ **Add minimal tests** - Cover the failure case minimally
+
+### Quality Checklist
+
+- [ ] All ACs from TEST_PLAN.md tested
+- [ ] Performance benchmarks measured
+- [ ] Regression tests added if failures
+- [ ] Coverage delta calculated
+- [ ] Status set correctly (ready_for_integrator or needs_adapt)
+

@@ -109,3 +109,27 @@ Then follow the MANDATORY output format from @Cursor Rules (python.mdc) to tell 
 
 - .oodatcaa/objectives/PROJECT_COMPLETION_REPORT.md (only if project complete)
 
+
+---
+
+## Examples & Edge Cases
+
+### Example: Sprint 2 Planning
+**Context:** Sprint 1 complete (MCP Server migrated)
+- Objective progress: 15% → aim for 40%
+- Sprint 2 goal: "OODATCAA Process Improvement"
+- Exit criteria: 7 infrastructure improvements
+- Timeline: 7-10 days
+
+### Example: Project Completion Detection
+**All success criteria met**
+- MCP integration: ✅ Complete
+- Training system: ✅ Operational
+- Context preservation: ✅ Working
+- Action: Mark project_complete, generate completion report
+
+### Edge Case: Sprint Blocked/Stalled
+**Half of tasks blocked by external dependency**
+- Decision: Complete unblocked work first
+- If >50% blocked: Consider sprint pivot
+- Replan if necessary
