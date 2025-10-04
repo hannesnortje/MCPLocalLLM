@@ -701,7 +701,11 @@
   ],
   "metadata": {
     "created": "2025-10-03T08:45:00+02:00",
+<<<<<<< HEAD
     "updated": "2025-10-04T19:00:00+02:00",
+=======
+    "updated": "2025-10-04T16:30:30+02:00",
+>>>>>>> feat/P006-step-01-operational-docs
     "sprint_goal": "OODATCAA Process Improvement - Automate and enhance multi-agent development",
     "sprint_status": "in_progress",
     "total_tasks": 37,
@@ -713,7 +717,11 @@
     "quality_tasks": 2,
     "completed_tasks": 14,
     "ready_tasks": 1,
+<<<<<<< HEAD
     "blocked_tasks": 12,
+=======
+    "blocked_tasks": 10,
+>>>>>>> feat/P006-step-01-operational-docs
     "in_progress_tasks": 0,
     "planning_tasks": 0,
     "planning_complete_tasks": 7,
@@ -723,7 +731,11 @@
     "done_tasks": 14,
     "cancelled_tasks": 6,
     "ready_for_integrator_tasks": 0,
+<<<<<<< HEAD
     "integrating_tasks": 1,
+=======
+    "integrating_tasks": 0,
+>>>>>>> feat/P006-step-01-operational-docs
     "done_story_tasks": 4,
     "sprint_2_start": "2025-10-03",
     "sprint_2_target_completion": "2025-10-10",
