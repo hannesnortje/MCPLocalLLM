@@ -265,10 +265,17 @@
       "title": "P003 Step 7: Documentation + Quality Gates + Integration",
       "type": "Build",
       "complexity": "S",
-      "status": "ready_for_integrator",
+      "status": "in_progress",
       "priority": 3,
-      "agent": null,
-      "lease": null,
+      "agent": "builder",
+      "lease": {
+        "task_id": "P003-B03",
+        "agent": "builder",
+        "owner": "agent-builder-cursor",
+        "acquired": "2025-10-03T22:28:13+02:00",
+        "ttl": 5400,
+        "last_heartbeat": "2025-10-03T22:28:13+02:00"
+      },
       "dependencies": [
         "P003-B02"
       ],
@@ -276,10 +283,7 @@
       "sprint": "2",
       "parent": "P003",
       "plan_steps": "7",
-      "estimated_time": "45 min",
-      "completed": "2025-10-03T22:33:57+02:00",
-      "tested": "2025-10-04T05:47:00Z",
-      "test_result": "4/4 ACs PASS (100%). Documentation complete (916 lines). Help flags added. Zero regressions. Atomic operations documented. Infrastructure integration verified."
+      "estimated_time": "45 min"
     },
     {
       "id": "P003-T01",
@@ -399,10 +403,16 @@
       "title": "Agent Role Assessment & Enhancement",
       "type": "Quality",
       "complexity": "M",
-      "status": "needs_plan",
+      "status": "planning",
       "priority": 5,
-      "agent": null,
-      "lease": null,
+      "agent": "planner",
+      "lease": {
+        "agent": "planner",
+        "owner": "agent-planner-P1",
+        "acquired": "2025-10-03T22:19:27+02:00",
+        "ttl": 1800,
+        "last_heartbeat": "2025-10-03T22:19:27+02:00"
+      },
       "dependencies": [],
       "objective": "SPRINT-2025-002",
       "sprint": "2",
@@ -413,7 +423,7 @@
       "title": "Process Documentation & Runbook",
       "type": "Docs",
       "complexity": "M",
-      "status": "planning_complete",
+      "status": "needs_plan",
       "priority": 6,
       "agent": null,
       "lease": null,
@@ -424,8 +434,7 @@
       ],
       "objective": "SPRINT-2025-002",
       "sprint": "2",
-      "objective_link": "Process Documentation Complete",
-      "plan_completed": "2025-10-03T22:35:00+02:00"
+      "objective_link": "Process Documentation Complete"
     },
     {
       "id": "P007",
@@ -444,105 +453,31 @@
       "objective": "SPRINT-2025-002",
       "sprint": "2",
       "objective_link": "Quality Gates Maintained"
-    },
-    {
-      "id": "P006-B01",
-      "title": "P006 Step 1-3: Runbook + Troubleshooting + Onboarding",
-      "type": "Build",
-      "complexity": "L",
-      "status": "blocked",
-      "priority": 6,
-      "agent": null,
-      "lease": null,
-      "dependencies": [
-        "P001",
-        "P003",
-        "P004"
-      ],
-      "objective": "SPRINT-2025-002",
-      "sprint": "2",
-      "parent": "P006",
-      "plan_steps": "1-3",
-      "estimated_time": "225 min",
-      "branch": "feat/P006-step-01-operational-docs"
-    },
-    {
-      "id": "P006-B02",
-      "title": "P006 Step 4-5: Agent Protocols + Architecture",
-      "type": "Build",
-      "complexity": "M",
-      "status": "blocked",
-      "priority": 6,
-      "agent": null,
-      "lease": null,
-      "dependencies": [
-        "P006-B01"
-      ],
-      "objective": "SPRINT-2025-002",
-      "sprint": "2",
-      "parent": "P006",
-      "plan_steps": "4-5",
-      "estimated_time": "150 min"
-    },
-    {
-      "id": "P006-B03",
-      "title": "P006 Step 6-7: Navigation + Quality",
-      "type": "Build",
-      "complexity": "S",
-      "status": "blocked",
-      "priority": 6,
-      "agent": null,
-      "lease": null,
-      "dependencies": [
-        "P006-B02"
-      ],
-      "objective": "SPRINT-2025-002",
-      "sprint": "2",
-      "parent": "P006",
-      "plan_steps": "6-7",
-      "estimated_time": "75 min"
-    },
-    {
-      "id": "P006-T01",
-      "title": "P006 Testing: Verify All 10 ACs",
-      "type": "Test",
-      "complexity": "M",
-      "status": "blocked",
-      "priority": 6,
-      "agent": null,
-      "lease": null,
-      "dependencies": [
-        "P006-B03"
-      ],
-      "objective": "SPRINT-2025-002",
-      "sprint": "2",
-      "parent": "P006"
     }
   ],
   "metadata": {
     "created": "2025-10-03T08:45:00+02:00",
-    "updated": "2025-10-04T07:50:26+02:00",
+    "updated": "2025-10-03T22:19:27+02:00",
     "sprint_goal": "OODATCAA Process Improvement - Automate and enhance multi-agent development",
     "sprint_status": "in_progress",
-    "total_tasks": 30,
+    "total_tasks": 26,
     "story_tasks": 7,
-    "builder_tasks": 17,
-    "tester_tasks": 7,
+    "builder_tasks": 13,
+    "tester_tasks": 6,
     "infra_tasks": 3,
     "docs_tasks": 2,
     "quality_tasks": 2,
     "completed_tasks": 5,
     "ready_tasks": 1,
-    "blocked_tasks": 14,
+    "blocked_tasks": 6,
     "in_progress_tasks": 0,
-    "planning_tasks": 0,
-    "planning_complete_tasks": 5,
+    "planning_tasks": 1,
+    "planning_complete_tasks": 2,
     "needs_plan_tasks": 2,
     "awaiting_test_tasks": 0,
-    "testing_tasks": 0,
     "done_tasks": 5,
     "cancelled_tasks": 3,
-    "ready_for_integrator_tasks": 1,
+    "ready_for_integrator_tasks": 0,
     "integrating_tasks": 0,
     "sprint_2_start": "2025-10-03",
     "sprint_2_target_completion": "2025-10-10",

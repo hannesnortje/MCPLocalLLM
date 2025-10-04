@@ -535,6 +535,50 @@ make tag TICKET=W123
 
 # Rollback to baseline
 make rollback TAG=pre/W123-YYYY-MM-DDTHH-MM-SS
+
+# Sprint Management (P003)
+make sprint-status              # View real-time sprint dashboard
+make sprint-complete            # Finalize sprint (when exit criteria met)
+make sprint-new                 # Initialize next sprint
+```
+
+### Sprint Management System
+
+The project includes automated sprint management tools for monitoring progress, completing sprints, and initializing new sprints.
+
+**Key Commands:**
+
+- **`make sprint-status`** - Real-time sprint dashboard showing:
+  - Progress percentage and task breakdown
+  - WIP utilization per agent role
+  - Exit criteria status
+  - Recent activity and next actions
+  - Generates `.oodatcaa/work/SPRINT_STATUS.json` for automation
+
+- **`make sprint-complete`** - Sprint finalization (requires exit criteria met):
+  - Archives all logs to `archive/sprint_N/`
+  - Generates sprint retrospective
+  - Creates git tag `sprint-N-complete`
+  - Updates SPRINT_QUEUE.json status
+
+- **`make sprint-new`** - Initialize next sprint:
+  - Increments sprint number automatically
+  - Creates new directory structure
+  - Resets logs and queue
+  - Cleans up stale leases/locks
+
+**Documentation:** See [`docs/SPRINT_MANAGEMENT.md`](docs/SPRINT_MANAGEMENT.md) for detailed usage, troubleshooting, and SPRINT_STATUS.json schema.
+
+**Example Workflow:**
+```bash
+# Monitor current sprint
+make sprint-status
+
+# When all exit criteria complete
+make sprint-complete   # Finalize Sprint 2
+
+# Start next sprint
+make sprint-new        # Initialize Sprint 3
 ```
 
 ## 🎯 Autonomous Workflow

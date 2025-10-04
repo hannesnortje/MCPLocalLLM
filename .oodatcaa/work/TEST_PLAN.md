@@ -1,27 +1,28 @@
-# TEST_PLAN: P003 - Enhanced Sprint Management System
+# TEST_PLAN: P006 - Process Documentation & Runbook
 
-**Task ID:** P003  
+**Task ID:** P006  
 **Test Plan Version:** 1.0  
-**Created:** 2025-10-03T15:30:00+02:00  
+**Created:** 2025-10-03T22:30:00+02:00  
 **Agent:** agent-planner-A
 
 ---
 
 ## Test Strategy
 
-**Approach:** End-to-end validation of sprint management system  
+**Approach:** Documentation validation and completeness verification  
 **Focus Areas:**
-1. Sprint dashboard accuracy and usability
-2. Sprint transition atomicity and safety
-3. Sprint ID consistency across all files
-4. Integration with existing infrastructure
-5. Performance and reliability
+1. Operational procedures completeness
+2. Troubleshooting coverage
+3. Onboarding effectiveness
+4. Agent protocol clarity
+5. Architecture documentation accuracy
+6. Navigation and cross-linking
+7. Quality and consistency
 
 **Test Environment:**
 - OS: Linux 6.14.0-33-generic
-- Shell: /usr/bin/bash
+- Documentation Tools: markdown linters, link checkers
 - Working Directory: /media/hannesn/storage/Code/MCPLocalLLM
-- Prerequisites: jq, git, bash 4+
 
 ---
 
@@ -32,35 +33,28 @@
 black --check .
 ```
 **Expected:** All files pass formatting check  
-**Acceptance:** 0 files need formatting
+**Acceptance:** 0 files need formatting (no Python files modified)
 
 ### Lint Check
 ```bash
 ruff check .
 ```
-**Expected:** ≤29 errors (Sprint 2 baseline from P002-B01)  
-**Acceptance:** No new ruff errors introduced
+**Expected:** ≤29 errors (Sprint 2 baseline)  
+**Acceptance:** No new ruff errors introduced (no code changes)
 
 ### Type Check
 ```bash
 mypy .
 ```
 **Expected:** ~401 mypy errors (Sprint 1 baseline)  
-**Acceptance:** No new mypy errors introduced (Python scripts only)
+**Acceptance:** No new mypy errors (no code changes)
 
 ### Unit Tests
 ```bash
 pytest -q
 ```
 **Expected:** All existing tests pass  
-**Acceptance:** 13 passed, 3 skipped (W006 baseline)
-
-### Integration Tests
-```bash
-pytest -q tests/acceptance
-```
-**Expected:** All acceptance tests pass  
-**Acceptance:** 0 failures
+**Acceptance:** 13 passed, 3 skipped (W006 baseline maintained)
 
 ### Build Check
 ```bash
@@ -80,726 +74,740 @@ pip-audit
 
 ## Acceptance Criteria
 
-### AC1: Sprint Dashboard Functional ✅
+### AC1: RUNBOOK.md Complete with 20+ Scenarios ✅
 
-**Requirement:** `make sprint-status` displays accurate, real-time sprint information
-
-**Test Procedure:**
-```bash
-# 1. Verify command exists
-make -n sprint-status
-
-# 2. Run sprint dashboard
-make sprint-status
-
-# 3. Verify output contains required sections
-make sprint-status | grep -E "(Sprint Status:|Progress:|Tasks:|WIP Utilization:|Exit Criteria:)"
-
-# 4. Check JSON status file exists
-test -f .oodatcaa/work/SPRINT_STATUS.json && echo "PASS: Status JSON exists"
-
-# 5. Validate JSON syntax
-jq empty .oodatcaa/work/SPRINT_STATUS.json && echo "PASS: Valid JSON"
-
-# 6. Check JSON contains required fields
-jq -e '.sprint_id, .progress, .wip, .exit_criteria' .oodatcaa/work/SPRINT_STATUS.json && echo "PASS: Required fields present"
-
-# 7. Verify progress percentage matches SPRINT_QUEUE.json
-QUEUE_TOTAL=$(jq '.metadata.total_tasks' .oodatcaa/work/SPRINT_QUEUE.json)
-QUEUE_DONE=$(jq '.metadata.done_tasks' .oodatcaa/work/SPRINT_QUEUE.json)
-STATUS_PCT=$(jq '.progress.percentage' .oodatcaa/work/SPRINT_STATUS.json)
-echo "Queue: $QUEUE_DONE / $QUEUE_TOTAL"
-echo "Status: $STATUS_PCT %"
-
-# 8. Performance check (must complete in < 5 seconds)
-time make sprint-status
-```
-
-**Expected Output:**
-- Sprint ID displayed (SPRINT-2025-002)
-- Progress percentage matches SPRINT_QUEUE.json
-- Task counts accurate (done, in_progress, blocked, etc.)
-- WIP utilization shows current/limit for each agent type
-- Exit criteria listed with status indicators
-- Color coding present (green/yellow/red)
-- Performance: < 5 seconds execution time
-
-**Pass Criteria:**
-- Command runs without errors
-- All required sections present
-- Data accuracy matches SPRINT_QUEUE.json
-- JSON validation passes
-- Performance target met (< 5s)
-
----
-
-### AC2: Sprint Completion Script Functional ✅
-
-**Requirement:** `make sprint-complete` finalizes current sprint with full archival
+**Requirement:** Operational runbook with comprehensive procedures
 
 **Test Procedure:**
 ```bash
-# NOTE: Use --dry-run to avoid actual sprint completion during testing
+# 1. Verify RUNBOOK.md exists
+test -f .oodatcaa/RUNBOOK.md && echo "PASS: RUNBOOK.md exists"
 
-# 1. Verify command exists
-make -n sprint-complete
+# 2. Count documented scenarios
+grep -c "^### Scenario:" .oodatcaa/RUNBOOK.md
 
-# 2. Test dry-run mode
-bash scripts/sprint-complete.sh --dry-run
+# 3. Verify categories covered
+grep -i "Sprint Operations\|Agent Operations\|System Maintenance" .oodatcaa/RUNBOOK.md
 
-# 3. Verify script checks exit criteria
-bash scripts/sprint-complete.sh --dry-run | grep -i "exit criteria"
+# 4. Check scenario structure (Procedure, Expected Output, Troubleshooting sections)
+grep -c "#### Procedure:" .oodatcaa/RUNBOOK.md
+grep -c "#### Expected Output:" .oodatcaa/RUNBOOK.md
+grep -c "#### Troubleshooting:" .oodatcaa/RUNBOOK.md
 
-# 4. Verify script would archive logs
-bash scripts/sprint-complete.sh --dry-run | grep -i "archive"
+# 5. Verify all commands have code blocks
+grep -A 3 "#### Procedure:" .oodatcaa/RUNBOOK.md | grep -c "^```"
 
-# 5. Verify script would update SPRINT_QUEUE.json
-bash scripts/sprint-complete.sh --dry-run | grep -i "sprint_queue.json"
+# 6. Check Sprint 2 systems documented
+grep -i "make sprint-status\|make sprint-complete\|daemon\|log rotation" .oodatcaa/RUNBOOK.md
 
-# 6. Verify script would create git tag
-bash scripts/sprint-complete.sh --dry-run | grep -i "git tag"
+# 7. Test example commands (safe ones)
+grep "^make sprint-status" .oodatcaa/RUNBOOK.md && make sprint-status --help 2>/dev/null || echo "Command documented"
 
-# 7. Verify script would generate retrospective
-bash scripts/sprint-complete.sh --dry-run | grep -i "retrospective"
+# 8. Check table of contents exists
+grep -i "table of contents\|## Contents" .oodatcaa/RUNBOOK.md
 
-# 8. Check script has error handling
-bash scripts/sprint-complete.sh --help
+# 9. Verify "See Also" cross-references
+grep -c "#### See Also:" .oodatcaa/RUNBOOK.md
 
-# 9. Verify atomic operations (temp files used)
-grep -i "temp" scripts/sprint-complete.sh || grep -i "atomic" scripts/sprint-complete.sh
-
-# 10. Test rollback capability
-bash scripts/sprint-complete.sh --help | grep -i "rollback"
-
-# 11. Performance check
-time bash scripts/sprint-complete.sh --dry-run
-```
-
-**Expected Behavior (Dry-Run):**
-- Validates sprint exit criteria
-- Shows actions that would be taken:
-  - Archive logs (calls rotate-logs.sh)
-  - Copy SPRINT_QUEUE.json to archive
-  - Update sprint status to "completed"
-  - Generate retrospective template
-  - Create git tag (sprint-N-complete)
-- No actual changes made in dry-run mode
-- Clear output with progress indicators
-- Error handling for incomplete sprints
-
-**Pass Criteria:**
-- Dry-run mode functional
-- All archival steps listed
-- Git tag creation shown
-- Retrospective generation shown
-- Error handling present
-- Performance < 5s (dry-run)
-
----
-
-### AC3: Sprint Initialization Script Functional ✅
-
-**Requirement:** `make sprint-new` initializes next sprint correctly
-
-**Test Procedure:**
-```bash
-# NOTE: Use dry-run or test environment to avoid actual sprint initialization
-
-# 1. Verify command exists
-make -n sprint-new
-
-# 2. Test dry-run mode (if available)
-bash scripts/sprint-new.sh --dry-run || bash scripts/sprint-new.sh --help
-
-# 3. Verify script checks for completed sprint
-grep -i "completed" scripts/sprint-new.sh
-
-# 4. Verify script increments sprint number
-grep -i "increment\|next.*sprint" scripts/sprint-new.sh
-
-# 5. Verify script creates directories
-grep -i "mkdir\|directory" scripts/sprint-new.sh
-
-# 6. Verify script resets log files
-grep -i "reset\|initialize.*log" scripts/sprint-new.sh
-
-# 7. Verify script updates SPRINT_QUEUE.json
-grep -i "SPRINT_QUEUE.json" scripts/sprint-new.sh
-
-# 8. Check pre-flight validation
-grep -i "validate\|check" scripts/sprint-new.sh
-
-# 9. Verify confirmation prompt (unless --force)
-grep -i "confirm\|prompt\|force" scripts/sprint-new.sh
-
-# 10. Test help output
-bash scripts/sprint-new.sh --help
-
-# 11. Performance estimate
-time bash scripts/sprint-new.sh --help
-```
-
-**Expected Behavior:**
-- Validates current sprint is "completed"
-- Checks no active tasks remain
-- Increments sprint number (e.g., 2 → 3)
-- Generates new sprint ID (SPRINT-YYYY-NNN)
-- Creates archive/sprint_N directory
-- Resets AGENT_LOG.md, SPRINT_LOG.md, SPRINT_PLAN.md
-- Creates empty SPRINT_QUEUE.json with new sprint
-- Updates SPRINT_GOAL.md status to "needs_planning"
-- Confirmation prompt before execution (unless --force)
-
-**Pass Criteria:**
-- Pre-flight checks present
-- Sprint number increment logic correct
-- Directory creation logic present
-- Log reset logic present
-- Confirmation prompt exists
-- Error handling for incomplete sprints
-
----
-
-### AC4: Sprint ID Consistency ✅
-
-**Requirement:** Sprint ID format (SPRINT-YYYY-NNN) consistent across all files
-
-**Test Procedure:**
-```bash
-# 1. Check SPRINT_QUEUE.json has sprint_id field
-jq -e '.metadata.sprint_id' .oodatcaa/work/SPRINT_QUEUE.json
-
-# 2. Verify sprint_id matches expected format
-jq -r '.metadata.sprint_id' .oodatcaa/work/SPRINT_QUEUE.json | grep -E "SPRINT-[0-9]{4}-[0-9]{3}"
-
-# 3. Check SPRINT_GOAL.md contains sprint ID
-grep -i "SPRINT-20" .oodatcaa/objectives/SPRINT_GOAL.md || grep -i "SPRINT-20" .oodatcaa/objectives/SPRINT_2_OBJECTIVE.md
-
-# 4. Verify sprint number and ID are consistent
-SPRINT_NUM=$(jq -r '.sprint' .oodatcaa/work/SPRINT_QUEUE.json)
-SPRINT_ID=$(jq -r '.metadata.sprint_id' .oodatcaa/work/SPRINT_QUEUE.json)
-echo "Sprint Number: $SPRINT_NUM"
-echo "Sprint ID: $SPRINT_ID"
-
-# 5. Search for sprint references in all OODATCAA files
-grep -r "sprint" .oodatcaa/work/*.json .oodatcaa/work/*.md | grep -i "sprint.* 2\|SPRINT-2025"
-
-# 6. Verify no inconsistent sprint references
-! grep -r "sprint.*1\|sprint.*3" .oodatcaa/work/SPRINT_QUEUE.json
-
-# 7. Check backward compatibility (sprint number still exists)
-jq -e '.sprint' .oodatcaa/work/SPRINT_QUEUE.json
-
-# 8. Verify metadata includes both sprint and sprint_id
-jq -e '.metadata | {sprint_id, sprint: .sprint}' .oodatcaa/work/SPRINT_QUEUE.json 2>/dev/null || jq -e '{sprint_id: .metadata.sprint_id, sprint: .sprint}' .oodatcaa/work/SPRINT_QUEUE.json
+# 10. Check file size (should be substantial)
+wc -l .oodatcaa/RUNBOOK.md | awk '{if ($1 > 500) print "PASS: Comprehensive"; else print "FAIL: Too short"}'
 ```
 
 **Expected Results:**
-- SPRINT_QUEUE.json contains `sprint_id` field
-- Sprint ID format: SPRINT-YYYY-NNN (e.g., SPRINT-2025-002)
-- Sprint number (integer) still present for backward compatibility
-- SPRINT_GOAL.md references sprint ID
-- All sprint references consistent across files
-- No orphaned or conflicting sprint identifiers
+- RUNBOOK.md file exists in `.oodatcaa/` directory
+- ≥20 scenarios documented (grep count ≥20)
+- All three categories present (Sprint, Agent, System)
+- Each scenario has Procedure, Expected Output, Troubleshooting sections
+- All procedures have code blocks with commands
+- P001-P004 systems referenced
+- Table of contents for navigation
+- Cross-references between scenarios
+- File is substantial (>500 lines)
 
 **Pass Criteria:**
-- Sprint ID field exists in SPRINT_QUEUE.json
-- Format validation passes
-- Consistency check across files passes
-- Backward compatibility maintained
+- ≥20 scenarios documented
+- All major scenario categories covered
+- Consistent structure across all scenarios
+- All commands formatted properly
+- Sprint 2 systems documented
 
 ---
 
-### AC5: Makefile Integration Complete ✅
+### AC2: TROUBLESHOOTING.md with 30+ Issues ✅
 
-**Requirement:** New sprint management targets integrated into Makefile
+**Requirement:** Comprehensive troubleshooting guide with diagnostic procedures
 
 **Test Procedure:**
 ```bash
-# 1. Verify all new targets exist
-make -n sprint-status
-make -n sprint-complete
-make -n sprint-new
+# 1. Verify TROUBLESHOOTING.md exists
+test -f .oodatcaa/TROUBLESHOOTING.md && echo "PASS: TROUBLESHOOTING.md exists"
 
-# 2. Check .PHONY declarations
-grep -i "sprint-status\|sprint-complete\|sprint-new" Makefile | grep -i "PHONY"
+# 2. Count documented issues
+grep -c "^### Issue:" .oodatcaa/TROUBLESHOOTING.md
 
-# 3. Verify targets call correct scripts
-grep "sprint-status:" Makefile -A 1
-grep "sprint-complete:" Makefile -A 1
-grep "sprint-new:" Makefile -A 1
+# 3. Verify categories covered
+grep -i "Agent Issues\|System Issues\|Process Issues" .oodatcaa/TROUBLESHOOTING.md
 
-# 4. Test sprint-status target
-make sprint-status > /tmp/sprint-status-output.txt 2>&1
-cat /tmp/sprint-status-output.txt
-test -s /tmp/sprint-status-output.txt && echo "PASS: Output generated"
+# 4. Check issue structure (Symptoms, Diagnosis, Solution, Prevention)
+grep -c "^\*\*Symptoms:\*\*" .oodatcaa/TROUBLESHOOTING.md
+grep -c "^\*\*Diagnosis:\*\*" .oodatcaa/TROUBLESHOOTING.md
+grep -c "^\*\*Solution:\*\*" .oodatcaa/TROUBLESHOOTING.md
+grep -c "^\*\*Prevention:\*\*" .oodatcaa/TROUBLESHOOTING.md
 
-# 5. Verify existing targets still work
-make -n fmt
-make -n gates
-make -n test
+# 5. Verify diagnostic commands have code blocks
+grep -A 3 "**Diagnosis:**" .oodatcaa/TROUBLESHOOTING.md | grep -c "^```"
 
-# 6. Check help output (if available)
-grep -i "sprint" Makefile
+# 6. Check common Sprint 2 issues documented
+grep -i "SPRINT_QUEUE.json\|lease\|lock\|quality gate\|log rotation" .oodatcaa/TROUBLESHOOTING.md
 
-# 7. Verify no syntax errors in Makefile
-make -n --dry-run all 2>&1 | grep -i "error" && echo "FAIL: Makefile syntax error" || echo "PASS: Makefile syntax OK"
+# 7. Verify "Related Issues" cross-references
+grep -c "^\*\*Related Issues:\*\*" .oodatcaa/TROUBLESHOOTING.md
+
+# 8. Check file size
+wc -l .oodatcaa/TROUBLESHOOTING.md | awk '{if ($1 > 600) print "PASS: Comprehensive"; else print "FAIL: Too short"}'
+
+# 9. Verify index or TOC
+grep -i "table of contents\|## Contents\|## Index" .oodatcaa/TROUBLESHOOTING.md
+
+# 10. Test diagnostic commands are safe (read-only)
+! grep "rm -rf\|--force\|DELETE\|DROP" .oodatcaa/TROUBLESHOOTING.md && echo "PASS: No destructive commands"
 ```
 
-**Expected Integration:**
-```makefile
-# Sprint Management
-sprint-status:
-	bash scripts/sprint-dashboard.sh
-
-sprint-complete:
-	bash scripts/sprint-complete.sh $(if $(FORCE),--force,)
-
-sprint-new:
-	bash scripts/sprint-new.sh
-
-.PHONY: sprint-status sprint-complete sprint-new
-```
+**Expected Results:**
+- TROUBLESHOOTING.md file exists
+- ≥30 issues documented (grep count ≥30)
+- All three categories present (Agent, System, Process)
+- Each issue has Symptoms, Diagnosis, Solution, Prevention
+- Diagnostic commands in code blocks
+- Common Sprint 2 issues covered
+- Cross-references between related issues
+- File is substantial (>600 lines)
+- Table of contents for navigation
+- No destructive commands in examples
 
 **Pass Criteria:**
-- All three targets exist and callable
-- .PHONY declarations present
-- Targets call correct scripts
-- No Makefile syntax errors
-- Existing targets unaffected
+- ≥30 issues documented
+- All major issue categories covered
+- Consistent structure across all issues
+- Diagnostic procedures safe and tested
+- Sprint 2 common issues included
 
 ---
 
-### AC6: Documentation Complete ✅
+### AC3: ONBOARDING.md with Quick Start Path ✅
 
-**Requirement:** Comprehensive documentation for sprint management system
+**Requirement:** Developer onboarding guide with 15-minute quick start
 
 **Test Procedure:**
 ```bash
-# 1. Check README updated with sprint management section
-grep -i "sprint management\|sprint.*command" README.md
+# 1. Verify ONBOARDING.md exists
+test -f .oodatcaa/ONBOARDING.md && echo "PASS: ONBOARDING.md exists"
 
-# 2. Verify SPRINT_MANAGEMENT.md exists
-test -f docs/SPRINT_MANAGEMENT.md && echo "PASS: Sprint management docs exist"
+# 2. Check main sections present
+grep "## Welcome\|## Quick Start\|## Core Concepts\|## First Sprint\|## Common Tasks\|## Next Steps" .oodatcaa/ONBOARDING.md
 
-# 3. Check script headers have usage documentation
-head -30 scripts/sprint-dashboard.sh | grep -i "usage\|example"
-head -30 scripts/sprint-complete.sh | grep -i "usage\|example"
-head -30 scripts/sprint-new.sh | grep -i "usage\|example"
+# 3. Verify Quick Start is actionable
+grep -A 20 "## Quick Start" .oodatcaa/ONBOARDING.md | grep -E "Step [0-9]:|^[0-9]+\."
 
-# 4. Verify help flags work
-bash scripts/sprint-dashboard.sh --help || bash scripts/sprint-dashboard.sh -h
-bash scripts/sprint-complete.sh --help
-bash scripts/sprint-new.sh --help
+# 4. Check Quick Start time estimate
+grep -i "15 minutes\|15-minute\|quick start" .oodatcaa/ONBOARDING.md
 
-# 5. Check examples in documentation
-grep -i "example\|usage" docs/SPRINT_MANAGEMENT.md
+# 5. Verify prerequisites section
+grep -i "prerequisite\|requirements\|before you start" .oodatcaa/ONBOARDING.md
 
-# 6. Verify troubleshooting section
-grep -i "troubleshoot\|error\|common.*issue" docs/SPRINT_MANAGEMENT.md
+# 6. Check for Sprint 1 walkthrough/example
+grep -i "sprint 1\|case study\|example sprint\|walkthrough" .oodatcaa/ONBOARDING.md
 
-# 7. Check schema documentation for SPRINT_STATUS.json
-grep -i "schema\|format\|field" docs/SPRINT_MANAGEMENT.md | grep -i "json"
+# 7. Verify links to other docs
+grep -c "\[.*\](\./" .oodatcaa/ONBOARDING.md
 
-# 8. Verify workflow examples exist
-grep -i "workflow\|step.*by.*step" docs/SPRINT_MANAGEMENT.md
+# 8. Check diagram references
+grep -i "diagram\|architecture\|flow" .oodatcaa/ONBOARDING.md
+
+# 9. Verify "Next Steps" section exists
+grep -A 10 "## Next Steps" .oodatcaa/ONBOARDING.md
+
+# 10. Check file is beginner-friendly (reasonable length)
+wc -l .oodatcaa/ONBOARDING.md | awk '{if ($1 > 200 && $1 < 800) print "PASS: Good length"; else print "CHECK: Length"}'
 ```
 
-**Required Documentation:**
-1. **README.md:** Sprint management section
-   - Overview of new commands
-   - Quick start guide
-   - Link to detailed docs
-
-2. **docs/SPRINT_MANAGEMENT.md:** Complete reference
-   - System overview
-   - Command reference (sprint-status, sprint-complete, sprint-new)
-   - Workflow examples
-   - SPRINT_STATUS.json schema
-   - Troubleshooting guide
-
-3. **Script Headers:** Each script must have:
-   - Description
-   - Usage syntax
-   - Options/flags
-   - Examples
-   - Exit codes
+**Expected Results:**
+- ONBOARDING.md file exists
+- All 6 main sections present (Welcome, Quick Start, Core Concepts, First Sprint, Common Tasks, Next Steps)
+- Quick Start has numbered steps
+- 15-minute time estimate mentioned
+- Prerequisites section exists
+- Sprint 1 walkthrough included as example
+- Multiple links to other documentation
+- Architecture/diagram references
+- Next Steps provides continuation path
+- File length reasonable (200-800 lines)
 
 **Pass Criteria:**
-- README.md updated
-- SPRINT_MANAGEMENT.md exists and complete
-- All scripts have comprehensive headers
-- Help flags functional
-- Examples and troubleshooting present
+- Complete onboarding structure
+- Quick start actionable in 15 minutes
+- Sprint 1 example included
+- Clear path to deeper documentation
+- Beginner-friendly language
 
 ---
 
-### AC7: Zero Regressions ✅
+### AC4: All Agent Prompts Enhanced with Examples ✅
 
-**Requirement:** Existing functionality unaffected by sprint management changes
+**Requirement:** 10 agent prompt files enhanced with examples, edge cases, and error handling
 
 **Test Procedure:**
 ```bash
-# 1. Verify all existing Makefile targets work
-make fmt
-make gates
-make test
-make build
-make audit
+# 1. List all agent prompts
+ls -1 .oodatcaa/prompts/*.md | grep -v README
 
-# 2. Check existing scripts unaffected
-bash scripts/rotate-logs.sh --dry-run
-bash scripts/generate-archive-index.sh
-bash scripts/validate-env.py
+# 2. Count agent prompts
+ls -1 .oodatcaa/prompts/*.md | grep -v README | wc -l
 
-# 3. Verify SPRINT_QUEUE.json structure preserved
-# Required fields must still exist
-jq -e '.sprint, .status, .wip_limits, .tasks' .oodatcaa/work/SPRINT_QUEUE.json
+# 3. Check each prompt has "Examples" section
+for file in .oodatcaa/prompts/{negotiator,sprint-planner,planner,builder,tester,refiner,integrator,project-completion-detector,sprint-close,triage}.md; do
+    grep -q "## Examples" "$file" && echo "PASS: $file has examples" || echo "FAIL: $file missing examples"
+done
 
-# 4. Check log rotation still works
-bash scripts/rotate-logs.sh --dry-run | grep -i "success\|complete"
+# 4. Check for "Edge Cases" section
+for file in .oodatcaa/prompts/{negotiator,planner,builder,tester,refiner,integrator}.md; do
+    grep -q "## Edge Cases\|### Edge Case" "$file" && echo "PASS: $file has edge cases" || echo "FAIL: $file missing edge cases"
+done
 
-# 5. Verify archive structure intact
-test -d .oodatcaa/work/archive && echo "PASS: Archive directory exists"
-test -d .oodatcaa/work/archive/sprint_1 && echo "PASS: Sprint 1 archive preserved"
-test -d .oodatcaa/work/archive/sprint_2 && echo "PASS: Sprint 2 archive exists"
+# 5. Check for "Common Errors" section
+for file in .oodatcaa/prompts/{planner,builder,tester,refiner,integrator}.md; do
+    grep -q "## Common Errors\|### Error:" "$file" && echo "PASS: $file has error docs" || echo "FAIL: $file missing errors"
+done
 
-# 6. Check SPRINT_LOG.md history preserved
-test -f .oodatcaa/work/SPRINT_LOG.md && echo "PASS: Sprint log exists"
-grep -i "sprint 1 complete" .oodatcaa/work/SPRINT_LOG.md && echo "PASS: Sprint 1 history preserved"
+# 6. Verify examples have structure (Input State, Actions, Output, Outcome)
+grep -c "**Input State:**\|**Actions Taken:**\|**Output:**\|**Outcome:**" .oodatcaa/prompts/planner.md
 
-# 7. Verify existing reports intact
-test -d .oodatcaa/work/reports && echo "PASS: Reports directory exists"
-ls .oodatcaa/work/reports/P002 && echo "PASS: P002 reports preserved"
+# 7. Count total examples added across all prompts
+grep -c "### Example [0-9]" .oodatcaa/prompts/*.md
 
-# 8. Test existing agent workflows
-# Planner should still work
-test -f .oodatcaa/prompts/planner.md && echo "PASS: Planner prompt exists"
+# 8. Count total edge cases documented
+grep -c "### Edge Case" .oodatcaa/prompts/*.md
 
-# 9. Check quality gates still pass
-black --check . || echo "Check if new Python files need formatting"
-ruff check . | wc -l  # Should be ≤29 (Sprint 2 baseline)
-pytest -q  # Should pass all tests
+# 9. Count total errors documented
+grep -c "### Error:" .oodatcaa/prompts/*.md
+
+# 10. Check for "Related Agents" or "See Also" sections
+grep -c "## Related Agents\|## See Also" .oodatcaa/prompts/*.md
 ```
 
-**Critical Regressions to Avoid:**
-- SPRINT_QUEUE.json schema breaking changes
-- Log rotation system failures
-- Archive corruption
-- Report generation issues
-- Makefile target conflicts
-- Agent workflow disruptions
+**Expected Results:**
+- ≥10 agent prompt files exist
+- All core agent prompts have "Examples" section (negotiator, planner, builder, tester, refiner, integrator)
+- ≥6 prompts have "Edge Cases" section
+- ≥5 prompts have "Common Errors" section
+- Examples have consistent structure (Input→Actions→Output→Outcome)
+- ≥20 total examples across all prompts (2 per agent minimum)
+- ≥15 edge cases documented across prompts
+- ≥15 errors documented across prompts
+- Cross-references between related agents
 
 **Pass Criteria:**
-- All existing tests pass
-- All existing Makefile targets work
-- SPRINT_QUEUE.json backward compatible
-- Archive structure preserved
-- No data loss in logs or reports
-- Ruff errors ≤29 (Sprint 2 baseline)
+- All 10 target prompts enhanced
+- ≥2 examples per core agent
+- ≥3 edge cases per core agent
+- ≥3 errors per core agent
+- Consistent documentation structure
 
 ---
 
-### AC8: Sprint Transitions Are Atomic ✅
+### AC5: ARCHITECTURE.md Complete with Diagrams ✅
 
-**Requirement:** Sprint transitions complete fully or roll back (no partial states)
+**Requirement:** System architecture documentation with 5 Mermaid diagrams
 
 **Test Procedure:**
 ```bash
-# 1. Verify sprint-complete.sh uses atomic operations
-grep -i "temp\|tmp\|atomic\|mv.*-f" scripts/sprint-complete.sh
+# 1. Verify ARCHITECTURE.md exists
+test -f .oodatcaa/ARCHITECTURE.md && echo "PASS: ARCHITECTURE.md exists"
 
-# 2. Check error handling exists
-grep -i "trap\|error\|exit" scripts/sprint-complete.sh
+# 2. Check main sections present
+grep "## System Overview\|## Agent Architecture\|## Data Architecture\|## Process Architecture\|## Integration Points\|## Technical Details" .oodatcaa/ARCHITECTURE.md
 
-# 3. Verify rollback capability
-grep -i "rollback\|restore\|backup" scripts/sprint-complete.sh
+# 3. Count Mermaid diagrams
+grep -c "^```mermaid" .oodatcaa/ARCHITECTURE.md
 
-# 4. Test validation before state changes
-grep -i "validate\|check.*before" scripts/sprint-complete.sh
+# 4. Verify diagram types
+grep -A 2 "^```mermaid" .oodatcaa/ARCHITECTURE.md | grep -E "graph|flowchart|stateDiagram|sequenceDiagram"
 
-# 5. Verify sprint-new.sh has pre-flight checks
-grep -i "pre.*flight\|validate\|check.*completed" scripts/sprint-new.sh
+# 5. Check P001-P004 systems documented in Integration Points
+grep -A 20 "## Integration Points" .oodatcaa/ARCHITECTURE.md | grep -i "P001\|daemon\|P002\|log rotation\|P003\|sprint management\|P004\|OODATCAA"
 
-# 6. Check for file locks during transitions
-grep -i "lock\|mutex\|flock" scripts/sprint-complete.sh scripts/sprint-new.sh
+# 6. Verify JSON schemas documented
+grep -i "SPRINT_QUEUE.json\|SPRINT_STATUS.json" .oodatcaa/ARCHITECTURE.md
 
-# 7. Test dry-run shows full transaction
-bash scripts/sprint-complete.sh --dry-run | grep -c "step\|phase\|action" || echo "Check transaction steps"
+# 7. Check technical details (leases, locks, tags, archives)
+grep -i "lease\|lock\|baseline.*tag\|archive" .oodatcaa/ARCHITECTURE.md
 
-# 8. Verify cleanup on error
-grep -i "cleanup.*error\|trap.*EXIT" scripts/sprint-complete.sh
+# 8. Verify file structure diagram/description
+grep -i "file structure\|directory.*structure" .oodatcaa/ARCHITECTURE.md
 
-# 9. Simulate error during transition (manual test)
-# This requires injecting an error in the script
-echo "Manual test: Inject error in sprint-complete.sh and verify rollback"
+# 9. Check component responsibilities documented
+grep -c "responsibility\|responsibilities\|role" .oodatcaa/ARCHITECTURE.md
 
-# 10. Check SPRINT_QUEUE.json is never left in invalid state
-# Validate JSON after any operation
-jq empty .oodatcaa/work/SPRINT_QUEUE.json && echo "PASS: JSON valid after operations"
+# 10. Verify file size is substantial
+wc -l .oodatcaa/ARCHITECTURE.md | awk '{if ($1 > 300) print "PASS: Comprehensive"; else print "FAIL: Too short"}'
 ```
 
-**Atomic Operation Requirements:**
-1. **Temp File Pattern:**
-   ```bash
-   # Good example
-   cp SPRINT_QUEUE.json SPRINT_QUEUE.json.tmp
-   # Modify temp file
-   jq '.status = "completed"' SPRINT_QUEUE.json.tmp > SPRINT_QUEUE.json.new
-   # Atomic rename
-   mv -f SPRINT_QUEUE.json.new SPRINT_QUEUE.json
-   ```
-
-2. **Error Handling:**
-   ```bash
-   set -euo pipefail  # Fail fast
-   trap cleanup EXIT   # Always cleanup
-   ```
-
-3. **Validation Before Commit:**
-   ```bash
-   # Validate changes before making permanent
-   jq empty SPRINT_QUEUE.json.new || { echo "Invalid JSON"; exit 1; }
-   ```
+**Expected Results:**
+- ARCHITECTURE.md file exists
+- All 6 main sections present
+- ≥5 Mermaid diagrams (exact count ≥5)
+- Diagrams use appropriate types (graph, flowchart, stateDiagram, sequence)
+- P001-P004 integration documented
+- JSON schemas explained
+- Technical mechanisms documented (leases, locks, tags, archives)
+- File structure explained
+- Component responsibilities clear
+- File is substantial (>300 lines)
 
 **Pass Criteria:**
-- Temp files used for modifications
-- Atomic renames (mv -f)
-- Error handling with trap
-- Pre-flight validation
-- Rollback capability
-- No partial state transitions
+- All sections complete
+- 5 diagrams render correctly
+- P001-P004 systems integrated
+- Technical details accurate
+- Clear architecture overview
 
 ---
 
-### AC9: Performance Targets Met ✅
+### AC6: Documentation Navigation Improved ✅
 
-**Requirement:** All sprint management commands complete in < 5 seconds
+**Requirement:** Clear navigation across all OODATCAA documentation
 
 **Test Procedure:**
 ```bash
-# 1. Benchmark sprint-status
-echo "Testing sprint-status performance..."
-time make sprint-status
-# Expected: < 5 seconds (real time)
+# 1. Check .oodatcaa/README.md has navigation index
+grep -A 20 "## Documentation\|## Navigation\|## Index" .oodatcaa/README.md
 
-# 2. Benchmark sprint-dashboard.sh directly
-time bash scripts/sprint-dashboard.sh
-# Expected: < 5 seconds
+# 2. Verify main README.md links to OODATCAA docs
+grep -c "\.oodatcaa/" README.md
 
-# 3. Benchmark SPRINT_STATUS.json generation
-time bash scripts/sprint-dashboard.sh > /dev/null 2>&1
-test -f .oodatcaa/work/SPRINT_STATUS.json && echo "PASS: JSON generated"
-# Expected: < 5 seconds
+# 3. Count total OODATCAA documentation files
+find .oodatcaa -name "*.md" -type f | wc -l
 
-# 4. Benchmark sprint-complete dry-run
-time bash scripts/sprint-complete.sh --dry-run
-# Expected: < 5 seconds (dry-run is fast)
+# 4. Check for categorization (getting started, operations, reference)
+grep -i "getting started\|operations\|reference\|guides" .oodatcaa/README.md
 
-# 5. Benchmark sprint-new dry-run (if available)
-time bash scripts/sprint-new.sh --dry-run 2>/dev/null || echo "No dry-run mode"
-# Expected: < 5 seconds
+# 5. Verify QUICK_START.md references ONBOARDING.md
+grep -i "onboarding" .oodatcaa/QUICK_START.md || echo "Check if consolidated"
 
-# 6. Test performance with large sprint (stress test)
-# Simulate sprint with many tasks
-echo "Simulating large sprint..."
-# This would require temporarily modifying SPRINT_QUEUE.json
-# Skip unless needed
+# 6. Check START_HERE.md points to right docs
+grep -c "\.md" .oodatcaa/START_HERE.md
 
-# 7. Verify no slow operations (manual review)
-grep -i "sleep\|wait" scripts/sprint-dashboard.sh scripts/sprint-complete.sh scripts/sprint-new.sh || echo "No intentional delays"
+# 7. Verify navigation consistency across key docs
+for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
+    grep -q "## See Also\|## Related" "$file" && echo "PASS: $file has navigation" || echo "FAIL: $file missing navigation"
+done
 
-# 8. Profile script execution (optional)
-bash -x scripts/sprint-dashboard.sh 2>&1 | tail -50
-# Check for any obvious bottlenecks
+# 8. Check cross-links between RUNBOOK and TROUBLESHOOTING
+grep -c "TROUBLESHOOTING.md" .oodatcaa/RUNBOOK.md
+grep -c "RUNBOOK.md" .oodatcaa/TROUBLESHOOTING.md
 
-# 9. Memory usage check
-/usr/bin/time -v bash scripts/sprint-dashboard.sh 2>&1 | grep "Maximum resident"
-# Should be minimal (< 50MB)
+# 9. Verify ONBOARDING links to OODATCAA_LOOP_GUIDE
+grep -c "OODATCAA_LOOP_GUIDE" .oodatcaa/ONBOARDING.md
+
+# 10. Count total cross-references in new docs
+grep -c "](\./" .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md
 ```
 
-**Performance Requirements:**
-- `make sprint-status`: < 5 seconds
-- `make sprint-complete` (dry-run): < 5 seconds
-- `make sprint-new` (dry-run): < 5 seconds
-- Memory usage: < 50MB per script
-- No network calls (all local operations)
+**Expected Results:**
+- .oodatcaa/README.md has comprehensive navigation index
+- Main README.md links to OODATCAA documentation
+- ≥20 documentation files in `.oodatcaa/`
+- Documentation categorized by purpose
+- QUICK_START.md and ONBOARDING.md are integrated or differentiated
+- START_HERE.md has correct pointers
+- All new docs have "See Also" or "Related" sections
+- RUNBOOK ↔ TROUBLESHOOTING cross-linked
+- ONBOARDING links to OODATCAA_LOOP_GUIDE
+- ≥30 cross-references in new documentation
 
 **Pass Criteria:**
-- All commands complete within 5-second target
-- No obvious performance bottlenecks
-- Memory usage reasonable
-- Scripts optimized (no unnecessary operations)
+- Clear navigation from main README
+- All new docs have navigation sections
+- Key docs cross-reference each other
+- Categorization clear
+- Easy to find related content
 
 ---
 
-### AC10: Integration with Existing Infrastructure ✅
+### AC7: All Documentation Cross-Linked ✅
 
-**Requirement:** Sprint management integrates seamlessly with existing systems
+**Requirement:** Comprehensive cross-linking between related documentation
 
 **Test Procedure:**
 ```bash
-# 1. Verify integration with log rotation (P002)
-# Sprint completion should trigger log rotation
-grep -i "rotate.*log\|log.*rotat" scripts/sprint-complete.sh
+# 1. Extract all markdown links from new docs
+grep -h "](\./" .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md | wc -l
 
-# 2. Check integration with archive system
-# Sprint complete should use existing archive structure
-grep -i "archive.*sprint" scripts/sprint-complete.sh
-test -d .oodatcaa/work/archive && echo "PASS: Archive structure used"
+# 2. Verify links are valid (targets exist)
+for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
+    echo "Checking links in $file..."
+    grep -o "](\.oodatcaa/[^)]*)" "$file" 2>/dev/null | sed 's/](//' | sed 's/)//' | while read -r link; do
+        test -f ".oodatcaa/$link" || echo "BROKEN: $link in $file"
+    done
+done
 
-# 3. Verify SPRINT_QUEUE.json compatibility
-# New fields added without breaking existing structure
-jq -e '.sprint, .status, .wip_limits, .tasks, .metadata' .oodatcaa/work/SPRINT_QUEUE.json
+# 3. Check RUNBOOK links to agent prompts
+grep -c "prompts/" .oodatcaa/RUNBOOK.md
 
-# 4. Check OODATCAA loop documentation reference (P004)
-# Sprint management should reference OODATCAA loop
-grep -i "oodatcaa\|observe.*orient.*decide" docs/SPRINT_MANAGEMENT.md
+# 4. Check TROUBLESHOOTING links to RUNBOOK scenarios
+grep -c "RUNBOOK.md#" .oodatcaa/TROUBLESHOOTING.md
 
-# 5. Verify Makefile doesn't conflict with existing targets
-make -n fmt gates test build audit sprint-status sprint-complete sprint-new
-echo "All targets callable without conflicts"
+# 5. Verify ONBOARDING links to multiple docs
+grep -o "](\.oodatcaa/[^)]*)" .oodatcaa/ONBOARDING.md | wc -l
 
-# 6. Test Negotiator compatibility
-# Negotiator should be able to call sprint-complete
-grep -i "sprint.*complete\|finalize.*sprint" .oodatcaa/prompts/negotiator.md || echo "Check Negotiator integration"
+# 6. Check ARCHITECTURE links to P004 (OODATCAA_LOOP_GUIDE)
+grep -c "OODATCAA_LOOP_GUIDE" .oodatcaa/ARCHITECTURE.md
 
-# 7. Verify Sprint Planner integration
-# sprint-new should trigger Sprint Planner
-grep -i "sprint.*planner\|planner.*trigger" scripts/sprint-new.sh
+# 7. Verify bidirectional links (A→B and B→A)
+# RUNBOOK → TROUBLESHOOTING
+grep -q "TROUBLESHOOTING.md" .oodatcaa/RUNBOOK.md && echo "PASS: RUNBOOK→TROUBLESHOOTING"
+# TROUBLESHOOTING → RUNBOOK
+grep -q "RUNBOOK.md" .oodatcaa/TROUBLESHOOTING.md && echo "PASS: TROUBLESHOOTING→RUNBOOK"
 
-# 8. Check git tag format compatibility
-# Tags should follow existing pattern (pre/, feat/, sprint-)
-grep -i "git tag" scripts/sprint-complete.sh
+# 8. Check ONBOARDING → RUNBOOK
+grep -q "RUNBOOK.md" .oodatcaa/ONBOARDING.md && echo "PASS: ONBOARDING→RUNBOOK"
 
-# 9. Verify report structure compatibility
-# Sprint retrospective should follow existing report patterns
-ls .oodatcaa/work/reports/P*/planner.md && echo "PASS: Report pattern known"
+# 9. Check ARCHITECTURE → all new docs
+for doc in RUNBOOK TROUBLESHOOTING ONBOARDING; do
+    grep -q "$doc.md" .oodatcaa/ARCHITECTURE.md && echo "PASS: ARCHITECTURE→$doc" || echo "CHECK: ARCHITECTURE→$doc"
+done
 
-# 10. Test with P004 loop metrics
-# Sprint dashboard should show loop metrics if available
-make sprint-status | grep -i "loop\|adapt\|iteration" || echo "Loop metrics optional"
+# 10. Verify no broken links
+! find .oodatcaa -name "*.md" -exec grep -l "](broken\|](TODO\|](FIXME" {} \; && echo "PASS: No placeholder links"
 ```
 
-**Integration Points:**
-1. **P002 (Log Rotation):** Sprint completion calls rotate-logs.sh
-2. **P004 (OODATCAA Docs):** References loop stages and adaptation
-3. **Archive System:** Uses existing `.oodatcaa/work/archive/sprint_N/` structure
-4. **SPRINT_QUEUE.json:** Additive changes, backward compatible
-5. **Makefile:** New targets don't conflict with existing
-6. **Negotiator:** Can call sprint-complete when exit criteria met
-7. **Sprint Planner:** Triggered by sprint-new for next sprint goal
-8. **Git Tags:** Follow existing naming conventions
-9. **Reports:** Retrospective uses existing report structure
+**Expected Results:**
+- ≥30 markdown links in new documentation
+- All link targets exist (no broken links)
+- RUNBOOK references agent prompts (scenarios use agents)
+- TROUBLESHOOTING links to RUNBOOK scenarios
+- ONBOARDING links to multiple docs (≥5 different files)
+- ARCHITECTURE links to OODATCAA_LOOP_GUIDE
+- Bidirectional links present (RUNBOOK↔TROUBLESHOOTING)
+- ONBOARDING links to RUNBOOK for operations
+- ARCHITECTURE links to all new docs
+- No placeholder or broken links
 
 **Pass Criteria:**
-- Log rotation integration verified
-- Archive structure compatible
-- SPRINT_QUEUE.json backward compatible
-- No Makefile conflicts
-- Negotiator can use new commands
-- Sprint Planner integration path clear
-- Git tag format consistent
-- Report structure compatible
+- No broken links
+- ≥30 cross-references
+- Bidirectional linking implemented
+- Key relationships linked (scenarios↔issues, onboarding↔operations)
+- All new docs integrated into documentation web
+
+---
+
+### AC8: Quality Checks Pass ✅
+
+**Requirement:** Documentation quality validated (links, formatting, commands)
+
+**Test Procedure:**
+```bash
+# 1. Validate all markdown links
+echo "Checking markdown links..."
+for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
+    grep -o "](\.oodatcaa/[^)]*)" "$file" 2>/dev/null | while read -r link_part; do
+        link=$(echo "$link_part" | sed 's/](//' | sed 's/)//')
+        test -f "$link" && echo "✓ $link" || echo "✗ BROKEN: $link in $(basename $file)"
+    done
+done
+
+# 2. Check markdown formatting consistency
+# Headers should use ## not underlines
+! grep -E "^={3,}|^-{3,}" .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md && echo "PASS: Consistent header formatting"
+
+# 3. Verify code blocks are closed
+for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
+    open=$(grep -c "^```" "$file")
+    if [ $((open % 2)) -eq 0 ]; then
+        echo "PASS: $file has balanced code blocks"
+    else
+        echo "FAIL: $file has unclosed code blocks"
+    fi
+done
+
+# 4. Test command examples (safe ones)
+echo "Testing safe commands from RUNBOOK..."
+# Extract make commands and test they exist
+grep "^make " .oodatcaa/RUNBOOK.md | sort -u | while read -r cmd; do
+    target=$(echo "$cmd" | awk '{print $2}')
+    make -n "$target" 2>/dev/null && echo "✓ $cmd" || echo "✗ $cmd (not in Makefile)"
+done
+
+# 5. Check for consistent terminology
+# Should use "Sprint" not "sprint", "Agent" not "agent" in titles
+grep -E "### [a-z]|## [a-z]" .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md | head -5
+
+# 6. Verify date stamps present
+for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
+    grep -q "Last Updated:\|Updated:\|Date:" "$file" && echo "PASS: $file has date" || echo "FAIL: $file missing date"
+done
+
+# 7. Check version numbers
+for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md; do
+    grep -q "Version:\|v[0-9]\." "$file" && echo "PASS: $file has version" || echo "CHECK: $file version"
+done
+
+# 8. Verify table of contents in long docs
+for file in .oodatcaa/{RUNBOOK,TROUBLESHOOTING}.md; do
+    lines=$(wc -l < "$file")
+    if [ "$lines" -gt 500 ]; then
+        grep -q "## Table of Contents\|## Contents" "$file" && echo "PASS: $file has TOC" || echo "FAIL: $file needs TOC"
+    fi
+done
+
+# 9. Check spell check (basic - common technical terms)
+! grep -i "occured\|recieve\|seperate\|teh " .oodatcaa/{RUNBOOK,TROUBLESHOOTING,ONBOARDING,ARCHITECTURE}.md && echo "PASS: No obvious typos"
+
+# 10. Verify all quality gates pass (no code changes expected)
+make gates 2>&1 | grep -E "black|ruff|mypy"
+```
+
+**Expected Results:**
+- All markdown links valid (no broken links)
+- Consistent header formatting (## not underlines)
+- All code blocks balanced (opened and closed)
+- Make commands in examples exist in Makefile
+- Consistent capitalization in headers
+- All new docs have date stamps
+- Version numbers present
+- Long docs (>500 lines) have table of contents
+- No obvious spelling errors
+- All quality gates pass (black, ruff, mypy maintained)
+
+**Pass Criteria:**
+- Zero broken links
+- All code blocks balanced
+- Commands are valid
+- Date stamps present
+- Quality gates maintained
+- Professional formatting
+
+---
+
+### AC9: Existing Documentation Consolidated ✅
+
+**Requirement:** Existing docs reviewed and integrated with new documentation
+
+**Test Procedure:**
+```bash
+# 1. Check for documentation overlap
+# Compare QUICK_START.md vs ONBOARDING.md
+diff -u <(head -50 .oodatcaa/QUICK_START.md) <(head -50 .oodatcaa/ONBOARDING.md) | head -20
+
+# 2. Verify START_HERE.md updated to reference ONBOARDING
+grep -i "onboarding" .oodatcaa/START_HERE.md && echo "PASS: START_HERE references ONBOARDING"
+
+# 3. Check AGENT_MANAGEMENT.md integrated with new docs
+grep -c "RUNBOOK\|TROUBLESHOOTING" .oodatcaa/AGENT_MANAGEMENT.md
+
+# 4. Verify WORKFLOW_ANALYSIS.md references ARCHITECTURE
+grep -c "ARCHITECTURE" .oodatcaa/WORKFLOW_ANALYSIS.md || echo "Check if consolidated"
+
+# 5. Check PARALLEL_AGENTS_GUIDE integrated
+grep -c "RUNBOOK\|operational" .oodatcaa/PARALLEL_AGENTS_GUIDE.md
+
+# 6. Verify main README.md updated
+grep -A 10 "## Documentation" README.md | grep -c "RUNBOOK\|TROUBLESHOOTING\|ONBOARDING\|ARCHITECTURE"
+
+# 7. Check for redundant documentation files
+find .oodatcaa -name "*_OLD.md" -o -name "*_BACKUP.md" -o -name "*.md~" | wc -l
+
+# 8. Verify consistent navigation across old and new docs
+for file in .oodatcaa/{QUICK_START,AGENT_MANAGEMENT,WORKFLOW_ANALYSIS}.md; do
+    grep -q "## See Also\|## Related\|## Documentation" "$file" && echo "PASS: $file has navigation" || echo "CHECK: $file navigation"
+done
+
+# 9. Check documentation is not duplicated
+# Should not have same content in multiple files
+echo "Checking for major content duplication..."
+# Manual review of key sections
+
+# 10. Verify documentation hierarchy is clear
+cat .oodatcaa/README.md | grep -A 30 "## Documentation"
+```
+
+**Expected Results:**
+- QUICK_START.md and ONBOARDING.md differentiated or consolidated
+- START_HERE.md references ONBOARDING.md
+- AGENT_MANAGEMENT.md cross-references new docs
+- WORKFLOW_ANALYSIS.md references ARCHITECTURE.md or consolidated
+- PARALLEL_AGENTS_GUIDE.md integrated with RUNBOOK
+- Main README.md lists all new docs
+- No redundant backup files
+- Consistent navigation in existing docs
+- No major content duplication
+- Clear documentation hierarchy
+
+**Pass Criteria:**
+- Overlap addressed (differentiated or merged)
+- Existing docs reference new docs
+- No obsolete files
+- Clear hierarchy from getting-started → reference
+- Consolidated where appropriate
+
+---
+
+### AC10: Sprint 2 Systems (P001-P004) Documented ✅
+
+**Requirement:** All Sprint 2 infrastructure documented in runbook and guides
+
+**Test Procedure:**
+```bash
+# 1. Check P001 (Background Agent Daemon) documentation
+grep -i "daemon\|background agent\|agent.*process" .oodatcaa/{RUNBOOK,ONBOARDING,ARCHITECTURE}.md
+
+# 2. Verify P002 (Log Rotation) procedures
+grep -i "log rotation\|rotate.*log\|archive.*log" .oodatcaa/{RUNBOOK,TROUBLESHOOTING}.md
+
+# 3. Check P003 (Sprint Management) scenarios
+grep -i "make sprint-status\|make sprint-complete\|make sprint-new\|sprint.*dashboard" .oodatcaa/{RUNBOOK,ONBOARDING}.md
+
+# 4. Verify P004 (OODATCAA Loop) references
+grep -c "OODATCAA_LOOP_GUIDE\|OODATCAA loop\|8.*stage" .oodatcaa/{ONBOARDING,ARCHITECTURE}.md
+
+# 5. Check P001 daemon commands documented
+grep -i "make agents-start\|make agents-stop\|agent.*daemon" .oodatcaa/RUNBOOK.md
+
+# 6. Verify P002 rotation commands
+grep "bash scripts/rotate-logs.sh\|make.*rotate" .oodatcaa/RUNBOOK.md
+
+# 7. Check P003 sprint commands
+grep -E "make sprint-status|make sprint-complete|make sprint-new" .oodatcaa/RUNBOOK.md | wc -l
+
+# 8. Verify P004 loop documentation integration
+grep -c "Check stage\|adaptation.*loop\|Start-Over Gate" .oodatcaa/{RUNBOOK,ONBOARDING}.md
+
+# 9. Check troubleshooting for all P001-P004
+for system in "daemon" "log rotation" "sprint management" "OODATCAA loop"; do
+    grep -i "$system" .oodatcaa/TROUBLESHOOTING.md && echo "✓ $system troubleshooting"
+done
+
+# 10. Verify architecture integration points documented
+grep -A 20 "## Integration Points" .oodatcaa/ARCHITECTURE.md | grep -c "P001\|P002\|P003\|P004"
+```
+
+**Expected Results:**
+- P001 daemon system documented in RUNBOOK, ONBOARDING, ARCHITECTURE
+- P002 log rotation procedures in RUNBOOK, TROUBLESHOOTING
+- P003 sprint management commands in RUNBOOK (all 3 make targets)
+- P004 OODATCAA loop referenced in ONBOARDING, ARCHITECTURE
+- P001 daemon commands documented (agents-start, agents-stop, agents-status)
+- P002 rotation commands documented (rotate-logs.sh, --dry-run)
+- P003 commands documented (≥3 references)
+- P004 loop concepts integrated (Check stage, adaptation, Start-Over)
+- Troubleshooting for all P001-P004 systems
+- Architecture integration points documented (≥4 systems mentioned)
+
+**Pass Criteria:**
+- All 4 Sprint 2 systems documented
+- Operational procedures for each system
+- Troubleshooting coverage for each system
+- Integration points explained
+- Commands and usage examples included
 
 ---
 
 ## Test Execution Summary
 
 ### Prerequisites Checklist
-- [ ] Repository at latest commit
+- [ ] Repository at latest commit (P001-P004 integrated)
 - [ ] No uncommitted changes
-- [ ] Virtual environment activated (if applicable)
-- [ ] All dependencies installed (jq, git, bash 4+)
-- [ ] Current working directory: project root
+- [ ] All Sprint 2 infrastructure operational
+- [ ] Documentation tools available (markdown linter, link checker)
 
 ### Execution Order
-1. Run quality gates first (format, lint, type, test, build, audit)
-2. Test AC1: Sprint dashboard functional
-3. Test AC5: Makefile integration
-4. Test AC4: Sprint ID consistency
-5. Test AC2: Sprint completion (dry-run)
-6. Test AC3: Sprint initialization (dry-run)
-7. Test AC6: Documentation complete
-8. Test AC7: Zero regressions
-9. Test AC8: Atomic transitions
-10. Test AC9: Performance targets
-11. Test AC10: Infrastructure integration
+1. Run quality gates first (black, ruff, mypy, pytest, build, audit)
+2. Test AC1: RUNBOOK.md complete
+3. Test AC2: TROUBLESHOOTING.md complete
+4. Test AC3: ONBOARDING.md complete
+5. Test AC4: Agent prompts enhanced
+6. Test AC5: ARCHITECTURE.md complete
+7. Test AC6: Navigation improved
+8. Test AC7: Cross-linking complete
+9. Test AC8: Quality checks pass
+10. Test AC9: Existing docs consolidated
+11. Test AC10: P001-P004 documented
 
 ### Success Criteria
 **All 10 ACs must pass for task to be ready_for_integrator.**
 
 **Critical ACs (must pass):**
-- AC1: Sprint dashboard functional
-- AC2: Sprint completion functional
-- AC3: Sprint initialization functional
-- AC7: Zero regressions
+- AC1: RUNBOOK.md complete
+- AC2: TROUBLESHOOTING.md complete
+- AC3: ONBOARDING.md complete
+- AC10: Sprint 2 systems documented
 
 **Important ACs (should pass):**
-- AC4: Sprint ID consistency
-- AC5: Makefile integration
-- AC8: Atomic transitions
-- AC10: Infrastructure integration
+- AC4: Agent prompts enhanced
+- AC5: ARCHITECTURE.md complete
+- AC7: Cross-linking complete
+- AC9: Existing docs consolidated
 
 **Quality ACs (negotiate if needed):**
-- AC6: Documentation (can be augmented later)
-- AC9: Performance (as long as reasonable < 10s)
+- AC6: Navigation (can improve iteratively)
+- AC8: Quality checks (minor issues acceptable)
 
 ---
 
 ## Risk Assessment
 
 ### Low Risk
-- Documentation completeness (AC6) - Can be improved iteratively
-- Performance optimization (AC9) - 5s target has headroom
+- Navigation improvements (AC6) - Can iterate
+- Quality checks (AC8) - Non-blocking issues
 
 ### Medium Risk
-- Sprint ID consistency (AC4) - Requires careful file updates
-- Atomic transitions (AC8) - Complex error handling
+- Cross-linking completeness (AC7) - Time-consuming to verify all links
+- Existing doc consolidation (AC9) - May require judgment calls
 
 ### High Risk
-- Zero regressions (AC7) - Critical for project stability
-- SPRINT_QUEUE.json changes (AC4, AC10) - Core data structure
+- Documentation completeness (AC1-3) - Must be comprehensive
+- P001-P004 coverage (AC10) - Critical for Sprint 2 completion
 
 ### Mitigation
-- Comprehensive dry-run testing before actual sprint transitions
-- Backup SPRINT_QUEUE.json before any modifications
-- Thorough regression testing
-- Rollback capability in all scripts
+- Use automation for link checking
+- Systematic review of all doc files
+- Test commands in examples
+- Review Sprint 2 objectives for completeness
 
 ---
 
 ## Notes for Tester
 
 ### Manual Testing Required
-- Sprint completion (full flow) - Should be tested in controlled environment
-- Sprint initialization (full flow) - Requires completed sprint
-- Error injection - Verify rollback capability
-- Concurrent access - Test lock mechanisms
+- Read ONBOARDING.md as new user (actual onboarding test)
+- Try RUNBOOK scenarios for common operations
+- Use TROUBLESHOOTING.md to diagnose test issue
+- Verify diagrams render correctly in preview
 
 ### Automated Testing Scope
 - Quality gates (format, lint, type)
-- Script syntax validation
-- Dry-run modes
-- JSON validation
+- Link validation (grep + test -f)
 - File existence checks
-- Performance benchmarks
+- Command validation (make -n)
+- Consistency checks (structure, formatting)
 
 ### Known Limitations
-- Cannot fully test sprint-complete without completing Sprint 2
-- Cannot fully test sprint-new until Sprint 2 is complete
-- Dry-run modes must accurately represent actual behavior
+- Cannot fully test onboarding effectiveness without new user
+- Diagram rendering depends on markdown viewer
+- Some commands require operational system
+- Cross-linking exhaustive test is time-consuming
 
 ### Recommendations
-- Use dry-run extensively during development
-- Test on copy of repository first
-- Validate all JSON modifications
-- Monitor git status during transitions
-- Keep Sprint 2 backups before testing
+- Use markdown preview for diagram verification
+- Test safe commands (read-only) from RUNBOOK
+- Verify all make targets exist before testing
+- Check link validity with automated script
+- Review for clarity and completeness
 
 ---
 
 **Test Plan Status:** ✅ Complete  
-**Ready for:** Tester (after P003-B03 complete)  
+**Ready for:** Tester (after P006-B03 complete)  
 **Estimated Testing Time:** 45 minutes  
-**Risk Level:** Medium (SPRINT_QUEUE.json modifications require care)
+**Risk Level:** Medium (comprehensive documentation review required)
