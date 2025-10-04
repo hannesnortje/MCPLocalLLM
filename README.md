@@ -650,6 +650,9 @@ Internal documentation for the autonomous development system:
 | **`.oodatcaa/config/UserRules.md`** | Multi-agent doctrine and coordination rules |
 | **`.oodatcaa/config/ProjectRules.md`** | Python-specific commands and quality gates |
 | **`.oodatcaa/AGENT_MANAGEMENT.md`** | Agent lifecycle management guide |
+| **`.oodatcaa/AGENT_ROLES_MATRIX.md`** | 11 agents documented (roles, responsibilities, I/O, decision authority) |
+| **`.oodatcaa/AGENT_INTERACTION_GUIDE.md`** | Workflow patterns, communication mechanisms, 4 protocols, best practices |
+| **`.oodatcaa/work/AGENT_GAP_ANALYSIS.md`** | System gap analysis, 13 gaps identified, 7 recommendations, roadmap |
 | **`.oodatcaa/work/SPRINT_LOG.md`** | Sprint summaries and retrospectives |
 | **`.oodatcaa/work/AGENT_LOG.md`** | Detailed agent execution log |
 

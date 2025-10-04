@@ -1,16 +1,15 @@
 # Agent Gap Analysis — OODATCAA Multi-Agent System
 
-**Version:** 2.0 (Gap Analysis Complete)  
+**Version:** 3.0 (Recommendations Complete)  
 **Last Updated:** 2025-10-04  
-**Status:** In Progress (P005-B02)
+**Status:** Complete (P005-B03)
 
 ---
 
 ## Document Status
 
-**Current Phase:** Gap Analysis Complete (P005-B02 Step 4-5)  
-**Next Phase:** Recommendations + Integration (P005-B03)  
-**Final Phase:** Documentation Integration (P005-B03)
+**Current Phase:** Complete (P005-B03 Step 6-7)  
+**All Phases Complete:** Evidence → Gap Analysis → Recommendations → Integration
 
 **Sections Complete:**
 - ✅ Sprint 1 Evidence Summary
@@ -20,10 +19,9 @@
 - ✅ Lessons Learned from Sprint 1/2
 - ✅ Gap Analysis (Workflow Coverage, Agent Type Gaps, Communication Gaps) - P005-B02
 - ✅ Communication Protocol Design (4 protocols) - P005-B02
-
-**Sections Pending:**
-- ⏳ Prioritized Recommendations - P005-B03
-- ⏳ Implementation Roadmap - P005-B03
+- ✅ Prioritized Recommendations (7 recommendations) - P005-B03
+- ✅ Implementation Roadmap (Sprint 2-5+) - P005-B03
+- ✅ Feasibility Assessment - P005-B03
 
 ---
 
@@ -1674,13 +1672,449 @@ Quick fix applied, p95 latency reduced to 120ms, AC5 passed on re-test.
 
 ---
 
-## Next Steps (P005-B03)
+## Prioritized Recommendations
 
-**P005-B03 (Recommendations + Integration):**
-1. Prioritize all 13 gaps (High/Medium/Low priority)
-2. Create implementation roadmap (Sprint 2/3/4+ timeline)
-3. Feasibility assessment (effort, dependencies, risk, benefit)
-4. Documentation integration (cross-link with OODATCAA_LOOP_GUIDE, ARCHITECTURE, README, prompts)
+### Priority Framework
+
+**Prioritization Criteria:**
+1. **Evidence Strength:** How many Sprint 1/2 issues support this gap?
+2. **Impact on System Health:** Does this affect core functionality or future scalability?
+3. **Dependencies:** Are prerequisites available (e.g., P001 daemon for Monitor agent)?
+4. **Effort vs Benefit:** Implementation cost relative to improvement value
+5. **Sprint 2 Success Context:** 92.3% success rate = don't fix what isn't broken
+
+**Priority Definitions:**
+- **High:** Implement Sprint 3 (next sprint), high benefit, low risk, enables automation
+- **Medium:** Implement Sprint 3-4, deferred until dependencies met or scale increases
+- **Low:** Defer indefinitely, enhance existing agents instead, or wait for production readiness
+
+---
+
+### High-Priority Recommendations (Implement Sprint 3)
+
+#### Recommendation 1: Implement Communication Protocols (Gaps 9, 10, 11)
+
+**Priority:** 🔴 HIGH  
+**Effort:** ~2 hours (Protocol 1: 1 hour, Protocol 2: 30 min, Protocol 4: ready)  
+**Dependencies:** None  
+**Risk:** Low (additive, doesn't change existing behavior)
+
+**Rationale:**
+- **Evidence:** 39 tasks coordinated successfully but coordination is manual (log parsing)
+- **Benefit:** Enables automation (Monitor agent can parse alerts), metrics aggregation, traceability
+- **Impact:** Foundation for future scalability (programmatic message parsing)
+- **Sprint 2 Context:** Current system works, but not scalable beyond ~50 tasks/sprint
+
+**Implementation Plan:**
+1. **Protocol 1: Structured Message Format (1 hour)**
+   - Add message template to AGENT_LOG.md convention
+   - Create `.messages/` directory structure
+   - Update agent prompts (Builder, Tester, Refiner, Integrator) to use template
+   - Validate with 1-2 example messages
+
+2. **Protocol 2: Decision Transparency Template (30 min)**
+   - Add decision template to AGENT_LOG.md convention
+   - Update Refiner, Planner, Negotiator prompts to use template
+   - Document confidence calibration process
+
+3. **Protocol 4: Conflict Resolution Process (ready)**
+   - Already documented, ready to use
+   - No implementation required (trigger when conflicts arise)
+
+**Success Metrics:**
+- 80%+ messages use structured format after Sprint 3
+- All decisions (Refiner, Planner) use transparency template
+- 0 conflicts unresolved (if conflicts arise)
+
+**Rollback Plan:** None needed (additive, can coexist with free-form logs)
+
+---
+
+### Medium-Priority Recommendations (Implement Sprint 3-4+)
+
+#### Recommendation 2: Monitor Agent (Gap 5)
+
+**Priority:** 🟡 MEDIUM  
+**Effort:** ~2 hours (after P001 daemon infrastructure complete)  
+**Dependencies:** P001 (Background Agent Daemon System) ⚠️ BLOCKS  
+**Risk:** Medium (adds complexity, may generate alert noise)
+
+**Rationale:**
+- **Evidence:** Sprint 1 had 5 manual interventions for protocol issues (could have been detected earlier)
+- **Benefit:** Early issue detection (tasks exceeding 150% estimated time), proactive monitoring
+- **Impact:** Reduces manual monitoring burden, increases confidence
+- **Sprint 2 Context:** 100% protocol fix success (P002-P005) = monitoring would provide confidence, not fix issues
+
+**Defer Until:** P001 daemon complete (currently 8% complete, blocked)
+
+**Implementation Plan (when P001 ready):**
+1. Create Monitor agent prompt (`.oodatcaa/prompts/monitor.md`)
+2. Implement monitoring loop (1-minute intervals, read SPRINT_QUEUE.json)
+3. Define anomaly detection thresholds (task exceeds 150% estimate, stale lease >2 TTLs, blocked dependencies)
+4. Alert mechanism (write to SPRINT_ALERTS.md or send structured message to Negotiator)
+5. Health metrics dashboard (integrate with `scripts/sprint-dashboard.sh`)
+
+**Success Metrics:**
+- Detects 90%+ anomalies within 5 minutes of occurrence
+- <10% false positive alert rate
+- Negotiator responds to alerts within 15 minutes
+
+**Alternative:** Manual monitoring sufficient for Sprint 2-3 scale (~50 tasks/sprint)
+
+---
+
+#### Recommendation 3: Status Reporting Standardization (Gap 12)
+
+**Priority:** 🟡 MEDIUM  
+**Effort:** ~30 minutes (template already designed)  
+**Dependencies:** None  
+**Risk:** Low (gradual adoption, not required)
+
+**Rationale:**
+- **Evidence:** Status updates vary by agent (some include metrics, others don't)
+- **Benefit:** Consistent metrics aggregation, retrospective analysis
+- **Impact:** Enables Monitor agent to parse progress, detect delays
+- **Sprint 2 Context:** Current logging sufficient for audit, standardization improves efficiency
+
+**Implementation Plan:**
+1. Add status report template to agent prompts (Builder, Tester, Refiner, Integrator)
+2. Mark as "recommended" not "required" (gradual adoption)
+3. Update AGENT_LOG.md convention documentation
+4. Monitor adoption rate over Sprint 3-4
+
+**Success Metrics:**
+- 60%+ status updates use standard template by end of Sprint 4
+- Metrics aggregation script can parse 80%+ entries
+
+**Gradual Adoption:** Agents may continue using free-form logs if preferred
+
+---
+
+#### Recommendation 4: Code Reviewer Agent (Gap 6)
+
+**Priority:** 🟡 MEDIUM  
+**Effort:** ~3 hours (define review criteria, integrate into workflow)  
+**Dependencies:** None (but defer until codebase grows)  
+**Risk:** Medium (adds review cycle time ~15 min/task, may introduce subjective disagreements)
+
+**Rationale:**
+- **Evidence:** Sprint 1/2 had 0 major code quality issues (quality gates sufficient)
+- **Benefit:** Catches tech debt early, improves code maintainability, educates Builder
+- **Impact:** Prevents quality degradation as codebase scales
+- **Sprint 2 Context:** 92.3% success rate = current gates sufficient, Reviewer is preventative
+
+**Defer Until:** Sprint 3+ when codebase >10,000 lines or features become more complex
+
+**Implementation Plan (when needed):**
+1. Create Reviewer agent prompt (`.oodatcaa/prompts/reviewer.md`)
+2. Define review criteria (readability checklist, DRY violations, complexity thresholds)
+3. Integrate into workflow (runs between Tester and Integrator)
+4. Advisory mode (non-blocking, Integrator decides whether to act on suggestions)
+5. Learning mechanism (track which suggestions accepted/rejected)
+
+**Success Metrics:**
+- 70%+ suggestions accepted by Integrator
+- Tech debt reduction (measured by ruff/mypy warnings over time)
+- Code quality metrics improve (complexity, duplication)
+
+**Alternative:** Enhance existing quality gates (add complexity checks to `make gates`)
+
+---
+
+### Low-Priority Recommendations (Defer or Enhance Existing)
+
+#### Recommendation 5: Enhance Planner Role (Gap 3, instead of Architect Agent)
+
+**Priority:** 🟢 LOW  
+**Effort:** ~30 minutes (add architecture checklist to AGENT_PLAN.md template)  
+**Dependencies:** None  
+**Risk:** Low (enhancement, not new agent)
+
+**Rationale:**
+- **Evidence:** Planner 100% acceptance rate by Builder (no architectural issues Sprint 1/2)
+- **Benefit:** Dedicated architecture review for complex features (>1 week effort)
+- **Impact:** Prevents architectural debt without adding agent complexity
+- **Sprint 2 Context:** Planner role sufficient for current scale (11-agent internal system)
+
+**Decision:** ❌ Do NOT create Architect agent (overkill for current scale)  
+**Alternative:** ✅ Enhance Planner with architecture checklist
+
+**Implementation Plan:**
+1. Add "Architecture Review" section to AGENT_PLAN.md template
+2. For complex features (>1 week), require:
+   - Architectural pattern used (e.g., layered, event-driven)
+   - Scalability considerations
+   - Tech debt assessment
+   - Dependency impact analysis
+3. Update Planner prompt to check complexity threshold
+
+**Success Metrics:**
+- 100% plans for complex features include architecture review
+- 0 architectural issues detected in retrospectives
+
+**Effort:** ~30 minutes (update template, update prompt)
+
+---
+
+#### Recommendation 6: Enhanced Releaser/Deployer (Gap 8)
+
+**Priority:** 🟢 LOW  
+**Effort:** ~8 hours (deployment pipeline, smoke tests, rollback, monitoring)  
+**Dependencies:** Project maturity (not production-ready yet)  
+**Risk:** Low (defer until needed)
+
+**Rationale:**
+- **Evidence:** Sprint 1/2 had 0 production deployments (internal development)
+- **Benefit:** Full deployment automation (staging → production)
+- **Impact:** Production readiness (not needed for training system development)
+- **Sprint 2 Context:** Releaser exists but underutilized (0 invocations), basic release process sufficient
+
+**Defer Until:** Project reaches production readiness (not Sprint 2/3/4)
+
+**Implementation Plan (when needed):**
+1. Create RELEASE_CHECKLIST.md template
+2. Add deployment automation (CI/CD pipeline integration)
+3. Environment-specific configurations (staging, production)
+4. Smoke tests post-deployment (health check endpoints)
+5. Rollback capability (automated revert on failures)
+6. Production monitoring integration (alert on errors)
+
+**Success Metrics:**
+- 90%+ releases succeed on first attempt
+- <5 minute deployment time (staging → production)
+- 0 manual intervention needed for rollbacks
+
+**Alternative:** Continue manual release process until production deployment required
+
+---
+
+#### Recommendation 7: Heartbeat Content Enhancement (Gap 13)
+
+**Priority:** 🟢 LOW  
+**Effort:** ~30 minutes (add progress fields to heartbeat)  
+**Dependencies:** None  
+**Risk:** Low (optional enhancement)
+
+**Rationale:**
+- **Evidence:** Sprint 1/2 lease heartbeats sufficient for stale detection (0 false positives)
+- **Benefit:** Progress visibility during long tasks (Builder 90-minute tasks)
+- **Impact:** Monitor agent could track progress, but not critical
+- **Sprint 2 Context:** Current heartbeats (timestamp only) work well, content is "nice to have"
+
+**Defer:** Low priority, implement only if Monitor agent requests it
+
+**Implementation Plan (if implemented):**
+1. Add optional fields to lease heartbeat:
+   - `progress_pct`: 0-100
+   - `current_step`: "Step 3 of 7"
+   - `blockers`: array of current blockers
+2. Update Builder, Tester, Refiner prompts (optional fields)
+3. Monitor agent parses heartbeat content for anomaly detection
+
+**Success Metrics:**
+- 50%+ long-running tasks include progress in heartbeat
+- Monitor agent detects progress stalls (0% change over 30 min)
+
+**Alternative:** Status updates in AGENT_LOG.md sufficient for progress tracking
+
+---
+
+## Implementation Roadmap
+
+### Sprint 2 (Current) - Documentation & Protocol Definition ✅
+
+**Completed:**
+- ✅ P005-B01: Agent audit, interaction analysis, evidence (3,540 lines documentation)
+- ✅ P005-B02: Gap analysis (13 gaps), communication protocol design (4 protocols)
+- 🔄 P005-B03: Recommendations, integration (in progress)
+
+**Deliverables:**
+- `.oodatcaa/AGENT_ROLES_MATRIX.md` (11 agents, 77 attributes)
+- `.oodatcaa/AGENT_INTERACTION_GUIDE.md` (4 workflows, 10 best practices, 4 protocols)
+- `.oodatcaa/work/AGENT_GAP_ANALYSIS.md` (13 gaps, 7 recommendations, roadmap)
+
+**Exit Criteria:** ✅ P005 (Agent Role Completeness) - 100% when P005-B03 complete
+
+---
+
+### Sprint 3 (Q4 2025) - High-Priority Implementation
+
+**Timeline:** 2 weeks (October 2025)  
+**Effort:** ~2.5 hours total
+
+**Tasks:**
+1. **Implement Communication Protocols (2 hours)**
+   - Protocol 1: Structured Message Format (1 hour)
+   - Protocol 2: Decision Transparency Template (30 min)
+   - Protocol 4: Conflict Resolution (ready, document in prompts: 30 min)
+   - Update agent prompts (Builder, Tester, Refiner, Integrator, Planner, Negotiator)
+
+2. **Monitor Agent Evaluation (if P001 complete)**
+   - If P001 (Background Agent Daemon) complete → implement Monitor agent (2 hours)
+   - If P001 incomplete → defer Monitor agent to Sprint 4
+
+**Success Criteria:**
+- 80%+ messages use structured format
+- All decisions use transparency template
+- Monitor agent operational (if P001 complete)
+
+**Dependencies:**
+- None for communication protocols
+- P001 complete for Monitor agent (otherwise defer)
+
+---
+
+### Sprint 4 (Q1 2026) - Medium-Priority Implementation
+
+**Timeline:** 2 weeks (November 2025)  
+**Effort:** ~4 hours total
+
+**Tasks:**
+1. **Status Reporting Standardization (30 min)**
+   - Add template to agent prompts
+   - Mark as recommended (gradual adoption)
+
+2. **Monitor Agent (if deferred from Sprint 3)**
+   - Implement if P001 complete in Sprint 3 (2 hours)
+
+3. **Planner Enhancement (30 min)**
+   - Add architecture review checklist to AGENT_PLAN.md template
+   - Update Planner prompt
+
+4. **Code Reviewer Agent Evaluation**
+   - Assess codebase size (if >10,000 lines → implement: 3 hours)
+   - Assess feature complexity (if complex features emerging → implement: 3 hours)
+   - Otherwise defer to Sprint 5+
+
+**Success Criteria:**
+- 60%+ status updates use standard template
+- Monitor agent operational (if P001 complete)
+- Architecture review used for 100% complex features
+
+**Dependencies:**
+- P001 complete for Monitor agent
+- Codebase growth for Reviewer agent
+
+---
+
+### Sprint 5+ (2026+) - Low-Priority / Future
+
+**Timeline:** As needed  
+**Effort:** Variable
+
+**Tasks:**
+1. **Code Reviewer Agent (when needed)**
+   - Trigger: Codebase >10,000 lines OR complex features OR tech debt accumulation
+   - Effort: ~3 hours
+   - Priority: Reactive (implement when problem detected)
+
+2. **Enhanced Releaser/Deployer (when needed)**
+   - Trigger: Production deployment requirement
+   - Effort: ~8 hours
+   - Priority: Defer until production-ready
+
+3. **Heartbeat Content Enhancement (optional)**
+   - Trigger: Monitor agent requests progress visibility
+   - Effort: ~30 minutes
+   - Priority: Optional, low value
+
+**Success Criteria:**
+- Implement only when triggered by specific need
+- Avoid premature optimization
+
+---
+
+## Feasibility Assessment
+
+### High-Priority (Communication Protocols)
+
+**Effort:** ~2 hours  
+**Dependencies:** None  
+**Risk:** ★☆☆☆☆ (Low - additive, doesn't change existing behavior)  
+**Benefit:** ★★★★☆ (High - enables automation, metrics, traceability)  
+**Feasibility:** ✅ Highly feasible (ready for Sprint 3)
+
+**Rationale:**
+- Templates already designed (P005-B02)
+- Implementation is adding convention to agent prompts
+- Can coexist with free-form logs (backward compatible)
+- Proven value (Monitor agent, metrics aggregation)
+
+**Risk Mitigation:**
+- Mark as "recommended" not "required" initially
+- Monitor adoption rate Sprint 3-4
+- Adjust templates based on agent feedback
+
+---
+
+### Medium-Priority (Monitor Agent, Status Reporting, Reviewer Agent)
+
+**Effort:** ~5.5 hours total (Monitor: 2 hours, Status: 30 min, Reviewer: 3 hours)  
+**Dependencies:** P001 daemon (for Monitor agent)  
+**Risk:** ★★☆☆☆ (Medium - Monitor adds complexity, Reviewer adds cycle time)  
+**Benefit:** ★★★☆☆ (Medium - proactive monitoring, quality improvement)  
+**Feasibility:** ⚠️ Conditional (defer until dependencies met or scale increases)
+
+**Rationale:**
+- Monitor agent blocked by P001 (currently 8% complete)
+- Status reporting ready but optional (gradual adoption)
+- Reviewer agent preventative (no current issues, but future-proofing)
+
+**Risk Mitigation:**
+- Defer Monitor until P001 complete (avoid dependency block)
+- Make status reporting optional (agents decide adoption)
+- Make Reviewer advisory-only (non-blocking, Integrator decides)
+
+---
+
+### Low-Priority (Planner Enhancement, Releaser, Heartbeat)
+
+**Effort:** ~9 hours total (Planner: 30 min, Releaser: 8 hours, Heartbeat: 30 min)  
+**Dependencies:** None (Planner), Production-readiness (Releaser), Monitor agent (Heartbeat)  
+**Risk:** ★☆☆☆☆ (Low - enhancements, not new agents)  
+**Benefit:** ★★☆☆☆ (Low - preventative, future-proofing)  
+**Feasibility:** ✅ Feasible but low priority (defer until triggered by need)
+
+**Rationale:**
+- Planner enhancement easy (30 min) but no current issues
+- Releaser enhancement significant effort (8 hours) but not needed yet
+- Heartbeat enhancement optional (Monitor agent may not need it)
+
+**Risk Mitigation:**
+- Planner enhancement: Implement opportunistically in Sprint 3-4
+- Releaser enhancement: Defer until production deployment required
+- Heartbeat enhancement: Implement only if Monitor agent requests
+
+---
+
+## Summary
+
+### Recommendations by Priority
+
+| Priority | Count | Recommendations | Sprint | Effort | Dependencies |
+|----------|-------|----------------|--------|--------|--------------|
+| **High** | 1 | Communication Protocols (Gaps 9, 10, 11) | Sprint 3 | ~2 hours | None |
+| **Medium** | 3 | Monitor Agent (Gap 5), Status Reporting (Gap 12), Reviewer Agent (Gap 6) | Sprint 3-4 | ~5.5 hours | P001 (Monitor) |
+| **Low** | 3 | Planner Enhancement (Gap 3), Releaser (Gap 8), Heartbeat (Gap 13) | Sprint 5+ | ~9 hours | Various |
+
+**Total Identified Gaps:** 13 (4 workflow + 4 agent type + 5 communication)  
+**Total Recommendations:** 7 (1 high, 3 medium, 3 low)
+
+### Key Decisions
+
+1. ✅ **Implement Communication Protocols Sprint 3** (High priority, enables automation)
+2. ⏸️ **Defer Monitor Agent until P001 complete** (Medium priority, blocked by dependency)
+3. 📋 **Make Status Reporting optional** (Medium priority, gradual adoption)
+4. ⏸️ **Defer Reviewer Agent until Sprint 4+** (Medium priority, codebase scale trigger)
+5. ❌ **Do NOT create Architect agent** (Low priority, enhance Planner instead)
+6. ⏸️ **Defer Releaser enhancement until production-ready** (Low priority, not needed yet)
+7. ⏸️ **Defer Heartbeat enhancement** (Low priority, optional)
+
+### Sprint 2 Context
+
+**Current System Performance:** 92.3% first-attempt success rate (Sprint 1/2)  
+**Implication:** System highly effective, gaps are for *future scalability*, not immediate fixes  
+**Approach:** Enhance, don't disrupt. Implement high-priority changes that enable automation without changing existing successful patterns.
 
 ---
 
@@ -1698,8 +2132,42 @@ Quick fix applied, p95 latency reduced to 120ms, AC5 passed on re-test.
 
 ---
 
-**Analysis Version:** 1.0 (Evidence Phase)  
+**Analysis Version:** 3.0 (Complete)  
 **Last Updated:** 2025-10-04  
-**Next Review:** P005-B02 (Gap Analysis)  
-**Maintainer:** Builder (P005-B01)
+**Next Review:** Sprint 3 (Pre-implementation)  
+**Maintainer:** Builder (P005-B03)
+
+---
+
+## Related Documentation
+
+**Core OODATCAA Documentation:**
+- [OODATCAA Loop Guide](`.oodatcaa/OODATCAA_LOOP_GUIDE.md`) - 8-stage loop (Observe → Orient → Decide → Act → Test → Check → Adapt → Archive)
+- [Agent Prompts](`.oodatcaa/prompts/`) - 11 agent prompt templates with role definitions
+
+**Agent Documentation (Created by P005):**
+- [Agent Roles Matrix](`.oodatcaa/AGENT_ROLES_MATRIX.md`) - 11 agents, 7 attributes each, decision authority matrix
+- [Agent Interaction Guide](`.oodatcaa/AGENT_INTERACTION_GUIDE.md`) - 4 workflows, 10 best practices, 4 communication protocols
+- [This Document](`.oodatcaa/work/AGENT_GAP_ANALYSIS.md`) - 13 gaps, 7 recommendations, implementation roadmap
+
+**Sprint Planning & Execution:**
+- [Sprint Queue](.oodatcaa/work/SPRINT_QUEUE.json) - Task management, status tracking, dependencies
+- [Sprint Plan](.oodatcaa/work/SPRINT_PLAN.md) - Sprint 2 objectives, exit criteria, timeline
+- [Sprint Log](.oodatcaa/work/SPRINT_LOG.md) - Historical sprint activity log
+- [Agent Log](.oodatcaa/work/AGENT_LOG.md) - Detailed agent action log
+
+**Sprint Evidence:**
+- Sprint 1 Reports: `.oodatcaa/work/reports/W001/` through `.oodatcaa/work/reports/W008/`
+- Sprint 2 Reports: `.oodatcaa/work/reports/P001/` through `.oodatcaa/work/reports/P007/`
+
+**Process & Quality:**
+- [CONTRIBUTING Guide](docs/CONTRIBUTING.md) - Development workflow, branching strategy
+- [Sprint Management System](docs/SPRINT_MANAGEMENT.md) - Sprint automation (dashboard, completion, initialization)
+
+**Usage Guide:**
+- For understanding agent roles → Read [Agent Roles Matrix](`.oodatcaa/AGENT_ROLES_MATRIX.md`)
+- For understanding agent workflows → Read [Agent Interaction Guide](`.oodatcaa/AGENT_INTERACTION_GUIDE.md`)
+- For understanding system gaps → Read this document
+- For implementing recommendations → See "Implementation Roadmap" section above
+- For Sprint 3 planning → Prioritize "High-Priority Recommendations" (Communication Protocols)
 
