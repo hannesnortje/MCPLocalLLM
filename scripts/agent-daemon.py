@@ -309,12 +309,10 @@ def update_queue_status(task_id: str, status: str, agent: str = None) -> bool:
 
 def execute_agent_prompt(role: str, task_id: str) -> bool:
     """
-    Execute the agent prompt for the given role.
+    Execute the agent prompt for the given role via Cursor subprocess.
 
-    This invokes Cursor/Claude with the appropriate prompt file.
-    For autonomous operation, this would need integration with an LLM API.
-
-    For now, this is a placeholder that logs the action.
+    This implements autonomous execution by calling Cursor with the appropriate
+    prompt file, enabling fully autonomous background agent operation.
     """
     prompt_file = PROMPTS_DIR / f"{role}.md"
 
@@ -325,15 +323,74 @@ def execute_agent_prompt(role: str, task_id: str) -> bool:
     logging.info(f"🔨 Executing {role} prompt for {task_id}")
     logging.info(f"Prompt file: {prompt_file}")
 
-    # TODO: Implement actual LLM integration
-    # For now, this is a placeholder that simulates work
-    # In production, this would call an LLM API or spawn a Cursor session
+    try:
+        # Try multiple Cursor command variations
+        cursor_commands = [
+            # Standard Cursor CLI
+            ['cursor', '--execute', f"Load @Cursor Rules and @Project Rules.\nRun .oodatcaa/prompts/{role}.md exactly.", '--context', f"Task: {task_id}", '--working-dir', str(PROJECT_ROOT)],
+            # Alternative Cursor CLI
+            ['cursor', '--command', f"Load @Cursor Rules and @Project Rules.\nRun .oodatcaa/prompts/{role}.md exactly.", '--working-dir', str(PROJECT_ROOT)],
+            # Cursor agents (if available)
+            ['cursor-agents', '--execute', f"Load @Cursor Rules and @Project Rules.\nRun .oodatcaa/prompts/{role}.md exactly.", '--context', f"Task: {task_id}"],
+        ]
 
-    logging.warning("⚠️  Autonomous execution not yet implemented")
-    logging.warning("⚠️  Manual agent invocation still required")
-    logging.warning(f"⚠️  Human must run: Load {prompt_file} and execute")
+        result = None
+        for i, cursor_command in enumerate(cursor_commands):
+            logging.info(f"🚀 Trying Cursor command {i+1}: {' '.join(cursor_command)}")
+            
+            try:
+                result = subprocess.run(
+                    cursor_command,
+                    capture_output=True,
+                    text=True,
+                    timeout=600,  # 10 minute timeout
+                    cwd=PROJECT_ROOT
+                )
+                if result.returncode == 0:
+                    logging.info(f"✅ Cursor command {i+1} succeeded")
+                    break
+                else:
+                    logging.warning(f"⚠️  Cursor command {i+1} failed with code {result.returncode}")
+                    if i < len(cursor_commands) - 1:
+                        logging.info(f"🔄 Trying next Cursor command...")
+                        continue
+            except FileNotFoundError:
+                logging.warning(f"⚠️  Cursor command {i+1} not found")
+                if i < len(cursor_commands) - 1:
+                    logging.info(f"🔄 Trying next Cursor command...")
+                    continue
+            except Exception as e:
+                logging.warning(f"⚠️  Cursor command {i+1} error: {e}")
+                if i < len(cursor_commands) - 1:
+                    logging.info(f"🔄 Trying next Cursor command...")
+                    continue
 
-    return False  # Return False since we can't actually execute yet
+        if result is None:
+            raise FileNotFoundError("No Cursor command found")
+
+        if result.returncode == 0:
+            logging.info(f"✅ {role} prompt executed successfully for {task_id}")
+            logging.debug(f"Cursor output: {result.stdout}")
+            return True
+        else:
+            logging.error(f"❌ {role} prompt failed for {task_id}")
+            logging.error(f"Cursor stderr: {result.stderr}")
+            logging.error(f"Cursor stdout: {result.stdout}")
+            return False
+
+    except subprocess.TimeoutExpired:
+        logging.error(f"⏰ {role} prompt timed out for {task_id} (10 minutes)")
+        return False
+    except FileNotFoundError:
+        logging.error("❌ Cursor not found in PATH. Please install Cursor or add to PATH")
+        logging.warning("⚠️  Falling back to manual execution mode")
+        logging.warning(f"⚠️  Human must run: Load {prompt_file} and execute")
+        # Update task status to indicate manual intervention needed
+        update_queue_status(task_id, "needs_manual", role)
+        return False
+    except Exception as e:
+        logging.error(f"❌ Error executing {role} prompt for {task_id}: {e}")
+        return False
 
 
 def poll_and_claim(role: str, owner: str, ignore_wip: bool = False) -> Optional[str]:
