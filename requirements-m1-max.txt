@@ -1,18 +1,17 @@
-# M1 Max Optimized Requirements - No CUDA
-# This file ensures CPU-only PyTorch installation, saving ~7GB
+# M1 Max Optimized Requirements - MPS + MLX-LM
+# This file ensures MPS-enabled PyTorch + MLX-LM for M1 Max, saving ~7GB
 
 # Core dependencies
 -e .
 
-# M1 Max training dependencies (install with: pip install -r requirements-m1-max.txt)
---extra-index-url https://download.pytorch.org/whl/cpu
+# M1 Max PyTorch (MPS-enabled, not CPU-only!)
 torch>=2.0.0,<3.0.0
 torchvision>=0.15.0,<1.0.0
 torchaudio>=2.0.0,<3.0.0
 
-# Apple Silicon specific (install separately on M1 Max)
-# mlx-lm>=0.0.1  # Uncomment when on M1 Max
-# mlx>=0.8.0     # Uncomment when on M1 Max
+# Apple Silicon native framework (M1 Max optimized)
+mlx-lm>=0.0.1
+mlx>=0.8.0
 
 # Training dependencies
 transformers>=4.30.0,<5.0.0
@@ -21,4 +20,4 @@ accelerate>=0.20.0,<1.0.0
 peft>=0.4.0,<1.0.0
 
 # Note: bitsandbytes not available on Apple Silicon
-# Use MLX-LM quantization instead
+# Use MLX-LM quantization instead (2-3x faster than PyTorch MPS)

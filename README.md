@@ -27,14 +27,14 @@ pre-commit install  # optional
 
 **Manual M1 Max Installation:**
 ```bash
-# CPU-only PyTorch (no CUDA)
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+# MPS-enabled PyTorch (M1 Max GPU acceleration)
+pip install torch torchvision torchaudio
 
 # M1 Max training dependencies
 pip install -e .[training]
 
-# Apple Silicon specific
-pip install mlx-lm  # Apple's native framework
+# Apple Silicon native framework (2-3x faster than PyTorch MPS)
+pip install mlx-lm
 ```
 
 ### 2. Configure Cursor Rules

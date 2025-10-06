@@ -28,9 +28,18 @@ source venv/bin/activate
 echo "⬆️  Upgrading pip..."
 pip install --upgrade pip
 
-# Install base dependencies (CPU-only PyTorch)
+# Install base dependencies (MPS-enabled PyTorch for M1 Max)
 echo "📚 Installing base dependencies..."
 pip install -e .
+
+# Install MPS-enabled PyTorch for M1 Max (not CPU-only!)
+if [[ $(uname -m) == "arm64" ]]; then
+    echo "🍎 Installing MPS-enabled PyTorch for Apple Silicon..."
+    pip install torch torchvision torchaudio
+else
+    echo "⚠️  Installing CPU-only PyTorch for non-Apple Silicon..."
+    pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+fi
 
 # Install M1 Max training dependencies
 echo "🚀 Installing M1 Max training dependencies..."
@@ -48,8 +57,11 @@ print(f'MPS available: {torch.backends.mps.is_available() if hasattr(torch.backe
 print(f'Device count: {torch.cuda.device_count() if torch.cuda.is_available() else 0}')
 "
 
-# Check for MLX-LM (Apple Silicon only)
+# Install MLX-LM (Apple Silicon only)
 if [[ $(uname -m) == "arm64" ]]; then
+    echo "🍎 Installing MLX-LM (Apple's native framework)..."
+    pip install mlx-lm
+    
     echo "🍎 Checking MLX-LM installation..."
     python3 -c "
 try:
@@ -57,7 +69,7 @@ try:
     print(f'MLX available: {mx.is_available()}')
     print(f'MLX devices: {mx.devices()}')
 except ImportError:
-    print('MLX-LM not installed - run: pip install mlx-lm')
+    print('MLX-LM installation failed')
 "
 fi
 
@@ -66,8 +78,8 @@ echo "🎉 Installation complete!"
 echo ""
 echo "📋 Next steps:"
 echo "   1. Activate environment: source venv/bin/activate"
-echo "   2. Install MLX-LM (M1 Max): pip install mlx-lm"
-echo "   3. Start Sprint 4 planning on M1 Max"
+echo "   2. Start Sprint 4 planning on M1 Max"
 echo ""
 echo "💾 Space saved: ~7GB (no CUDA PyTorch)"
-echo "⚡ Performance: Optimized for M1 Max unified memory"
+echo "⚡ Performance: MPS + MLX-LM optimized for M1 Max unified memory"
+echo "🎯 Training: MLX-LM (primary) + PyTorch MPS (fallback)"
