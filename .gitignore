@@ -13,19 +13,49 @@ __pycache__/
 htmlcov/
 .pytest_cache/
 
+# Linting & type checking caches
+.mypy_cache/
+.ruff_cache/
+
 # Logs
 *.log
 
-# Project
+# Project runtime files
 .leases/
 .locks/
+.agent-daemon-logs/
+.agent-daemon-pids
+
+# IDE files
+.cursor/
+.vscode/
+.idea/
 
 # OODATCAA working files (optional - uncomment to ignore sprint work logs)
 # .oodatcaa/work/*.md
 # .oodatcaa/work/*.json
 
-
 # MCP specific
 qdrant_storage/
 .env
 policy/*.lock
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
