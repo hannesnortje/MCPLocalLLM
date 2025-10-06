@@ -6,62 +6,22 @@
 
 ## Sprint 4: Training System Foundation — Current Assignments
 
-### Active Assignments (2025-10-06T07:57:00+02:00)
-
-**Planner → T001: Training Framework Research & Selection**
-- Status: Planning Complete ✅ (AGENT_PLAN.md and TEST_PLAN.md created)
-- Assigned: 2025-10-06T07:57:00+02:00
-- Completed: 2025-10-06T08:15:00+02:00 (estimated)
-- Plan Version: 1.0
-- Artifacts: AGENT_PLAN.md (8 steps, 3 subtasks), TEST_PLAN.md (8 ACs + 8 quality gates)
-- Completion Report: `.oodatcaa/work/reports/T001/planner.md`
-- Framework Selected: MLX-LM (Alternative 1 - M1 Max optimization, memory efficiency, ease of use)
-- Unblocks: T002 (QLoRA Config), T003 (Dataset Schema)
-
-**Next Assignment: Builder → T001-B01 (READY)**
+### Active Assignments
+**No active assignments - Sprint 4 ready for planning**
 
 ---
 
-### T001: Training Framework Research & Selection (Planning Complete)
+### T001: Training Framework Research & Selection (Needs Planning)
 
-**Plan Version:** 1.0  
-**Branch:** `feat/T001-step-01-framework-selection`  
-**Plan Document:** `.oodatcaa/work/AGENT_PLAN.md`  
-**Test Document:** `.oodatcaa/work/TEST_PLAN.md`  
-**Planner:** agent-planner-A  
-**Completed:** 2025-10-06T08:15:00+02:00
+**Status:** Needs Planning  
+**Priority:** 1 (Critical Path)  
+**Complexity:** Medium (120-180 min estimated)
 
 **Purpose:** Select and validate training framework (MLX-LM or axolotl) for fine-tuning Qwen2.5-Coder-7B with QLoRA on M1 Max.
 
-**Implementation Steps:**
-1. **Step 1:** Research & framework evaluation (30 min) → MLX-LM vs axolotl comparison
-2. **Step 2:** MLX-LM installation & setup (20 min) → pip install, verify imports
-3. **Step 3:** Model download & loading (25 min) → Qwen2.5-Coder-7B-Instruct
-4. **Step 4:** Basic inference test (20 min) → Code generation prompt, validate response
-5. **Step 5:** Memory profiling (25 min) → Measure inference + training memory (≤16GB target)
-6. **Step 6:** Installation guide documentation (20 min) → FRAMEWORK_SETUP.md
-7. **Step 7:** Update pyproject.toml dependencies (10 min) → MLX-LM + dependencies
-8. **Step 8:** Quality gates & commit (10 min) → All gates pass, commit changes
+**Dependencies:** None (ready for planning)
 
-**Deliverables:**
-- Framework evaluation report (AC1, AC2)
-- MLX-LM installation validated (AC3)
-- Qwen2.5-Coder-7B-Instruct loaded (AC4)
-- Inference test passing (AC5)
-- Memory profile ≤16GB validated (AC6, CRITICAL)
-- Installation guide (AC7)
-- Updated pyproject.toml (AC8)
-
-**Subtask Breakdown:**
-- **T001-B01:** Steps 1-5 (Research, Install, Model Load, Inference, Memory) — 120 min, ready
-- **T001-B02:** Steps 6-8 (Docs, Dependencies, Quality Gates) — 40 min, blocked by B01
-- **T001-T01:** Validation (All 8 ACs) — 20 min, blocked by B02
-
-**Exit Criteria:** All 8 ACs pass, memory ≤16GB validated, T002+T003 unblocked
-
-**Estimated Timeline:** 180 minutes (3 subtasks in sequence)
-
-**Ready for:** Builder (T001-B01) — **Can start immediately!**
+**Next Action:** Assign to Planner for detailed implementation plan
 
 ---
 

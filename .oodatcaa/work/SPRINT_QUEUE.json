@@ -15,24 +15,24 @@
       "title": "Training Framework Research & Selection",
       "type": "Story",
       "complexity": "M",
-      "status": "planning_complete",
+      "status": "planning",
       "priority": 1,
-      "agent": null,
+      "agent": "planner",
       "lease": null,
       "dependencies": [],
       "objective": "SPRINT-2025-004",
       "sprint": "4",
-      "objective_link": "Training System (Core) → QLoRA Setup → Framework selection",
+      "objective_link": "Training System (Core) \u2192 QLoRA Setup \u2192 Framework selection",
       "estimated_time": "120-180 min",
       "plan_version": "1.0",
-      "plan_created": "2025-10-06T07:57:00+02:00",
+      "plan_created": null,
       "subtasks": [
         {
           "id": "T001-B01",
           "title": "Steps 1-5: Research, Install, Model Load, Inference, Memory Profile",
           "type": "Implementation",
           "complexity": "M",
-          "status": "ready",
+          "status": "blocked",
           "priority": 1,
           "agent": null,
           "lease": null,
@@ -45,7 +45,7 @@
             "MLX-LM installed and validated (AC3)",
             "Qwen2.5-Coder-7B-Instruct loaded (AC4)",
             "Basic inference test passes (AC5)",
-            "Memory profiled (AC6, CRITICAL: ≤16GB)"
+            "Memory profiled (AC6, CRITICAL: \u226416GB)"
           ]
         },
         {
@@ -57,7 +57,9 @@
           "priority": 2,
           "agent": null,
           "lease": null,
-          "dependencies": ["T001-B01"],
+          "dependencies": [
+            "T001-B01"
+          ],
           "parent_task": "T001",
           "steps": "6-8",
           "estimated_time": "40 min",
@@ -77,7 +79,9 @@
           "priority": 3,
           "agent": null,
           "lease": null,
-          "dependencies": ["T001-B02"],
+          "dependencies": [
+            "T001-B02"
+          ],
           "parent_task": "T001",
           "estimated_time": "20 min",
           "exit_gates": [
@@ -85,7 +89,7 @@
             "Quality gates pass",
             "Integration tests pass",
             "No regressions",
-            "Memory ≤16GB validated"
+            "Memory \u226416GB validated"
           ]
         }
       ]
@@ -104,7 +108,7 @@
       ],
       "objective": "SPRINT-2025-004",
       "sprint": "4",
-      "objective_link": "Training System (Core) → QLoRA Setup → Configuration",
+      "objective_link": "Training System (Core) \u2192 QLoRA Setup \u2192 Configuration",
       "estimated_time": "150-210 min"
     },
     {
@@ -121,7 +125,7 @@
       ],
       "objective": "SPRINT-2025-004",
       "sprint": "4",
-      "objective_link": "Training System (Core) → Dataset creation → Schema design",
+      "objective_link": "Training System (Core) \u2192 Dataset creation \u2192 Schema design",
       "estimated_time": "180-240 min"
     },
     {
@@ -138,7 +142,7 @@
       ],
       "objective": "SPRINT-2025-004",
       "sprint": "4",
-      "objective_link": "Training System (Core) → Dataset: 1k-5k examples",
+      "objective_link": "Training System (Core) \u2192 Dataset: 1k-5k examples",
       "estimated_time": "240-360 min"
     },
     {
@@ -155,7 +159,7 @@
       ],
       "objective": "SPRINT-2025-004",
       "sprint": "4",
-      "objective_link": "Quality & Performance → Code Quality → Validation",
+      "objective_link": "Quality & Performance \u2192 Code Quality \u2192 Validation",
       "estimated_time": "120-180 min"
     },
     {
@@ -173,7 +177,7 @@
       ],
       "objective": "SPRINT-2025-004",
       "sprint": "4",
-      "objective_link": "Quality & Performance → Integration Testing → Training system",
+      "objective_link": "Quality & Performance \u2192 Integration Testing \u2192 Training system",
       "estimated_time": "180-240 min"
     },
     {
@@ -191,7 +195,7 @@
       ],
       "objective": "SPRINT-2025-004",
       "sprint": "4",
-      "objective_link": "MCP Integration → Context preservation with training",
+      "objective_link": "MCP Integration \u2192 Context preservation with training",
       "estimated_time": "150-210 min"
     },
     {
@@ -211,7 +215,7 @@
       ],
       "objective": "SPRINT-2025-004",
       "sprint": "4",
-      "objective_link": "Documentation & Deployment → Comprehensive Documentation",
+      "objective_link": "Documentation & Deployment \u2192 Comprehensive Documentation",
       "estimated_time": "120-180 min"
     }
   ],
@@ -225,12 +229,12 @@
     "quality_tasks": 2,
     "docs_tasks": 1,
     "completed_tasks": 0,
-    "ready_tasks": 1,
-    "blocked_tasks": 7,
+    "ready_tasks": 0,
+    "blocked_tasks": 8,
     "in_progress_tasks": 0,
     "planning_tasks": 0,
-    "planning_complete_tasks": 1,
-    "needs_plan_tasks": 0,
+    "planning_complete_tasks": 0,
+    "needs_plan_tasks": 1,
     "awaiting_test_tasks": 0,
     "testing_tasks": 0,
     "done_tasks": 0,
