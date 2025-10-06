@@ -15,7 +15,7 @@ Built with the OODATCAA autonomous development loop: Observe → Orient → Deci
 **For M1 Max (Recommended):**
 ```bash
 cd /path/to/MCPLocalLLM
-./scripts/install-m1-max.sh  # M1 optimized, no CUDA (~7GB saved)
+./scripts/install-m1-max.sh  # M1 optimized, MPS + MLX-LM (~7GB saved)
 ```
 
 **For Other Platforms:**
@@ -29,6 +29,9 @@ pre-commit install  # optional
 ```bash
 # MPS-enabled PyTorch (M1 Max GPU acceleration)
 pip install torch torchvision torchaudio
+
+# Core dependencies (includes scikit-learn for MCP server)
+pip install -e .
 
 # M1 Max training dependencies
 pip install -e .[training]
@@ -67,7 +70,17 @@ Build a fast CSV parser for data pipelines
 - Security: pip-audit clean
 ```
 
-### 4. Launch the Autonomous System
+### 4. Start MCP Server (Optional)
+For Cursor integration with memory management:
+```bash
+# Start MCP server in prompts-only mode (recommended for Cursor)
+python3 memory_server.py --prompts-only
+
+# Or start with UI for memory visualization
+python3 memory_server.py --ui
+```
+
+### 5. Launch the Autonomous System
 Open a Cursor chat and paste:
 ```
 Load @Cursor Rules and @Project Rules. 
@@ -165,6 +178,12 @@ Before you begin, ensure you have:
 - **Docker Desktop** (optional, for Qdrant vector database)
 - **Git** (for version control)
 - **pip** (Python package manager)
+
+**M1 Max Optimizations:**
+- ✅ **No CUDA dependencies** (saves ~7GB)
+- ✅ **MPS-enabled PyTorch** (Apple Silicon GPU acceleration)
+- ✅ **MLX-LM support** (Apple's native framework, 2-3x faster)
+- ✅ **CPU-optimized embeddings** (sentence-transformers)
 
 ### Step 1: Clone and Navigate
 
@@ -303,6 +322,31 @@ chmod +x scripts/setup-dev.sh
 **Solution:**
 ```bash
 pip install -e ".[dev]"  # Reinstall all dependencies
+```
+
+#### Issue 6: MCP Server Won't Start
+**Problem:** `ModuleNotFoundError: No module named 'sklearn'`
+**Solution:**
+```bash
+# Install missing scikit-learn dependency
+pip install scikit-learn
+
+# Or reinstall all dependencies
+pip install -e .
+```
+
+#### Issue 7: M1 Max Performance Issues
+**Problem:** Slow training or inference on M1 Max
+**Solution:**
+```bash
+# Use M1 Max optimized installation
+./scripts/install-m1-max.sh
+
+# Verify MPS is available
+python3 -c "import torch; print(f'MPS available: {torch.backends.mps.is_available()}')"
+
+# Install MLX-LM for best performance
+pip install mlx-lm
 ```
 
 For more troubleshooting, see `docs/mcp/TROUBLESHOOTING.md` or check the validation output for specific issues.
