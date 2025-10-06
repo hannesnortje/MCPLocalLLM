@@ -11,10 +11,30 @@ Built with the OODATCAA autonomous development loop: Observe → Orient → Deci
 ## ⚡ Quick Start
 
 ### 1. Install Dependencies
+
+**For M1 Max (Recommended):**
+```bash
+cd /path/to/MCPLocalLLM
+./scripts/install-m1-max.sh  # M1 optimized, no CUDA (~7GB saved)
+```
+
+**For Other Platforms:**
 ```bash
 cd /path/to/MCPLocalLLM
 pip install -e .[dev]
 pre-commit install  # optional
+```
+
+**Manual M1 Max Installation:**
+```bash
+# CPU-only PyTorch (no CUDA)
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# M1 Max training dependencies
+pip install -e .[training]
+
+# Apple Silicon specific
+pip install mlx-lm  # Apple's native framework
 ```
 
 ### 2. Configure Cursor Rules
