@@ -85,10 +85,16 @@ echo "=== Archiving Logs ==="
 SPRINT_NUM=$(jq -r '.sprint' "$QUEUE_FILE")
 
 if [[ "$DRY_RUN" == "true" ]]; then
-    echo "[DRY-RUN] Would call: bash scripts/rotate-logs.sh --force"
+    echo "[DRY-RUN] Would call: bash scripts/rotate-logs.sh"
     echo "[DRY-RUN] Would copy SPRINT_QUEUE.json to archive/sprint_${SPRINT_NUM}/"
 else
-    [[ -f "scripts/rotate-logs.sh" ]] && bash scripts/rotate-logs.sh --force || echo "⚠️  rotate-logs.sh not found"
+    # Rotate logs at sprint completion
+    if [[ -f "scripts/rotate-logs.sh" ]]; then
+        echo "Rotating logs for sprint completion..."
+        bash scripts/rotate-logs.sh
+    else
+        echo "⚠️  rotate-logs.sh not found - skipping rotation"
+    fi
     
     mkdir -p "$ARCHIVE_DIR/sprint_${SPRINT_NUM}"
     cp "$QUEUE_FILE" "$ARCHIVE_DIR/sprint_${SPRINT_NUM}/SPRINT_${SPRINT_NUM}_FINAL.json"

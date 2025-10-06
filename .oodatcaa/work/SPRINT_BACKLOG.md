@@ -1,202 +1,300 @@
-# Sprint 1 Backlog (AGENT-GENERATED)
+# Sprint 4 Backlog (AGENT-GENERATED)
 
-> **Sprint Goal:** MCP Server Foundation — Migrate and integrate MCP server infrastructure
+> **Sprint Goal:** Training System Foundation — Dataset creation and QLoRA setup
+
+> **Sprint 4 Start:** 2025-10-05  
+> **Target Completion:** 2025-10-15 (7-10 working days)
 
 ---
 
 ## Work Items
 
-### W001: Analyze MCP Source Structure
-**Type:** Story  
-**Complexity:** S  
-**Status:** needs_plan
-
-**Description:**  
-Analyze the source MCP repository at `/media/hannesn/storage/Code/MCP/` to identify:
-- Essential components (memory, policy, vector storage)
-- Unnecessary components (UI, examples not needed for training)
-- Potential file conflicts with current project structure
-- Dependency requirements
-
-**Acceptance Criteria:**
-- [ ] Documented list of files/directories to copy
-- [ ] Identified files to exclude or modify
-- [ ] Conflict resolution strategy defined (preserve `.oodatcaa/`)
-- [ ] Dependency list extracted from MCP source
-
-**Links to Objective:**  
-OBJECTIVE.md → MCP Integration (Critical) → Server Migration
-
----
-
-### W002: Execute MCP Server Migration
+### T001: Training Framework Research & Selection
 **Type:** Story  
 **Complexity:** M  
-**Status:** needs_plan
+**Status:** ready
+**Priority:** 1
 
 **Description:**  
-Copy the MCP server codebase from `/media/hannesn/storage/Code/MCP/` to this project:
-- Use `cp -r` to migrate essential files
-- Resolve file conflicts (prioritize MCP files, preserve `.oodatcaa/`)
-- Rename package from "mcp-memory-server" to "mcp-local-llm"
-- Update all internal references to new package name
+Research and select the optimal training framework for fine-tuning Qwen2.5-Coder-7B on M1 Max:
+- Evaluate Apple MLX-LM (native M1 Max support, Metal acceleration)
+- Evaluate axolotl (popular LoRA/QLoRA framework)
+- Compare memory usage, training speed, ease of use
+- Create proof-of-concept setup for chosen framework
+- Document installation and configuration steps
 
 **Acceptance Criteria:**
-- [ ] All essential MCP files copied successfully
-- [ ] File conflicts resolved without breaking OODATCAA system
-- [ ] Package renamed in all Python modules and configs
-- [ ] Import statements updated to reflect new package name
-- [ ] No orphaned references to old package name
+- [ ] Both frameworks evaluated with pros/cons documented
+- [ ] Framework selected with rationale (memory, speed, ease)
+- [ ] Proof-of-concept installation successful
+- [ ] Can load Qwen2.5-Coder-7B-Instruct base model
+- [ ] Basic inference test passes (model responds to prompt)
+- [ ] Memory usage profiled and documented
+- [ ] Installation guide documented
+- [ ] Dependencies added to `pyproject.toml`
 
 **Links to Objective:**  
-OBJECTIVE.md → MCP Integration (Critical) → Server Migration → Complete file system migration
+OBJECTIVE.md → Training System (Core) → QLoRA Setup → Framework selection
+
+**Estimated Time:** 120-180 minutes
 
 ---
 
-### W003: Integrate MCP Dependencies
+### T002: QLoRA Configuration & Environment Setup
 **Type:** Story  
 **Complexity:** M  
-**Status:** needs_plan
+**Status:** blocked
+**Priority:** 2
+**Dependencies:** T001
 
 **Description:**  
-Update project dependencies to include MCP requirements:
-- Extract dependencies from MCP source
-- Add to `pyproject.toml` with compatible versions
-- Resolve any conflicts with existing dependencies (mdnotes module)
-- Install and verify in clean venv
+Configure QLoRA training environment with optimal settings for M1 Max:
+- Create training configuration file (LoRA rank=16, alpha=32)
+- Set up model quantization (4-bit for memory efficiency)
+- Configure gradient checkpointing
+- Set optimal batch size and learning rate
+- Create training script with checkpoint management
+- Validate memory usage ≤16GB RAM
 
 **Acceptance Criteria:**
-- [ ] `pyproject.toml` includes all MCP dependencies
-- [ ] Dependencies install cleanly: `pip install -e .`
-- [ ] No version conflicts between MCP and existing deps
-- [ ] `requirements.txt` or lock file generated
-- [ ] Qdrant and vector DB dependencies included
+- [ ] Training config file created with QLoRA parameters
+- [ ] LoRA rank=16, alpha=32 configured
+- [ ] 4-bit quantization enabled
+- [ ] Gradient checkpointing configured
+- [ ] Batch size optimized for M1 Max (memory target ≤16GB)
+- [ ] Learning rate schedule configured
+- [ ] Training script created with checkpoint saving/loading
+- [ ] Dry-run training successful (1-10 examples)
+- [ ] Memory usage profiled (≤16GB confirmed)
+- [ ] Training time per step measured and documented
 
 **Links to Objective:**  
-OBJECTIVE.md → MCP Integration (Critical) → Update dependencies and configuration
+OBJECTIVE.md → Training System (Core) → QLoRA Setup → Configuration
+
+**Estimated Time:** 150-210 minutes
 
 ---
 
-### W004: Adapt MCP for Training Use Case
+### T003: Training Dataset Schema & Generator
 **Type:** Story  
 **Complexity:** M  
-**Status:** needs_plan
+**Status:** blocked
+**Priority:** 3
+**Dependencies:** T001
 
 **Description:**  
-Clean and customize MCP server for small coder training project:
-- Remove UI components not needed for training system
-- Simplify or remove unnecessary features (e.g., multi-user support)
-- Adapt configuration for training-focused use case
-- Ensure core functionality remains: memory, vector search, policy system
+Design and implement training dataset schema and generation tools:
+- Define instruction-input-output format
+- Create dataset generator with templates
+- Implement procedural knowledge examples (error handling, tool usage)
+- Create custom definition examples ("42", domain patterns)
+- Design context window replacement templates
+- Implement metadata tagging patterns (preservation levels)
+- Create validation functions
 
 **Acceptance Criteria:**
-- [ ] Unnecessary UI/frontend code removed or disabled
-- [ ] Core functionality verified: memory management, vector storage, policy system
-- [ ] Configuration adapted for single-developer training workflow
-- [ ] Code simplified without breaking essential features
-- [ ] Memory footprint reduced where possible
+- [ ] Dataset schema documented (instruction-input-output format)
+- [ ] JSON/JSONL format specified with examples
+- [ ] Dataset generator script created
+- [ ] Template system for different example types
+- [ ] Can generate procedural knowledge examples
+- [ ] Can generate custom definition examples
+- [ ] Can generate context preservation patterns
+- [ ] Can generate metadata tagging examples
+- [ ] Schema validation function working
+- [ ] Quality checks implemented (length, completeness)
+- [ ] Generator can produce 100+ examples
+- [ ] Examples diverse and representative
 
 **Links to Objective:**  
-OBJECTIVE.md → MCP Integration (Critical) → Clean and adapt for training focus
+OBJECTIVE.md → Training System (Core) → Dataset creation → Schema design
+
+**Estimated Time:** 180-240 minutes
 
 ---
 
-### W005: Python Tooling & Quality Gates
+### T004: Core Training Dataset Creation
+**Type:** Story  
+**Complexity:** L  
+**Status:** blocked
+**Priority:** 4
+**Dependencies:** T003
+
+**Description:**  
+Create comprehensive training dataset with 1,000-5,000 examples:
+- Generate procedural knowledge examples (500-1000)
+- Create custom definition examples (200-500)
+- Build context window replacement examples (200-500)
+- Create metadata tagging examples (100-300)
+- Generate rule compliance examples (100-300)
+- Create OODATCAA process examples (100-300)
+- Implement train/validation split (80/20)
+
+**Acceptance Criteria:**
+- [ ] Dataset contains 1,000-5,000 examples total
+- [ ] Procedural knowledge: 500-1000 examples (error handling, tool usage, commits)
+- [ ] Custom definitions: 200-500 examples ("42", domain patterns)
+- [ ] Context windows: 200-500 examples (system prompts, active rules)
+- [ ] Metadata tagging: 100-300 examples (preservation levels)
+- [ ] Rule compliance: 100-300 examples (concept:*, pattern:*, definition:*)
+- [ ] OODATCAA examples: 100-300 examples (workflow, agents, protocols)
+- [ ] Train/validation split implemented (80/20)
+- [ ] Dataset diversity validated (no repetitive patterns)
+- [ ] All examples pass schema validation
+- [ ] Dataset saved in JSONL format
+- [ ] Example count documented and tracked
+
+**Links to Objective:**  
+OBJECTIVE.md → Training System (Core) → Dataset: 1k-5k examples
+
+**Estimated Time:** 240-360 minutes
+
+---
+
+### T005: Dataset Validation & Quality Pipeline
 **Type:** Quality  
 **Complexity:** M  
-**Status:** needs_plan
+**Status:** blocked
+**Priority:** 5
+**Dependencies:** T004
 
 **Description:**  
-Ensure migrated MCP code passes all quality gates:
-- Format with black: `black .`
-- Lint with ruff: `ruff check .`
-- Type check with mypy: `mypy .`
-- Fix any issues in migrated code
-- Update mypy.ini / pyproject.toml for MCP modules if needed
+Implement comprehensive dataset validation and quality assurance:
+- Create schema validation (format correctness)
+- Implement quality checks (length, completeness, diversity)
+- Validate context preservation patterns
+- Check metadata consistency
+- Create quality report generation
+- Fix any validation failures
+- Document dataset statistics
 
 **Acceptance Criteria:**
-- [ ] `black --check .` passes on all MCP code
-- [ ] `ruff check .` passes with 0 errors
-- [ ] `mypy .` passes (may exclude strict mode initially)
-- [ ] All linter issues in migrated code resolved
-- [ ] CI-ready: all quality gates green
+- [ ] Schema validation script working
+- [ ] Quality checks implemented (min/max length, completeness)
+- [ ] Diversity checks working (detect repetitive patterns)
+- [ ] Context pattern validation passes
+- [ ] Metadata consistency verified
+- [ ] All examples pass validation
+- [ ] Quality report generated with statistics
+- [ ] Dataset statistics documented (avg length, type distribution)
+- [ ] Validation failures identified and fixed
+- [ ] Train/validation split verified (80/20 ratio)
+- [ ] Validation script added to test suite
 
 **Links to Objective:**  
-OBJECTIVE.md → Quality & Performance → Code Quality → black, ruff, mypy pass
+OBJECTIVE.md → Quality & Performance → Code Quality → Validation
+
+**Estimated Time:** 120-180 minutes
 
 ---
 
-### W006: Basic Integration Testing
+### T006: Training Infrastructure Testing
 **Type:** Quality  
-**Complexity:** S  
-**Status:** needs_plan
+**Complexity:** L  
+**Status:** blocked
+**Priority:** 6
+**Dependencies:** T002, T004
 
 **Description:**  
-Create and run basic integration tests for MCP components:
-- Verify MCP server can initialize
-- Test memory storage and retrieval
-- Validate policy system operations
-- Ensure no regressions in existing `mdnotes` module
-- Run existing test suite: `pytest -q`
+Test complete training infrastructure end-to-end:
+- Run training with small dataset (10-100 examples)
+- Validate checkpoint saving and loading
+- Profile resource usage (CPU, RAM, disk, time)
+- Test model quantization pipeline (GGUF Q4_K_M)
+- Validate trained model inference
+- Create training monitoring tools
+- Document performance benchmarks
 
 **Acceptance Criteria:**
-- [ ] Basic smoke test for MCP server initialization passes
-- [ ] Memory CRUD operations tested (create, read, update, delete)
-- [ ] Policy system basic tests pass
-- [ ] Existing tests in `tests/` still pass
-- [ ] No breaking changes to existing functionality
+- [ ] Training runs successfully with 10-100 examples
+- [ ] Checkpoint saving working (model state preserved)
+- [ ] Checkpoint loading working (resume training)
+- [ ] Resource usage profiled (CPU, RAM, disk)
+- [ ] Memory stays ≤16GB during training
+- [ ] Training time per step measured and documented
+- [ ] Model quantization pipeline tested (GGUF Q4_K_M)
+- [ ] Quantized model inference validated
+- [ ] Training monitoring tools created
+- [ ] Performance benchmarks documented
+- [ ] End-to-end training workflow validated
+- [ ] No blocking issues or crashes
 
 **Links to Objective:**  
-OBJECTIVE.md → Quality & Performance → Integration Testing → MCP protocol stable
+OBJECTIVE.md → Quality & Performance → Integration Testing → Training system
+
+**Estimated Time:** 180-240 minutes
 
 ---
 
-### W007: Configuration & Environment Setup
-**Type:** Infra  
-**Complexity:** S  
-**Status:** needs_plan
+### T007: MCP Integration & Context Patterns
+**Type:** Story  
+**Complexity:** M  
+**Status:** blocked
+**Priority:** 7
+**Dependencies:** T003, T004
 
 **Description:**  
-Set up configuration files and environment for MCP server:
-- Configure Qdrant vector database (Docker or local)
-- Create/update `.env` template with MCP settings
-- Document environment variables needed
-- Provide setup scripts or Makefile targets
+Integrate training dataset with MCP context preservation patterns:
+- Align context patterns with MCP policy system
+- Create examples referencing MCP memory operations
+- Validate embedding compatibility (384-dim)
+- Document RAG integration pathway
+- Create examples with preservation levels (strict/moderate/flexible)
+- Test MCP server integration with training examples
 
 **Acceptance Criteria:**
-- [ ] Qdrant configuration ready (docker-compose or local setup)
-- [ ] Environment variables documented in README
-- [ ] `.env.example` or similar template provided
-- [ ] Setup instructions clear and tested
-- [ ] Can run MCP server in development mode
+- [ ] Training examples reference MCP memory operations
+- [ ] Context preservation patterns align with MCP policy system
+- [ ] Preservation levels integrated (strict/moderate/flexible)
+- [ ] Embedding dimension verified (384-dim all-MiniLM-L6-v2)
+- [ ] RAG integration pathway documented
+- [ ] MCP server tested with training examples
+- [ ] Training examples can trigger MCP operations
+- [ ] Context window examples compatible with MCP
+- [ ] Documentation updated with MCP integration guide
+- [ ] Integration validated end-to-end
 
 **Links to Objective:**  
-OBJECTIVE.md → Deployment Ready → Docker containers for Qdrant
+OBJECTIVE.md → MCP Integration → Context preservation with training
+
+**Estimated Time:** 150-210 minutes
 
 ---
 
-### W008: Documentation Update
+### T008: Training System Documentation
 **Type:** Docs  
-**Complexity:** S  
-**Status:** needs_plan
+**Complexity:** M  
+**Status:** blocked
+**Priority:** 8
+**Dependencies:** T002, T004, T006, T007
 
 **Description:**  
-Update project documentation to reflect MCP integration:
-- README: Add MCP integration overview section
-- Document migration process and rationale
-- Setup instructions for MCP server
-- Architecture notes on how MCP enables training workflow
-- Troubleshooting section for common MCP issues
+Create comprehensive documentation for training system:
+- Document training dataset format and examples
+- Explain QLoRA configuration and rationale
+- Document training workflow (data prep → train → validate → quantize)
+- Create troubleshooting guide for training issues
+- Document performance benchmarks
+- Create quick-start guide
+- Update README with training instructions
 
 **Acceptance Criteria:**
-- [ ] README includes MCP integration section
-- [ ] Installation instructions cover MCP dependencies
-- [ ] Architecture documentation explains MCP role
-- [ ] Setup process documented end-to-end
-- [ ] Examples or quick-start guide provided
+- [ ] Training dataset format documented with examples
+- [ ] QLoRA configuration explained (rank, alpha, quantization)
+- [ ] Training workflow documented end-to-end
+- [ ] Step-by-step training guide created
+- [ ] Troubleshooting section with common issues
+- [ ] Performance benchmarks documented
+- [ ] Quick-start guide created (15-30 min setup)
+- [ ] README updated with training section
+- [ ] All commands documented and tested
+- [ ] Screenshots/examples included where helpful
+- [ ] Documentation cross-linked properly
 
 **Links to Objective:**  
 OBJECTIVE.md → Documentation & Deployment → Comprehensive Documentation
+
+**Estimated Time:** 120-180 minutes
 
 ---
 
@@ -204,19 +302,41 @@ OBJECTIVE.md → Documentation & Deployment → Comprehensive Documentation
 
 **Total Items:** 8  
 **Complexity Breakdown:**
-- Small (S): 3 items
-- Medium (M): 5 items
-- Large (L): 0 items
+- Small (S): 0 items
+- Medium (M): 6 items (T001, T002, T003, T005, T007, T008)
+- Large (L): 2 items (T004, T006)
 
 **Type Breakdown:**
-- Story: 4 items
-- Quality: 2 items
-- Infra: 1 item
-- Docs: 1 item
+- Story: 5 items (T001, T002, T003, T004, T007)
+- Quality: 2 items (T005, T006)
+- Docs: 1 item (T008)
+
+**Priority Order:**
+1. T001 (Framework Selection) - READY
+2. T002 (QLoRA Config) - depends on T001
+3. T003 (Dataset Schema) - depends on T001
+4. T004 (Dataset Creation) - depends on T003
+5. T005 (Dataset Validation) - depends on T004
+6. T006 (Training Testing) - depends on T002, T004
+7. T007 (MCP Integration) - depends on T003, T004
+8. T008 (Documentation) - depends on T002, T004, T006, T007
 
 **Critical Path:**  
-W001 (Analyze) → W002 (Migrate) → W003 (Dependencies) → W004 (Adapt) → W005 (Quality) → W006 (Testing) → W007 (Config) → W008 (Docs)
+T001 → T003 → T004 → T005 → T006 → T008
+
+**Parallel Opportunities:**
+- Phase 1: T001 (Framework) - single task
+- Phase 2: T002 (QLoRA) + T003 (Schema) can run in parallel after T001
+- Phase 3: T004 (Dataset) after T003 completes
+- Phase 4: T005 (Validation) + T007 (MCP) can run in parallel after T004
+- Phase 5: T006 (Testing) after T002 + T004 complete
+- Phase 6: T008 (Docs) after all dependencies complete
+
+**Estimated Total Time:** 1,260-1,800 minutes (21-30 hours)
 
 ---
 
-**Next Steps:** Negotiator will initialize SPRINT_QUEUE.json and assign first task to Planner for detailed planning.
+**Next Steps:** 
+1. Sprint Planner will initialize SPRINT_QUEUE.json with Sprint 4 tasks
+2. Sprint Planner will log Sprint 4 initiation in SPRINT_LOG.md
+3. Negotiator will assign T001 to Planner for detailed planning

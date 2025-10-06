@@ -1,4 +1,4 @@
-.PHONY: fmt gates test check build audit ship tag rollback validate-env sprint-status sprint-complete sprint-new
+.PHONY: fmt gates test check build audit ship tag rollback validate-env sprint-status sprint-complete sprint-new log-rotate log-status
 
 validate-env:
 	python3 scripts/validate-env.py
@@ -32,6 +32,17 @@ sprint-complete:
 
 sprint-new:
 	bash scripts/sprint-new.sh $(if $(FORCE),--force,)
+
+# Log Management
+log-status:
+	@echo "=== Log File Status ==="
+	@wc -l .oodatcaa/work/AGENT_LOG.md .oodatcaa/work/SPRINT_LOG.md .oodatcaa/work/SPRINT_PLAN.md 2>/dev/null || echo "Log files not found"
+	@echo ""
+	@echo "Threshold: 1000 lines (automatic rotation at sprint completion)"
+	@echo "Manual rotation: make log-rotate"
+
+log-rotate:
+	bash scripts/rotate-logs.sh $(if $(DRY_RUN),--dry-run,) || true
 
 ship:
 	git push -u origin HEAD

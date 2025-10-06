@@ -4,28 +4,96 @@
 
 ---
 
-## Sprint 2: OODATCAA Process Improvement — Current Assignments
+## Sprint 4: Training System Foundation — Current Assignments
 
-### Active Assignments (2025-10-05T14:15:00Z)
+### Active Assignments (2025-10-06T07:57:00+02:00)
 
-**Integrator #1 → P006-B03: Integrate Navigation + Quality**
-- Status: Integrating (tested 7/7 PASS, ready for merge)
-- Assigned: 2025-10-05T14:15:00Z
-- Priority: 6 (CRITICAL PATH - Final blocker for Sprint 2 completion!)
-- Complexity: Small (~20 min estimated)
+**Planner → T001: Training Framework Research & Selection**
+- Status: Planning Complete ✅ (AGENT_PLAN.md and TEST_PLAN.md created)
+- Assigned: 2025-10-06T07:57:00+02:00
+- Completed: 2025-10-06T08:15:00+02:00 (estimated)
+- Plan Version: 1.0
+- Artifacts: AGENT_PLAN.md (8 steps, 3 subtasks), TEST_PLAN.md (8 ACs + 8 quality gates)
+- Completion Report: `.oodatcaa/work/reports/T001/planner.md`
+- Framework Selected: MLX-LM (Alternative 1 - M1 Max optimization, memory efficiency, ease of use)
+- Unblocks: T002 (QLoRA Config), T003 (Dataset Schema)
+
+**Next Assignment: Builder → T001-B01 (READY)**
+
+---
+
+### T001: Training Framework Research & Selection (Planning Complete)
+
+**Plan Version:** 1.0  
+**Branch:** `feat/T001-step-01-framework-selection`  
+**Plan Document:** `.oodatcaa/work/AGENT_PLAN.md`  
+**Test Document:** `.oodatcaa/work/TEST_PLAN.md`  
+**Planner:** agent-planner-A  
+**Completed:** 2025-10-06T08:15:00+02:00
+
+**Purpose:** Select and validate training framework (MLX-LM or axolotl) for fine-tuning Qwen2.5-Coder-7B with QLoRA on M1 Max.
+
+**Implementation Steps:**
+1. **Step 1:** Research & framework evaluation (30 min) → MLX-LM vs axolotl comparison
+2. **Step 2:** MLX-LM installation & setup (20 min) → pip install, verify imports
+3. **Step 3:** Model download & loading (25 min) → Qwen2.5-Coder-7B-Instruct
+4. **Step 4:** Basic inference test (20 min) → Code generation prompt, validate response
+5. **Step 5:** Memory profiling (25 min) → Measure inference + training memory (≤16GB target)
+6. **Step 6:** Installation guide documentation (20 min) → FRAMEWORK_SETUP.md
+7. **Step 7:** Update pyproject.toml dependencies (10 min) → MLX-LM + dependencies
+8. **Step 8:** Quality gates & commit (10 min) → All gates pass, commit changes
+
+**Deliverables:**
+- Framework evaluation report (AC1, AC2)
+- MLX-LM installation validated (AC3)
+- Qwen2.5-Coder-7B-Instruct loaded (AC4)
+- Inference test passing (AC5)
+- Memory profile ≤16GB validated (AC6, CRITICAL)
+- Installation guide (AC7)
+- Updated pyproject.toml (AC8)
+
+**Subtask Breakdown:**
+- **T001-B01:** Steps 1-5 (Research, Install, Model Load, Inference, Memory) — 120 min, ready
+- **T001-B02:** Steps 6-8 (Docs, Dependencies, Quality Gates) — 40 min, blocked by B01
+- **T001-T01:** Validation (All 8 ACs) — 20 min, blocked by B02
+
+**Exit Criteria:** All 8 ACs pass, memory ≤16GB validated, T002+T003 unblocked
+
+**Estimated Timeline:** 180 minutes (3 subtasks in sequence)
+
+**Ready for:** Builder (T001-B01) — **Can start immediately!**
+
+---
+
+## Sprint 3: MCP Server Foundation — Historical Assignments (Complete)
+
+Sprint 3 completed successfully on 2025-10-03T05:00:00+02:00. All 8 tasks complete, 6/6 exit criteria met.
+
+See SPRINT_LOG.md for complete Sprint 3 summary.
+
+---
+
+## Sprint 2: OODATCAA Process Improvement — Historical Assignments (Complete)
+
+### Active Assignments (2025-10-05T15:00:00Z)
+
+**Tester #1 → P006-T01: Final Sprint 2 Validation**
+- Status: Awaiting Test (assigned to tester)
+- Assigned: 2025-10-05T15:00:00Z
+- Priority: 6 (CRITICAL PATH - FINAL task for Sprint 2 completion!)
+- Complexity: Medium (30-45 min estimated)
 - Parent Task: P006 (Process Documentation & Runbook)
-- Plan Steps: Steps 6-7 integration
-- Branch: `feat/P006-step-03-navigation-quality`
-- Test Results: 7/7 tests PASS (100% success rate) - validated 2025-10-04T18:25:00Z
-- Deliverables to Merge:
-  - START_HERE.md v2.0 (navigation hub)
-  - Navigation footers in 4 docs (41+ cross-refs)
-  - validate-docs.sh script (108 lines, 5/5 checks pass)
-  - 397 insertions, 66 deletions (net +331 lines)
-- Integration Notes: Zero conflicts expected (documentation-only changes)
-- Next: Once integrated, P006-T01 unblocked → Sprint 2 final validation → COMPLETE!
+- Dependencies: P006-B03 ✅ (integrated 2f2dd02 at 14:30:00Z)
+- Scope: Verify all 10 P006 acceptance criteria
+- Validation Coverage:
+  - P006-B01: Operational docs (4,317 lines - RUNBOOK, TROUBLESHOOTING, ONBOARDING)
+  - P006-B02: Protocols + Architecture (1,096 lines - 7 agent prompts, ARCHITECTURE.md)
+  - P006-B03: Navigation + Quality (331 lines - START_HERE v2.0, cross-linking, validation script)
+  - Total: ~5,744 lines comprehensive documentation
+- Previous Subtask Tests: B01 3/3 PASS, B02 5/5 PASS, B03 7/7 PASS
+- Next: Upon completion → P006 story 100% complete → Sprint 2 100% COMPLETE! 🎉
 
-**No other active assignments** - WIP: integrator 1/1, all other roles 0/capacity
+**No other active assignments** - WIP: tester 1/2, all other roles 0/capacity
 
 ---
 

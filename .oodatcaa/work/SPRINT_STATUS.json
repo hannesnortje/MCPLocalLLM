@@ -1,20 +1,19 @@
 {
-  "sprint_id": "SPRINT-2025-002",
-  "sprint_number": 2,
-  "status": "in_progress",
-  "generated_at": "2025-10-04T16:09:02Z",
+  "sprint_id": "SPRINT-2025-004",
+  "sprint_number": 4,
+  "status": "planning",
+  "generated_at": "2025-10-06T05:34:42Z",
   "progress": {
-    "total_tasks": 37,
-    "completed": 15,
-    "in_progress": 1,
+    "total_tasks": 8,
+    "completed": 0,
+    "in_progress": 0,
     "ready": 1,
-    "blocked": 6,
-    "needs_plan": 0,
+    "blocked": 0,
+    "needs_plan": 7,
     "planning": 0,
-    "awaiting_test": 1,
-    "ready_for_integrator": 1,
-    "percentage": 40
+    "awaiting_test": 0,
+    "percentage": 0
   },
-  "wip": {"planner":{"current":0,"limit":1},"builder":{"current":1,"limit":3},"tester":{"current":0,"limit":2},"refiner":{"current":0,"limit":1},"integrator":{"current":1,"limit":1}},
-  "exit_criteria": [{"name":"Agent Role Completeness","status":"done","progress":100},{"name":"Automatic Log Rotation Working","status":"done","progress":100},{"name":"Background Agent System Operational","status":"planning_complete","progress":25},{"name":"OODATCAA Loop Documented & Visualized","status":"done","progress":100},{"name":"Process Documentation Complete","status":"planning_complete","progress":25},{"name":"Quality Gates Maintained","status":"planning_complete","progress":25},{"name":"Sprint Management Enhanced","status":"done","progress":100}]
+  "wip": {"planner":{"current":0,"limit":1},"builder":{"current":1,"limit":3},"tester":{"current":0,"limit":2},"refiner":{"current":0,"limit":1},"integrator":{"current":0,"limit":1}},
+  "exit_criteria": [{"name":"Documentation & Deployment → Comprehensive Documentation","status":"needs_plan","progress":0},{"name":"MCP Integration → Context preservation with training","status":"needs_plan","progress":0},{"name":"Quality & Performance → Code Quality → Validation","status":"needs_plan","progress":0},{"name":"Quality & Performance → Integration Testing → Training system","status":"needs_plan","progress":0},{"name":"Training System (Core) → Dataset creation → Schema design","status":"needs_plan","progress":0},{"name":"Training System (Core) → Dataset: 1k-5k examples","status":"needs_plan","progress":0},{"name":"Training System (Core) → QLoRA Setup → Configuration","status":"needs_plan","progress":0},{"name":"Training System (Core) → QLoRA Setup → Framework selection","status":"in_progress","progress":50}]
 }

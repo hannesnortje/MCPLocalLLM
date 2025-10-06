@@ -1,903 +1,686 @@
-# AGENT_PLAN: P007 - Integration Testing & Quality Validation
+# Implementation Plan — T001: Training Framework Research & Selection
 
 **Plan Version:** 1.0  
-**Task ID:** P007  
-**Objective:** SPRINT-2025-002 (OODATCAA Process Improvement)  
-**Sprint:** 2  
-**Complexity:** Medium  
-**Planner:** planner-P007  
-**Created:** 2025-10-04T17:00:00+02:00
+**Created:** 2025-10-06T07:57:00+02:00  
+**Planner:** agent-planner-A  
+**Status:** Planning Complete  
+**Branch:** `feat/T001-step-01-framework-selection`
 
 ---
 
 ## Traceability
 
-**Objective Link:** `.oodatcaa/objectives/SPRINT_2_OBJECTIVE.md` → Exit Criterion 7: Quality Gates Maintained  
-**Epic:** Sprint 2 - OODATCAA Process Improvement  
-**Dependencies:** P001 (Background Agent System), P002 (Log Rotation), P003 (Sprint Management) - All Complete
+**Objective ID:** OBJ-2025-002 (Small Coder Model Training with MCP Integration)  
+**Epic:** Training System Foundation  
+**Sprint:** Sprint 4 (2025-10-05 → 2025-10-15)  
+**Backlog Item:** T001 - Training Framework Research & Selection  
+**Objective Link:** Training System (Core) → QLoRA Setup → Framework selection
 
-**Success Criteria Addressed:**
-1. All existing quality gates pass (black, ruff, mypy, pytest, build, pip-audit)
-2. Sprint 1 baseline maintained or improved (15+ tests, known error baselines)
-3. New process tests added for P001 daemon, P002 log rotation, P003 sprint management
-4. Integration tests validate end-to-end workflows
-5. Quality standards documented for future sprints
-6. CI/CD readiness verified
+**Dependencies:** None (first task in Sprint 4)  
+**Unblocks:** T002 (QLoRA Configuration), T003 (Dataset Schema)
 
 ---
 
 ## Problem Statement
 
-**Current State:**
-- Sprint 2 has delivered 5 major systems: P001 (daemon), P002 (log rotation), P003 (sprint management), P004 (OODATCAA docs), P005 (agent assessment)
-- Quality gates are maintained when run, but no formal validation or regression testing completed
-- New systems (P001, P002, P003) lack comprehensive integration tests
-- Quality baseline from Sprint 1 needs verification (ruff: 29 errors, mypy: ~400 errors, tests: 13 passed/3 skipped)
-- No documented quality standards for future sprints
-- CI/CD readiness uncertain
+### Current State
+- **Sprint 3 Complete**: MCP server infrastructure fully integrated (61 files, 12 dependencies, Qdrant configured)
+- **Training Infrastructure**: None — no training framework, no model loading, no QLoRA configuration
+- **Hardware Target**: Apple M1 Max with 32GB RAM (Metal acceleration available)
+- **Model Target**: Qwen2.5-Coder-7B-Instruct (7B parameters, instruct-tuned)
+- **Training Method**: QLoRA (LoRA rank=16, alpha=32, 4-bit quantization)
 
-**Evidence:**
-- AGENT_LOG.md shows "Quality Gates Maintained" but deferred detailed validation
-- P001-B03 added test_agent_daemon.py (250 lines, 10 methods) but not run comprehensively
-- P002 tested rotation (9/9 ACs) but integration with daemon system not validated
-- P003 tested tools individually but not end-to-end sprint lifecycle
-- Ruff baseline: 29 errors (from W008), Mypy baseline: ~400 errors (from W005)
-- Tests baseline: 13 passed, 3 skipped (from W007)
+### Impact
+Without a training framework, we cannot:
+- Fine-tune Qwen2.5-Coder-7B on procedural knowledge and custom definitions
+- Implement daily learning cycles with overnight training
+- Validate QLoRA memory constraints (≤16GB RAM target)
+- Proceed with dataset creation and training pipeline (Sprint 4 blocks T002-T008)
 
-**Impact:**
-- Risk: Regressions may exist but undetected
-- Risk: New systems may have integration issues under real workloads
-- Risk: Future sprints lack clear quality standards
-- Risk: CI/CD pipeline not validated
-- Opportunity: Establish comprehensive quality framework for Sprint 3+
-
-**Goal:**
-Formally validate all quality gates, run comprehensive regression and integration tests, establish Sprint 2 quality baseline, document standards, and certify Sprint 2 as production-ready for future work.
+### Problem
+**Select and validate a training framework** for fine-tuning Qwen2.5-Coder-7B with QLoRA on M1 Max hardware, optimizing for:
+1. **Memory Efficiency**: ≤16GB RAM during training (32GB available, leaving headroom)
+2. **M1 Max Optimization**: Native Metal acceleration support
+3. **Ease of Use**: Quick setup, good documentation, active community
+4. **QLoRA Support**: Built-in LoRA/QLoRA with 4-bit quantization
+5. **Model Compatibility**: Works with Qwen2.5-Coder-7B-Instruct
 
 ---
 
-## Constraints & Interfaces
+## Constraints, Interfaces & Risks
 
-### Technical Constraints
-- **No Breaking Changes:** Only test and validation work, no functional changes
-- **Baseline Acceptance:** Known issues (29 ruff, ~400 mypy) are documented technical debt, acceptable if not regressed
-- **Test Environment:** Local M1 Max (32GB RAM), Python 3.11+, dependencies installed
-- **Time Limit:** Medium complexity task, estimate 4-6 hours total work
+### Constraints
+
+**Hardware:**
+- Apple M1 Max (32GB RAM, Metal GPU)
+- No NVIDIA GPU (CUDA not available)
+- Local-only (no cloud dependencies)
+
+**Software:**
+- Python 3.11+ (existing project constraint)
+- Must integrate with existing MCP infrastructure
+- Type hints (mypy strict mode)
+- Quality gates: black, ruff, mypy, pytest, pip-audit
+
+**Model:**
+- Qwen2.5-Coder-7B-Instruct (HuggingFace model)
+- QLoRA training (rank=16, alpha=32, 4-bit quantization)
+- Target model size: ≤8GB quantized (GGUF Q4_K_M)
+
+**Timeline:**
+- Framework selection: 120-180 minutes (Medium complexity)
+- Must unblock T002 (QLoRA config) and T003 (Dataset schema)
 
 ### Interfaces
-**Input:**
-- `Makefile` - Quality gate commands (fmt, gates, test, check, build, audit)
-- `pyproject.toml` - Quality gate configuration
-- `ruff.toml`, `mypy.ini`, `pytest.ini` - Tool configurations
-- All source code in `src/`, `tests/`, `scripts/`
-- Sprint 2 deliverables: P001-P006 systems
 
-**Output:**
-- Comprehensive test run reports
-- Quality gate validation results
-- Integration test results for P001, P002, P003
-- Regression test baseline
-- Quality standards documentation
-- CI/CD readiness report
-- Sprint 2 quality certification
+**Inputs:**
+- OBJECTIVE.md requirements (QLoRA, Qwen2.5-Coder-7B, M1 Max)
+- Existing MCP infrastructure (src/mcp_local/, pyproject.toml)
+- Hardware specifications (M1 Max capabilities)
 
-### Existing Infrastructure
-- Quality gates defined: black, ruff, mypy, pytest (unit + acceptance), coverage (85%), build, pip-audit
-- Test infrastructure: pytest, conftest.py, mcp tests, smoke tests, agent daemon tests
-- Sprint 1 baseline: 13 passed / 3 skipped, 29 ruff errors, ~400 mypy errors
-- Documentation: Policy docs, OODATCAA guides, agent protocols
-- Automation: Makefile commands, sprint management scripts, daemon system
+**Outputs:**
+- Framework selection report with pros/cons comparison
+- Proof-of-concept installation guide
+- Basic inference test (model responds to prompt)
+- Memory usage profile (training and inference)
+- Updated pyproject.toml with framework dependencies
+- Documentation for Builder to implement
 
 ### Risks
-1. **Regressions Detected:** Sprint 2 changes may have broken existing functionality
-   - Mitigation: Comprehensive regression suite, baseline comparison, accept documented technical debt
-2. **Integration Failures:** P001/P002/P003 may not integrate properly
-   - Mitigation: End-to-end integration tests, real-world scenario testing
-3. **Quality Gate Degradation:** Baselines may have regressed
-   - Mitigation: Compare Sprint 1 vs Sprint 2 baselines, identify acceptable vs unacceptable changes
-4. **Missing Tests:** New systems may lack adequate test coverage
-   - Mitigation: Identify gaps, add critical tests, document gaps for Sprint 3
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| **Memory overflow** (>32GB RAM during training) | Medium | High | Profile memory with small batch sizes first; QLoRA 4-bit should fit |
+| **Framework incompatibility** with M1 Max | Low | High | Test both frameworks; MLX-LM has native M1 support |
+| **Model download failures** (7B model ~14GB) | Low | Medium | Document download process; use HuggingFace mirror if needed |
+| **Installation complexity** (many dependencies) | Medium | Medium | Use isolated venv; document exact versions |
+| **Poor documentation** (framework issues) | Low | Medium | Both frameworks have active communities; fallback to other framework |
+| **QLoRA not supported** | Very Low | High | Both frameworks explicitly support QLoRA |
 
 ---
 
 ## Definition of Done (DoD)
 
 ### Functional Requirements
-1. **Quality Gates Validation:**
-   - Run all 8 quality gates (black, ruff, mypy, pytest unit, pytest acceptance, coverage, build, pip-audit)
-   - Document pass/fail status for each
-   - Compare Sprint 2 vs Sprint 1 baselines
-   - Accept or flag regressions
-
-2. **Regression Testing:**
-   - Run full test suite (unit + acceptance + mcp + smoke + daemon)
-   - Verify all Sprint 1 tests still pass
-   - Verify Sprint 2 tests pass
-   - Zero unexpected regressions
-
-3. **Integration Testing:**
-   - Test P001 daemon system end-to-end (start, task execution, stop)
-   - Test P002 log rotation under real workload (trigger rotation, verify archival)
-   - Test P003 sprint management lifecycle (status, complete, new)
-   - Test cross-system integration (daemon + rotation + sprint management)
-
-4. **Performance Validation:**
-   - Test suite execution time < 30 seconds (baseline)
-   - Build time < 10 seconds
-   - Sprint management tools < 5 seconds response time
-   - No performance regressions
-
-5. **Documentation:**
-   - Quality standards document for Sprint 3+
-   - Baseline comparison report (Sprint 1 vs Sprint 2)
-   - Integration test results report
-   - CI/CD readiness assessment
-
-6. **Coverage Analysis:**
-   - Overall coverage ≥ 85% (project standard)
-   - New code (P001-P006) coverage ≥ 85%
-   - Identify gaps and document for Sprint 3
+1. ✅ **Framework Selected**: Clear recommendation (MLX-LM or axolotl) with documented rationale
+2. ✅ **Installation Working**: Proof-of-concept setup completed successfully
+3. ✅ **Model Loading**: Can load Qwen2.5-Coder-7B-Instruct base model
+4. ✅ **Basic Inference**: Model responds to test prompt (code generation task)
+5. ✅ **Memory Profiled**: Training and inference memory usage documented
 
 ### Non-Functional Requirements
-- **No Code Changes:** This is validation-only, no functional changes
-- **Reproducible:** All tests can be rerun with consistent results
-- **Documented:** All findings documented in reports
-- **Baseline Established:** Sprint 2 quality baseline clearly documented
+6. ✅ **Documentation**: Installation guide with exact commands and dependencies
+7. ✅ **Dependencies**: pyproject.toml updated with framework + model dependencies
+8. ✅ **Quality Gates**: All gates pass (black, ruff, mypy, pytest, pip-audit)
 
-### Acceptance Criteria (Detailed in TEST_PLAN.md)
-- AC1: All 8 quality gates run and results documented
-- AC2: Full test suite passes (unit + acceptance + mcp + smoke + daemon)
-- AC3: P001 daemon integration tests pass
-- AC4: P002 log rotation integration tests pass
-- AC5: P003 sprint management integration tests pass
-- AC6: Performance benchmarks meet or exceed baselines
-- AC7: Coverage ≥ 85% overall and for new code
-- AC8: Baseline comparison report complete (Sprint 1 vs Sprint 2)
-- AC9: Quality standards documentation complete
-- AC10: CI/CD readiness assessment complete
-- AC11: Zero critical regressions
-- AC12: Sprint 2 certified production-ready
+---
+
+## Acceptance Criteria (ACs)
+
+### AC1: Framework Evaluation Complete ✅
+- [ ] **MLX-LM** evaluated with pros/cons documented
+- [ ] **axolotl** evaluated with pros/cons documented
+- [ ] Comparison matrix created (memory, speed, ease of use, QLoRA support, M1 Max optimization)
+- [ ] Framework selected with explicit rationale (minimum 3 decision factors)
+- [ ] Alternative framework documented as fallback option
+
+**Validation:** Evaluation report exists with 2 frameworks compared and 1 selected
+
+### AC2: Framework Selected with Rationale ✅
+- [ ] Selected framework explicitly stated (MLX-LM or axolotl)
+- [ ] Rationale documented with minimum 3 decision factors:
+  - Memory efficiency (≤16GB RAM target)
+  - M1 Max optimization (Metal acceleration)
+  - Ease of use (setup time, documentation quality)
+- [ ] Trade-offs acknowledged (what we gain, what we lose)
+- [ ] Fallback plan documented if selected framework fails
+
+**Validation:** Selection section in report with clear decision reasoning
+
+### AC3: Proof-of-Concept Installation Successful ✅
+- [ ] Framework installed in project venv
+- [ ] Installation guide documented with exact commands
+- [ ] All framework dependencies resolved
+- [ ] Installation validated (import test passes)
+- [ ] No conflicts with existing MCP dependencies
+
+**Validation:** `pip list | grep <framework>` shows installed, import test passes
+
+### AC4: Qwen2.5-Coder-7B-Instruct Model Loaded ✅
+- [ ] Model downloaded from HuggingFace (or documented download process)
+- [ ] Model loaded successfully in Python
+- [ ] Model tokenizer working
+- [ ] Model architecture validated (7B parameters confirmed)
+- [ ] Model ready for inference
+
+**Validation:** Python script loads model, prints architecture summary, no errors
+
+### AC5: Basic Inference Test Passes ✅
+- [ ] Test prompt defined (code generation task, e.g., "Write a Python function to...")
+- [ ] Model generates response (minimum 20 tokens)
+- [ ] Response is coherent (not gibberish)
+- [ ] Inference time measured and documented
+- [ ] Test script provided for Builder to reproduce
+
+**Validation:** Inference script runs, generates response, inference time logged
+
+### AC6: Memory Usage Profiled and Documented ✅
+- [ ] **Inference memory** measured (model loading + single inference)
+- [ ] **Training memory** estimated (with QLoRA, batch size 1)
+- [ ] Memory usage documented in MB/GB
+- [ ] Comparison with 16GB target (headroom calculated)
+- [ ] Peak memory usage captured (not just average)
+
+**Validation:** Memory profile document with numbers (e.g., "Inference: 8.2GB, Training est: 14.5GB")
+
+### AC7: Installation Guide Documented ✅
+- [ ] Step-by-step installation instructions
+- [ ] Exact commands provided (copy-paste ready)
+- [ ] Dependencies listed with versions
+- [ ] Troubleshooting section (common issues)
+- [ ] Verification steps (how to confirm installation worked)
+
+**Validation:** `docs/training/FRAMEWORK_SETUP.md` exists with complete installation guide
+
+### AC8: Dependencies Added to pyproject.toml ✅
+- [ ] Framework package added to dependencies
+- [ ] Model packages added (transformers, torch/mlx, etc.)
+- [ ] Versions specified (not unpinned)
+- [ ] Optional dependencies documented if applicable
+- [ ] pip-audit passes (no high-severity vulnerabilities)
+
+**Validation:** pyproject.toml updated, `pip install -e .` works, pip-audit clean
 
 ---
 
 ## Alternatives Considered
 
-### Alternative 1: Minimal Validation (Quick Check)
-**Approach:**
-- Run `make gates` and `make test` once
-- Document pass/fail
-- Skip integration testing, skip baseline comparison
+### Alternative 1: Apple MLX-LM 🥇 **RECOMMENDED**
+
+**Description:** Apple's native machine learning framework for M1/M2 chips with Metal acceleration.
 
 **Pros:**
-- Fast (< 1 hour)
-- Simple
-- Meets minimum DoD
+- ✅ **Native M1 Max support** — Built specifically for Apple Silicon with Metal GPU acceleration
+- ✅ **Memory efficient** — Optimized for unified memory architecture
+- ✅ **Easy setup** — pip install, minimal dependencies
+- ✅ **Good documentation** — Apple maintains comprehensive guides
+- ✅ **Active development** — Regular updates, growing community
+- ✅ **LoRA/QLoRA support** — Built-in LoRA fine-tuning with examples
+- ✅ **Fast inference** — Metal acceleration provides excellent inference speed
+- ✅ **Quantization support** — Built-in 4-bit, 8-bit quantization
 
 **Cons:**
-- Misses integration issues
-- No baseline comparison (can't detect regressions)
-- No quality standards for future
-- Risk of undetected issues
+- ⚠️ **M1/M2 only** — Not portable to NVIDIA/AMD GPUs (but not a constraint for this project)
+- ⚠️ **Smaller ecosystem** — Fewer community examples than PyTorch/Axolotl
+- ⚠️ **Newer framework** — Less battle-tested than PyTorch-based solutions
+- ⚠️ **Model support** — Not all HuggingFace models officially tested (but Qwen supported)
 
-**Verdict:** ❌ **Rejected** - Too shallow. Sprint 2 added significant new systems (daemon, rotation, sprint management) that need integration testing. No baseline comparison means can't certify quality.
+**Decision Factors:**
+1. **M1 Max Optimization**: Native Metal acceleration is critical for performance on our hardware
+2. **Memory Efficiency**: Unified memory architecture optimization aligns with ≤16GB target
+3. **Ease of Use**: Simple pip install, minimal setup overhead
+4. **QLoRA Support**: Built-in LoRA with quantization examples
+5. **Apple Backing**: Official Apple support provides confidence in M1 Max optimization
+
+**Estimated Effort:** 60-90 minutes (setup + validation)
 
 ---
 
-### Alternative 2: Exhaustive Validation (Deep Audit)
-**Approach:**
-- Run all quality gates 3+ times
-- Add new tests for every edge case
-- Fix all ruff and mypy errors (zero tolerance)
-- Achieve 100% coverage
-- Performance profiling and optimization
+### Alternative 2: Axolotl (HuggingFace/PyTorch-based)
+
+**Description:** Popular LoRA/QLoRA training framework built on HuggingFace Transformers and PyTorch.
 
 **Pros:**
-- Maximum confidence
-- Zero technical debt
-- Comprehensive coverage
-- Optimized performance
+- ✅ **Battle-tested** — Widely used in community, many examples
+- ✅ **Comprehensive** — Supports almost all HuggingFace models
+- ✅ **Rich ecosystem** — Many community configs, troubleshooting resources
+- ✅ **QLoRA built-in** — Excellent LoRA/QLoRA support with bitsandbytes
+- ✅ **Flexible** — Highly configurable for advanced use cases
+- ✅ **Portable** — Works on CUDA, MPS (Metal), CPU
 
 **Cons:**
-- Time-consuming (2-3 days)
-- Scope creep (optimization not in P007 scope)
-- Diminishing returns
-- Delays Sprint 2 completion
+- ⚠️ **PyTorch MPS backend** — MPS (Metal Performance Shaders) support is less mature than CUDA
+- ⚠️ **Memory overhead** — PyTorch can be memory-hungry, especially with transformers
+- ⚠️ **Complex setup** — More dependencies, configuration files, potential conflicts
+- ⚠️ **M1 Max optimization** — Not specifically optimized for Apple Silicon (generic MPS support)
+- ⚠️ **Slower inference** — PyTorch MPS generally slower than native MLX on M1 Max
+- ⚠️ **Dependency conflicts** — More dependencies increases risk of conflicts with existing MCP packages
 
-**Verdict:** ❌ **Rejected** - Overkill. Sprint 2 objective is "maintain" quality gates, not "perfect" them. Fixing all 29 ruff and 400 mypy errors would delay sprint completion for marginal benefit. Documented technical debt is acceptable.
+**Decision Factors:**
+1. **Ecosystem Maturity**: Large community, many examples and troubleshooting resources
+2. **Model Compatibility**: Guaranteed to work with Qwen2.5-Coder-7B-Instruct
+3. **QLoRA Experience**: Well-documented QLoRA training recipes
+4. **Fallback Option**: If MLX-LM has issues, axolotl is proven alternative
+
+**Estimated Effort:** 120-150 minutes (more complex setup)
 
 ---
 
-### Alternative 3: Comprehensive Validation with Baseline Acceptance (CHOSEN)
-**Approach:**
-- Run all 8 quality gates once
-- Full regression testing (all test suites)
-- Integration testing for P001, P002, P003
-- Baseline comparison (Sprint 1 vs Sprint 2)
-- Accept documented technical debt if not regressed
-- Document quality standards for Sprint 3+
-- Assess CI/CD readiness
+### Alternative 3: Minimal Setup (No Framework, Direct HuggingFace Transformers + LoRA)
+
+**Description:** Use HuggingFace Transformers + PEFT (Parameter-Efficient Fine-Tuning) libraries directly without a higher-level framework.
 
 **Pros:**
-- ✅ Comprehensive validation without scope creep
-- ✅ Integration testing ensures new systems work
-- ✅ Baseline comparison detects regressions
-- ✅ Pragmatic acceptance of documented technical debt
-- ✅ Establishes quality framework for future
-- ✅ CI/CD readiness for Sprint 3+
-- ✅ Balanced effort (4-6 hours)
+- ✅ **Minimal dependencies** — Only transformers + peft + torch
+- ✅ **Maximum control** — Write custom training loops
+- ✅ **Well-documented** — HuggingFace docs are excellent
+- ✅ **Flexible** — Can optimize exactly for our use case
 
 **Cons:**
-- Still have 29 ruff errors (accepted technical debt)
-- Still have ~400 mypy errors (accepted technical debt)
-- Not 100% coverage (85% is acceptable)
+- ❌ **High effort** — Must write training loops, config management, checkpointing from scratch
+- ❌ **Reinventing wheel** — Frameworks like MLX-LM already provide this
+- ❌ **Time-consuming** — Estimated 4-6 hours to build training pipeline
+- ❌ **Error-prone** — More code to maintain and debug
+- ❌ **No M1 Max optimization** — Generic PyTorch MPS, not optimized for Apple Silicon
 
-**Verdict:** ✅ **CHOSEN** - Right balance of thoroughness and pragmatism. Validates Sprint 2 is production-ready while accepting documented technical debt. Establishes framework for Sprint 3+ continuous improvement.
+**Decision Factors:**
+1. **Time Constraint**: 120-180 minutes for T001 insufficient for custom implementation
+2. **Framework Benefits**: MLX-LM/axolotl provide tested, optimized solutions
+3. **Maintenance**: Less code to maintain with framework
+4. **Risk**: Higher risk of bugs in custom implementation
 
----
+**Estimated Effort:** 240-360 minutes (Large complexity, beyond T001 scope)
 
-## Implementation Plan
-
-### Step-by-Step Breakdown
-
-#### **Step 1: Environment Setup & Tool Verification (15 min)**
-**Goal:** Ensure all quality gate tools are installed and working
-
-**Tasks:**
-1. **Verify Tool Installation:**
-   ```bash
-   black --version      # Format checker
-   ruff --version       # Linter
-   mypy --version       # Type checker
-   pytest --version     # Test runner
-   python -m build --help  # Build tool
-   pip-audit --version  # Security auditor
-   ```
-
-2. **Install Missing Tools (if needed):**
-   ```bash
-   pip install black ruff mypy pytest pytest-cov build pip-audit
-   ```
-
-3. **Verify Test Discovery:**
-   ```bash
-   pytest --collect-only -q
-   ```
-
-4. **Verify Makefile Commands:**
-   ```bash
-   make -n gates  # Dry-run gates command
-   make -n test   # Dry-run test command
-   make -n check  # Dry-run check command
-   ```
-
-**Deliverable:** Tool verification report (all tools installed and functional)
-
-**Exit Gate:** All tools respond with version info, no "command not found" errors
+**Recommendation:** ❌ **REJECT** — Not viable within T001 timeline
 
 ---
 
-#### **Step 2: Sprint 1 Baseline Documentation (20 min)**
-**Goal:** Document Sprint 1 quality baseline for comparison
+## Chosen Alternative: MLX-LM (Alternative 1) 🥇
 
-**Tasks:**
-1. **Document Sprint 1 Baselines (from historical logs):**
-   - **Ruff:** 29 errors (established in W008)
-   - **Mypy:** ~400 errors (established in W005, accepted technical debt)
-   - **Tests:** 13 passed, 3 skipped (established in W007)
-   - **Coverage:** 85% target (project standard)
-   - **Build:** Clean (no errors)
-   - **Pip-audit:** Clean (no high-severity vulnerabilities)
+### Rationale
 
-2. **Create Baseline Document:**
-   `.oodatcaa/work/quality_baseline_sprint1.md`
-   - All quality gate baselines
-   - Known issues and technical debt
-   - Acceptance criteria for Sprint 2 (maintain or improve)
+We select **Apple MLX-LM** for the following reasons:
 
-3. **Identify Acceptance Thresholds:**
-   - Ruff: ≤ 29 errors (no regression)
-   - Mypy: ≤ 400 errors (no regression)
-   - Tests: ≥ 13 passed (no test failures)
-   - Coverage: ≥ 85% (maintain standard)
-   - Build: Clean (no new errors)
-   - Pip-audit: No new high-severity issues
+1. **M1 Max Optimization (Critical)**: Native Metal acceleration provides significant performance advantage over PyTorch MPS backend. This is our primary hardware constraint and MLX-LM is purpose-built for it.
 
-**Deliverable:** `.oodatcaa/work/quality_baseline_sprint1.md`
+2. **Memory Efficiency (High Priority)**: Unified memory architecture optimization in MLX-LM aligns perfectly with our ≤16GB RAM target. Apple engineers tuned this specifically for M1/M2 memory characteristics.
 
-**Exit Gate:** Sprint 1 baseline fully documented with clear acceptance thresholds
+3. **Ease of Use (Medium Priority)**: Simple `pip install mlx-lm` with minimal dependencies reduces setup complexity and risk. Estimated 60-90 minutes vs 120-150 minutes for axolotl.
 
----
+4. **QLoRA Support (High Priority)**: Built-in LoRA fine-tuning with quantization examples in MLX-LM documentation. Proven to work with 7B models on M1 Max.
 
-#### **Step 3: Quality Gates Execution (30 min)**
-**Goal:** Run all 8 quality gates and document results
+5. **Future-Proof (Low Priority)**: As Apple continues developing MLX, we benefit from ongoing optimizations for Apple Silicon. Aligns with local-first, M1 Max-focused objective.
 
-**Tasks:**
-1. **Run Quality Gates in Order:**
-   ```bash
-   # Gate 1: Black formatting
-   black --check . > .oodatcaa/work/gate1_black.log 2>&1
-   echo "Exit code: $?" >> .oodatcaa/work/gate1_black.log
-   
-   # Gate 2: Ruff linting
-   ruff check . > .oodatcaa/work/gate2_ruff.log 2>&1
-   echo "Exit code: $?" >> .oodatcaa/work/gate2_ruff.log
-   echo "Error count: $(ruff check . 2>&1 | grep -c 'error')" >> .oodatcaa/work/gate2_ruff.log
-   
-   # Gate 3: Mypy type checking
-   mypy . > .oodatcaa/work/gate3_mypy.log 2>&1
-   echo "Exit code: $?" >> .oodatcaa/work/gate3_mypy.log
-   echo "Error count: $(mypy . 2>&1 | grep 'Found' | grep 'error')" >> .oodatcaa/work/gate3_mypy.log
-   
-   # Gate 4: Pytest unit tests
-   pytest -q > .oodatcaa/work/gate4_pytest_unit.log 2>&1
-   echo "Exit code: $?" >> .oodatcaa/work/gate4_pytest_unit.log
-   
-   # Gate 5: Pytest acceptance tests
-   pytest -q tests/acceptance > .oodatcaa/work/gate5_pytest_acceptance.log 2>&1
-   echo "Exit code: $?" >> .oodatcaa/work/gate5_pytest_acceptance.log
-   
-   # Gate 6: Coverage
-   pytest --cov=src --cov-report=term-missing --cov-fail-under=85 > .oodatcaa/work/gate6_coverage.log 2>&1
-   echo "Exit code: $?" >> .oodatcaa/work/gate6_coverage.log
-   
-   # Gate 7: Build
-   python -m build > .oodatcaa/work/gate7_build.log 2>&1
-   echo "Exit code: $?" >> .oodatcaa/work/gate7_build.log
-   
-   # Gate 8: Security audit
-   pip-audit > .oodatcaa/work/gate8_security.log 2>&1
-   echo "Exit code: $?" >> .oodatcaa/work/gate8_security.log
-   ```
+### Trade-offs Accepted
 
-2. **Parse Results:**
-   - Extract error counts, pass/fail status
-   - Compare to Sprint 1 baseline
-   - Identify regressions
+- **Smaller Ecosystem**: Fewer community examples than PyTorch/axolotl (acceptable — we can reference MLX-LM docs)
+- **Portability**: Locked to M1/M2 hardware (acceptable — OBJECTIVE.md explicitly targets M1 Max)
+- **Newer Framework**: Less battle-tested than PyTorch (acceptable — Apple backing provides confidence)
 
-3. **Create Results Summary:**
-   `.oodatcaa/work/quality_gates_sprint2.md`
-   - Gate-by-gate results
-   - Sprint 1 vs Sprint 2 comparison
-   - Regression analysis
-   - Accept/flag each gate
+### Fallback Plan
 
-**Deliverable:** `.oodatcaa/work/quality_gates_sprint2.md` + 8 log files
-
-**Exit Gate:** All 8 gates executed, results documented, comparison complete
+If MLX-LM fails during implementation (e.g., model compatibility issues, unexpected memory problems):
+1. **Quick validation** (30 min): Test axolotl with same proof-of-concept
+2. **Switch decision** (15 min): Update plan, document switch rationale
+3. **Axolotl implementation** (90 min): Follow Alternative 2 setup
+4. **Total fallback cost**: ~135 minutes (still within Sprint 4 buffer)
 
 ---
 
-#### **Step 4: Regression Testing (45 min)**
-**Goal:** Verify all existing tests still pass (zero regressions)
+## Step-by-Step Implementation Plan
+
+### Step 1: Research & Framework Evaluation (30 minutes)
+
+**Goal:** Evaluate MLX-LM and axolotl, confirm Qwen2.5-Coder-7B compatibility
 
 **Tasks:**
-1. **Run Full Test Suite:**
-   ```bash
-   # All tests with verbose output
-   pytest -v --tb=short > .oodatcaa/work/regression_tests_full.log 2>&1
-   
-   # Test discovery
-   pytest --collect-only -q >> .oodatcaa/work/regression_tests_full.log
-   
-   # Test timing
-   pytest -v --durations=10 >> .oodatcaa/work/regression_tests_full.log
-   ```
+1. Read MLX-LM documentation (installation, LoRA examples, Qwen support)
+2. Read axolotl documentation (MPS backend, Qwen configs)
+3. Check community reports for Qwen2.5-Coder-7B on M1 Max
+4. Create comparison matrix (memory, speed, ease, QLoRA, M1 Max)
+5. Document decision rationale (3+ factors)
 
-2. **Run Test Categories Separately:**
-   ```bash
-   # Smoke tests
-   pytest tests/test_smoke.py -v > .oodatcaa/work/regression_smoke.log 2>&1
-   
-   # MCP integration tests
-   pytest tests/mcp/ -v > .oodatcaa/work/regression_mcp.log 2>&1
-   
-   # Daemon tests
-   pytest tests/test_agent_daemon.py -v > .oodatcaa/work/regression_daemon.log 2>&1
-   
-   # Acceptance tests
-   pytest tests/acceptance/ -v > .oodatcaa/work/regression_acceptance.log 2>&1
-   ```
+**Exit Gate:**
+- [ ] Comparison matrix complete (2 frameworks, 5 criteria)
+- [ ] Framework selected (MLX-LM expected)
+- [ ] Rationale documented with minimum 3 decision factors
 
-3. **Analyze Test Results:**
-   - Total tests: Expected ≥ 13 passed
-   - Skipped tests: Expected 3 (Qdrant unavailable)
-   - Failed tests: Expected 0
-   - New tests: Count P001 daemon tests (10 methods), P002/P003 tests (if any)
-   - Execution time: Expected < 30 seconds
-
-4. **Compare to Baseline:**
-   - Sprint 1: 13 passed, 3 skipped
-   - Sprint 2: ? passed, ? skipped, ? failed
-   - Net change: + (new tests) - (removed tests)
-
-**Deliverable:** `.oodatcaa/work/regression_analysis.md` + 5 test log files
-
-**Exit Gate:** All tests executed, results compared to baseline, zero unexpected failures
+**Branch:** Not needed (research only)  
+**Deliverable:** `docs/training/T001_framework_evaluation.md`
 
 ---
 
-#### **Step 5: Integration Testing - P001 Daemon System (45 min)**
-**Goal:** Validate P001 daemon system works end-to-end
+### Step 2: MLX-LM Installation & Setup (20 minutes)
+
+**Goal:** Install MLX-LM framework in project venv, validate imports
 
 **Tasks:**
-1. **Unit Tests (Already Exist):**
-   - Verify `tests/test_agent_daemon.py` runs successfully
-   - 5 test classes, 10 test methods
-   - Tests: queue parsing, WIP enforcement, lease acquisition, directory creation, shutdown
+1. Create new branch: `feat/T001-step-01-framework-selection`
+2. Activate project venv: `source .venv/bin/activate`
+3. Install MLX-LM: `pip install mlx-lm`
+4. Install dependencies: `pip install mlx transformers` (if not auto-installed)
+5. Verify installation: `python -c "import mlx_lm; print(mlx_lm.__version__)"`
+6. Update pyproject.toml with MLX-LM dependencies
 
-2. **Integration Test - Manual Workflow:**
-   ```bash
-   # Test 1: Daemon help and version
-   python scripts/agent-daemon.py --help
-   python scripts/agent-daemon.py --version
-   
-   # Test 2: Queue file validation
-   python scripts/agent-daemon.py --validate-queue
-   
-   # Test 3: Dry run (no actual work)
-   timeout 10s python scripts/agent-daemon.py --agent planner --dry-run || echo "Timeout OK"
-   
-   # Test 4: Verify Makefile integration
-   make -n daemon-start
-   make -n daemon-stop
-   make -n daemon-status
-   ```
+**Exit Gate:**
+- [ ] MLX-LM installed successfully
+- [ ] Import test passes (no errors)
+- [ ] pyproject.toml updated with dependencies
+- [ ] No conflicts with existing MCP packages (pip check passes)
 
-3. **Integration Test - Real Scenario (Controlled):**
-   - Create test SPRINT_QUEUE.json with simple task
-   - Run daemon for 1 minute in background
-   - Verify daemon acquires lease
-   - Verify daemon logs activity
-   - Stop daemon gracefully
-   - Verify clean shutdown
+**Commands:**
+```bash
+git checkout -b feat/T001-step-01-framework-selection
+pip install mlx-lm mlx transformers
+python -c "import mlx_lm; import mlx; import transformers; print('MLX-LM:', mlx_lm.__version__); print('MLX:', mlx.__version__); print('Transformers:', transformers.__version__)"
+pip check
+```
 
-4. **Document Results:**
-   - Unit tests pass/fail
-   - Integration tests pass/fail
-   - Any issues discovered
-   - Daemon system certification (ready / needs work)
-
-**Deliverable:** `.oodatcaa/work/integration_p001_daemon.md`
-
-**Exit Gate:** P001 daemon system validated or issues documented
+**Deliverable:** Updated `pyproject.toml` with MLX-LM dependencies
 
 ---
 
-#### **Step 6: Integration Testing - P002 Log Rotation (30 min)**
-**Goal:** Validate P002 log rotation works under real workload
+### Step 3: Model Download & Loading (25 minutes)
+
+**Goal:** Download Qwen2.5-Coder-7B-Instruct, load model in Python
 
 **Tasks:**
-1. **Verify P002 Deliverables:**
-   - `scripts/rotate-logs.sh` exists and executable
-   - `scripts/generate-archive-index.sh` exists and executable
-   - Archive structure exists: `.oodatcaa/work/archive/sprint_2/`
+1. Research Qwen2.5-Coder-7B-Instruct on HuggingFace (model card, download size)
+2. Check MLX-LM model format requirements (HuggingFace Hub, local path, or MLX format)
+3. Download model using HuggingFace CLI or mlx_lm tool
+4. Create Python script to load model with MLX-LM
+5. Verify model architecture (7B parameters, instruct-tuned)
+6. Document model download process
 
-2. **Test Log Rotation Trigger:**
-   ```bash
-   # Test rotation with current logs
-   bash scripts/rotate-logs.sh --dry-run
-   
-   # Check log sizes
-   wc -l .oodatcaa/work/AGENT_LOG.md
-   wc -l .oodatcaa/work/SPRINT_LOG.md
-   ```
+**Exit Gate:**
+- [ ] Qwen2.5-Coder-7B-Instruct downloaded (~14GB)
+- [ ] Model loaded successfully in Python script
+- [ ] Model architecture validated (7B parameters confirmed)
+- [ ] Tokenizer working (can encode/decode test strings)
+- [ ] Script documented for reproducibility
 
-3. **Test Archive Index Generation:**
-   ```bash
-   bash scripts/generate-archive-index.sh
-   ls -lh ARCHIVE_INDEX.md
-   ```
+**Commands:**
+```bash
+# Option 1: MLX-LM automatic download
+python -c "from mlx_lm import load; model, tokenizer = load('Qwen/Qwen2.5-Coder-7B-Instruct')"
 
-4. **Verify Archive Structure:**
-   - Sprint 1 archives exist
-   - Sprint 2 archives exist (if rotation triggered)
-   - Archive README exists
+# Option 2: HuggingFace Hub CLI (if needed)
+pip install huggingface_hub
+huggingface-cli download Qwen/Qwen2.5-Coder-7B-Instruct
+```
 
-5. **Document Results:**
-   - Rotation script functional: yes/no
-   - Archive structure valid: yes/no
-   - Index generation works: yes/no
-   - Issues discovered (if any)
-
-**Deliverable:** `.oodatcaa/work/integration_p002_rotation.md`
-
-**Exit Gate:** P002 log rotation validated or issues documented
+**Deliverable:** `scripts/training/load_model_test.py` (model loading script)
 
 ---
 
-#### **Step 7: Integration Testing - P003 Sprint Management (30 min)**
-**Goal:** Validate P003 sprint management lifecycle works end-to-end
+### Step 4: Basic Inference Test (20 minutes)
+
+**Goal:** Run inference with Qwen2.5-Coder-7B-Instruct, validate model works
 
 **Tasks:**
-1. **Verify P003 Deliverables:**
-   - `scripts/sprint-dashboard.sh` exists and executable
-   - `scripts/sprint-complete.sh` exists and executable
-   - `scripts/sprint-new.sh` exists and executable
-   - Makefile commands: `sprint-status`, `sprint-complete`, `sprint-new`
+1. Create inference test script
+2. Define test prompt (code generation task, e.g., "Write a Python function to calculate Fibonacci sequence")
+3. Run inference with model (generate 50-100 tokens)
+4. Validate response is coherent (not gibberish, relevant to prompt)
+5. Measure inference time (seconds per token, total time)
+6. Document inference parameters (temperature, max_tokens, etc.)
 
-2. **Test Sprint Dashboard:**
-   ```bash
-   make sprint-status > .oodatcaa/work/test_sprint_dashboard.log 2>&1
-   # Verify output includes:
-   # - Sprint ID (SPRINT-2025-002)
-   # - Task status summary
-   # - Progress indicators
-   # - No errors
-   ```
+**Exit Gate:**
+- [ ] Inference test script runs without errors
+- [ ] Model generates coherent response (minimum 20 tokens)
+- [ ] Inference time measured and documented
+- [ ] Test prompt and output saved for validation
+- [ ] Script reproducible (Builder can run it)
 
-3. **Test Sprint Status JSON:**
-   ```bash
-   ls -lh .oodatcaa/work/SPRINT_STATUS.json
-   python3 -m json.tool .oodatcaa/work/SPRINT_STATUS.json > /dev/null 2>&1
-   echo "JSON valid: $?"
-   ```
+**Commands:**
+```bash
+python scripts/training/inference_test.py
+```
 
-4. **Test Sprint Completion (Dry Run):**
-   ```bash
-   # DO NOT RUN FOR REAL - Sprint 2 not complete yet!
-   bash scripts/sprint-complete.sh --help
-   # Verify help text shows usage
-   ```
+**Expected Output:**
+```
+Test Prompt: Write a Python function to calculate Fibonacci sequence
+Model Response: def fibonacci(n): ...
+Inference Time: 2.3 seconds (21.7 tokens/sec)
+Response Coherent: Yes
+```
 
-5. **Test Sprint Initialization (Dry Run):**
-   ```bash
-   # DO NOT RUN FOR REAL
-   bash scripts/sprint-new.sh --help
-   # Verify help text shows usage
-   ```
-
-6. **Verify Atomic Operations:**
-   - Check SPRINT_QUEUE.json for atomic update markers
-   - Check logs for atomic operation notes
-   - Verify no data corruption risks
-
-7. **Document Results:**
-   - Dashboard functional: yes/no
-   - Status JSON valid: yes/no
-   - Completion script ready: yes/no
-   - Initialization script ready: yes/no
-   - Atomic operations verified: yes/no
-   - Issues discovered (if any)
-
-**Deliverable:** `.oodatcaa/work/integration_p003_sprint_mgmt.md`
-
-**Exit Gate:** P003 sprint management validated or issues documented
+**Deliverable:** `scripts/training/inference_test.py` + `docs/training/inference_test_results.md`
 
 ---
 
-#### **Step 8: Cross-System Integration Test (30 min)**
-**Goal:** Validate P001 + P002 + P003 work together
+### Step 5: Memory Profiling (25 minutes)
+
+**Goal:** Measure memory usage (inference + training estimate), validate ≤16GB target
 
 **Tasks:**
-1. **Test Daemon + Sprint Management:**
-   - Daemon reads SPRINT_QUEUE.json (P003 format)
-   - Daemon respects sprint status (in_progress, blocked, etc.)
-   - Daemon works with sprint dashboard output
+1. Create memory profiling script using `psutil` or macOS `memory_pressure`
+2. Measure inference memory (model loading + single inference run)
+3. Estimate training memory (QLoRA with batch size 1, based on MLX-LM docs)
+4. Calculate peak memory usage (not just average)
+5. Compare with 16GB target (headroom calculation)
+6. Document memory profile with numbers
 
-2. **Test Log Rotation + Daemon:**
-   - Daemon logs to AGENT_LOG.md
-   - Log rotation handles daemon log entries
-   - Archive structure preserves daemon logs
+**Exit Gate:**
+- [ ] Inference memory measured (MB/GB)
+- [ ] Training memory estimated (based on QLoRA 4-bit quantization)
+- [ ] Peak memory usage documented
+- [ ] Comparison with 16GB target (e.g., "14.5GB training, 1.5GB headroom")
+- [ ] Profile reproducible (Builder can verify)
 
-3. **Test Sprint Management + Log Rotation:**
-   - Sprint complete archives logs (P002)
-   - Sprint new starts with clean logs
-   - Archive index includes all sprints
+**Commands:**
+```bash
+python scripts/training/memory_profile.py
+# or: /usr/bin/time -l python scripts/training/inference_test.py
+```
 
-4. **End-to-End Scenario:**
-   - Run `make sprint-status` (P003)
-   - Check AGENT_LOG.md size (P002 concern)
-   - Verify daemon can read queue (P001)
-   - All systems functional together
+**Expected Output:**
+```
+Inference Memory: 8.2GB (model loading + single inference)
+Training Memory (est): 14.5GB (QLoRA, batch size 1, 4-bit quantization)
+Peak Memory: 14.8GB
+Headroom from 16GB target: 1.2GB (acceptable)
+```
 
-5. **Document Results:**
-   - Cross-system integration: pass/fail
-   - Issues discovered (if any)
-   - Dependencies verified: yes/no
-   - Systems interoperate: yes/no
-
-**Deliverable:** `.oodatcaa/work/integration_cross_system.md`
-
-**Exit Gate:** Cross-system integration validated or issues documented
+**Deliverable:** `docs/training/memory_profile.md`
 
 ---
 
-#### **Step 9: Performance Validation (20 min)**
-**Goal:** Verify performance baselines met
+### Step 6: Installation Guide Documentation (20 minutes)
+
+**Goal:** Create comprehensive installation guide for Builder
 
 **Tasks:**
-1. **Test Suite Performance:**
-   ```bash
-   time pytest -q > /dev/null 2>&1
-   # Baseline: < 30 seconds
-   ```
+1. Create `docs/training/FRAMEWORK_SETUP.md`
+2. Document step-by-step installation (exact commands)
+3. List all dependencies with versions
+4. Add troubleshooting section (common issues on M1 Max)
+5. Add verification steps (how to confirm setup worked)
+6. Cross-reference with T001 evaluation report
 
-2. **Build Performance:**
-   ```bash
-   rm -rf dist/
-   time python -m build > /dev/null 2>&1
-   # Baseline: < 10 seconds
-   ```
+**Exit Gate:**
+- [ ] Installation guide exists at `docs/training/FRAMEWORK_SETUP.md`
+- [ ] Step-by-step instructions with exact commands
+- [ ] Dependencies listed with versions
+- [ ] Troubleshooting section (minimum 3 common issues)
+- [ ] Verification steps documented
 
-3. **Sprint Management Tools Performance:**
-   ```bash
-   time bash scripts/sprint-dashboard.sh > /dev/null 2>&1
-   # Baseline: < 5 seconds (achieved 0.199s in P003!)
-   ```
+**Contents:**
+- Prerequisites (Python 3.11+, M1 Max, venv)
+- Installation commands (copy-paste ready)
+- Verification (import test, model load test)
+- Troubleshooting (M1 Max specific issues)
+- Next steps (reference to T002 QLoRA configuration)
 
-4. **Log Rotation Performance:**
-   ```bash
-   time bash scripts/rotate-logs.sh --dry-run > /dev/null 2>&1
-   # Baseline: < 2 seconds
-   ```
-
-5. **Quality Gates Performance:**
-   ```bash
-   time make gates > /dev/null 2>&1
-   # Baseline: < 60 seconds
-   ```
-
-6. **Document Results:**
-   - All performance benchmarks met: yes/no
-   - Any regressions: yes/no
-   - Performance baseline for Sprint 3
-
-**Deliverable:** `.oodatcaa/work/performance_validation.md`
-
-**Exit Gate:** Performance baselines met or regressions documented
+**Deliverable:** `docs/training/FRAMEWORK_SETUP.md`
 
 ---
 
-#### **Step 10: Coverage Analysis (30 min)**
-**Goal:** Verify coverage ≥ 85% overall and for new code
+### Step 7: Update pyproject.toml Dependencies (10 minutes)
+
+**Goal:** Add MLX-LM and model dependencies to pyproject.toml
 
 **Tasks:**
-1. **Run Coverage Analysis:**
-   ```bash
-   pytest --cov=src --cov-report=term-missing --cov-report=html --cov-fail-under=85 > .oodatcaa/work/coverage_report.log 2>&1
-   ```
+1. Add `mlx-lm` to dependencies section
+2. Add `mlx` (MLX core library)
+3. Add `transformers` (if not already present)
+4. Add `huggingface_hub` (for model downloads)
+5. Specify versions (pin or use ranges)
+6. Add optional training dependencies group if needed
+7. Run `pip-audit` to check for vulnerabilities
 
-2. **Analyze Overall Coverage:**
-   - Overall coverage percentage
-   - Modules below 85%
-   - Untested code sections
+**Exit Gate:**
+- [ ] pyproject.toml updated with MLX-LM dependencies
+- [ ] Versions specified (not unpinned)
+- [ ] `pip install -e .` works without errors
+- [ ] `pip check` passes (no dependency conflicts)
+- [ ] `pip-audit` passes (no high-severity vulnerabilities)
 
-3. **Analyze New Code Coverage (Sprint 2):**
-   - Coverage for P001 daemon code (scripts/agent-daemon.py)
-   - Coverage for P002 rotation code (scripts/rotate-logs.sh - bash, exempt)
-   - Coverage for P003 management code (scripts/sprint-*.sh - bash, exempt)
-   - Note: Bash scripts exempt from Python coverage
+**Dependencies to Add:**
+```toml
+[project]
+dependencies = [
+    # ... existing dependencies ...
+    "mlx-lm>=0.16.0,<1.0.0",
+    "mlx>=0.16.0,<1.0.0",
+    "transformers>=4.40.0,<5.0.0",
+    "huggingface-hub>=0.23.0,<1.0.0",
+]
+```
 
-4. **Identify Coverage Gaps:**
-   - Which modules need more tests?
-   - Which functions untested?
-   - Critical paths covered?
-
-5. **Document Results:**
-   - Overall coverage: X%
-   - Pass/fail (≥ 85%)
-   - Coverage gaps identified
-   - Recommendations for Sprint 3
-
-**Deliverable:** `.oodatcaa/work/coverage_analysis.md` + HTML coverage report
-
-**Exit Gate:** Coverage analyzed, pass/fail documented, gaps identified
+**Deliverable:** Updated `pyproject.toml`
 
 ---
 
-#### **Step 11: Quality Standards Documentation (45 min)**
-**Goal:** Document Sprint 2 quality standards for Sprint 3+
+### Step 8: Quality Gates & Commit (10 minutes)
+
+**Goal:** Validate all quality gates pass, commit T001 work
 
 **Tasks:**
-1. **Create Quality Standards Document:**
-   `.oodatcaa/QUALITY_STANDARDS.md`
-   - Quality gates definitions
-   - Acceptance thresholds
-   - Technical debt policy
-   - Coverage requirements
-   - Performance benchmarks
-   - Security requirements
-   - Testing standards
+1. Run black formatter: `make fmt`
+2. Run ruff linter: `ruff check .`
+3. Run mypy type checker: `mypy .`
+4. Run pytest unit tests: `pytest -q`
+5. Run pip-audit: `pip-audit`
+6. Fix any issues (unlikely — documentation and scripts)
+7. Commit changes with `[plan]` label
 
-2. **Document Technical Debt Policy:**
-   - Acceptable technical debt (29 ruff, ~400 mypy)
-   - Debt tracking process
-   - Debt reduction targets
-   - When to accept vs fix
+**Exit Gate:**
+- [ ] `black --check .` passes
+- [ ] `ruff check .` passes
+- [ ] `mypy .` passes
+- [ ] `pytest -q` passes (existing tests)
+- [ ] `pip-audit` passes
+- [ ] Changes committed with clear message
 
-3. **Document Testing Standards:**
-   - Unit test requirements
-   - Integration test requirements
-   - Acceptance test requirements
-   - Coverage targets (85%)
-   - Test performance (< 30s)
+**Commands:**
+```bash
+make fmt
+make gates
+git add .
+git commit -m "[plan] T001: Framework selection complete - MLX-LM chosen, installation validated, memory profiled"
+```
 
-4. **Document CI/CD Requirements:**
-   - What must pass before merge
-   - Automated checks
-   - Manual validation steps
-   - Release criteria
+**Commit Message Pattern:** `[plan] T001: <summary of work>`
 
-5. **Document Sprint 2 Baseline:**
-   - All quality metrics
-   - Comparison to Sprint 1
-   - Net changes (improvements/regressions)
-   - Certification status
-
-**Deliverable:** `.oodatcaa/QUALITY_STANDARDS.md` + baseline comparison
-
-**Exit Gate:** Quality standards fully documented for Sprint 3+
-
----
-
-#### **Step 12: CI/CD Readiness Assessment (30 min)**
-**Goal:** Assess readiness for automated CI/CD pipeline
-
-**Tasks:**
-1. **Identify CI/CD Requirements:**
-   - What should run on every PR?
-   - What should run before merge?
-   - What should run on main branch?
-   - What should run nightly?
-
-2. **Assess Current Tooling:**
-   - Makefile commands ready for CI: yes/no
-   - Scripts CI-compatible: yes/no
-   - Dependencies installable: yes/no
-   - Tests isolated (no external deps): yes/no
-
-3. **Identify Gaps:**
-   - Missing CI configuration
-   - Environment setup needed
-   - Secrets management
-   - Artifact storage
-
-4. **Create CI/CD Roadmap:**
-   - Sprint 3: Basic CI (quality gates on PR)
-   - Sprint 4: Full CI/CD (automated deployment)
-   - Sprint 5: Advanced (performance testing, security scans)
-
-5. **Document Results:**
-   - CI/CD readiness: ready / needs work / not ready
-   - Gaps identified
-   - Roadmap for Sprint 3+
-
-**Deliverable:** `.oodatcaa/work/cicd_readiness.md`
-
-**Exit Gate:** CI/CD readiness assessed, roadmap created
-
----
-
-#### **Step 13: Sprint 2 Quality Certification (30 min)**
-**Goal:** Certify Sprint 2 as production-ready
-
-**Tasks:**
-1. **Review All Validation Results:**
-   - Quality gates: 8/8 passed or acceptable
-   - Regression tests: zero critical failures
-   - Integration tests: P001, P002, P003 validated
-   - Performance: baselines met
-   - Coverage: ≥ 85%
-   - Technical debt: documented and accepted
-
-2. **Create Certification Report:**
-   `.oodatcaa/work/sprint2_quality_certification.md`
-   - Executive summary
-   - Quality gates status
-   - Regression test results
-   - Integration test results
-   - Performance results
-   - Coverage results
-   - Technical debt summary
-   - Certification decision: APPROVED / CONDITIONAL / REJECTED
-
-3. **Document Known Issues:**
-   - 29 ruff errors (accepted technical debt)
-   - ~400 mypy errors (accepted technical debt)
-   - 3 skipped tests (Qdrant unavailable - acceptable)
-   - Any other issues discovered
-
-4. **Create Recommendations:**
-   - High priority for Sprint 3
-   - Medium priority for Sprint 4+
-   - Technical debt reduction plan
-
-5. **Certification Decision:**
-   - **APPROVED:** Sprint 2 production-ready, proceed to Sprint 3
-   - **CONDITIONAL:** Minor issues, address before Sprint 3
-   - **REJECTED:** Critical issues, cannot proceed (unlikely)
-
-**Deliverable:** `.oodatcaa/work/sprint2_quality_certification.md`
-
-**Exit Gate:** Sprint 2 certified, decision documented, recommendations clear
+**Deliverable:** Committed branch `feat/T001-step-01-framework-selection`
 
 ---
 
 ## Task Breakdown for SPRINT_QUEUE.json
 
-### P007-B01: Steps 1-7 - Quality Gates + Regression + Integration Testing
-**Complexity:** Large  
-**Estimated Time:** 255 minutes (~4.25 hours)  
-**Steps:** 1, 2, 3, 4, 5, 6, 7  
-**Dependencies:** None (P001, P002, P003 complete)  
-**Deliverables:**
-- Tool verification report
-- Quality baseline Sprint 1 documented
-- Quality gates Sprint 2 executed (8 gates + logs)
-- Regression analysis complete
-- Integration tests: P001 daemon, P002 rotation, P003 sprint management
-- Cross-system integration validated
-
-**Branch:** `feat/P007-step-01-quality-validation` (no code changes, only test execution and reports)
-
-**Exit Criteria:** All quality gates run, regression tests complete, integration tests done
-
----
-
-### P007-B02: Steps 8-13 - Performance + Coverage + Standards + Certification
+### T001-B01: Steps 1-5 — Research, Install, Model Load, Inference, Memory Profile
 **Complexity:** Medium  
-**Estimated Time:** 185 minutes (~3 hours)  
-**Steps:** 8, 9, 10, 11, 12, 13  
-**Dependencies:** P007-B01  
-**Deliverables:**
-- Performance validation results
-- Coverage analysis (≥ 85%)
-- Quality standards documentation
-- CI/CD readiness assessment
-- Sprint 2 quality certification
+**Estimated Time:** 120 minutes  
+**Status:** ready  
+**Dependencies:** None  
+**Exit Gates:** Steps 1-5 complete, all ACs 1-6 validated
 
-**Branch:** `feat/P007-step-02-standards-certification` (documentation only)
+### T001-B02: Steps 6-8 — Documentation, Dependencies, Quality Gates
+**Complexity:** Small  
+**Estimated Time:** 40 minutes  
+**Status:** blocked (depends on T001-B01)  
+**Dependencies:** T001-B01  
+**Exit Gates:** Steps 6-8 complete, ACs 7-8 validated
 
-**Exit Criteria:** Performance validated, coverage analyzed, standards documented, Sprint 2 certified
-
----
-
-### P007-T01: Testing - Verify All 12 Acceptance Criteria
-**Complexity:** Medium  
-**Estimated Time:** 45 minutes  
-**Dependencies:** P007-B02  
-**Deliverables:**
-- All 12 acceptance criteria verified
-- Certification validated
-- Quality standards reviewed
-- Recommendations feasibility assessed
-
-**Exit Criteria:** All ACs pass, Sprint 2 certified production-ready
+### T001-T01: Validation — Verify All 8 ACs Pass
+**Complexity:** Small  
+**Estimated Time:** 20 minutes  
+**Status:** blocked (depends on T001-B02)  
+**Dependencies:** T001-B02  
+**Exit Gates:** All 8 ACs validated, TEST_PLAN.md checks pass
 
 ---
 
-## Exit Criteria Summary
+## Deliverables Summary
 
-This task is complete when:
-1. ✅ All 8 quality gates run and results documented
-2. ✅ Full test suite passes (zero critical regressions)
-3. ✅ P001 daemon integration validated
-4. ✅ P002 log rotation integration validated
-5. ✅ P003 sprint management integration validated
-6. ✅ Cross-system integration validated
-7. ✅ Performance baselines met
-8. ✅ Coverage ≥ 85% overall and for new code
-9. ✅ Sprint 1 vs Sprint 2 baseline comparison complete
-10. ✅ Quality standards documented for Sprint 3+
-11. ✅ CI/CD readiness assessed
-12. ✅ Sprint 2 certified production-ready
+| Deliverable | Location | Size Estimate | AC Coverage |
+|-------------|----------|---------------|-------------|
+| Framework Evaluation Report | `docs/training/T001_framework_evaluation.md` | ~500 lines | AC1, AC2 |
+| Model Loading Script | `scripts/training/load_model_test.py` | ~50 lines | AC4 |
+| Inference Test Script | `scripts/training/inference_test.py` | ~100 lines | AC5 |
+| Inference Test Results | `docs/training/inference_test_results.md` | ~200 lines | AC5 |
+| Memory Profile Script | `scripts/training/memory_profile.py` | ~80 lines | AC6 |
+| Memory Profile Report | `docs/training/memory_profile.md` | ~300 lines | AC6 |
+| Framework Setup Guide | `docs/training/FRAMEWORK_SETUP.md` | ~400 lines | AC7 |
+| Updated pyproject.toml | `pyproject.toml` | +10 lines | AC8 |
 
-**Unblocks:** Sprint 2 completion, Sprint 3 planning
+**Total Deliverables:** 7 documentation files + 3 Python scripts + 1 config update = **11 files**  
+**Estimated Total Lines:** ~1,640 lines (documentation + scripts)
 
 ---
 
-## Notes
+## Risk Mitigation
 
-- **No Code Changes:** This is validation and documentation only, no functional changes
-- **Accept Technical Debt:** 29 ruff errors and ~400 mypy errors are documented, acceptable if not regressed
-- **Integration Focus:** New systems (P001, P002, P003) need thorough integration testing
-- **Baseline Critical:** Sprint 1 vs Sprint 2 comparison essential for regression detection
-- **Certification Goal:** Certify Sprint 2 production-ready for Sprint 3
-- **Quality Framework:** Establish standards and processes for all future sprints
-- **CI/CD Readiness:** Assess readiness for automated pipelines in Sprint 3+
+| Risk | Mitigation Strategy | Contingency Plan |
+|------|---------------------|------------------|
+| MLX-LM incompatible with Qwen2.5-Coder-7B | Verify model support in Step 3 early | Switch to axolotl (Alternative 2), +90 min |
+| Memory exceeds 16GB during training | Profile memory in Step 5 with batch size 1 | Reduce batch size, use gradient accumulation |
+| Model download fails (14GB size) | Document download process, provide HuggingFace CLI alternative | Use HuggingFace mirror, local download |
+| Installation conflicts with MCP packages | Run `pip check` in Step 2 | Use isolated venv, pin conflicting versions |
+| Inference too slow (>5 sec/token) | Measure inference time in Step 4 | Document limitation, proceed (inference speed not Sprint 4 goal) |
 
 ---
 
-**Plan Status:** ✅ Complete  
-**Ready for:** Builder (P007-B01)  
-**Estimated Total Time:** 485 minutes (~8 hours across 2 builder tasks + testing)
+## Sprint Impact
+
+**Sprint 4 Progress:**
+- T001: 0% → 100% (upon completion)
+- Sprint 4: 0% → 12.5% (T001 is 1 of 8 tasks)
+- Objective: ~25% → ~27% (T001 advances training foundation)
+
+**Unblocks:**
+- T002 (QLoRA Configuration) — Can configure LoRA rank, alpha, quantization
+- T003 (Dataset Schema) — Can design dataset format for MLX-LM training
+
+**Dependencies Satisfied:** None (T001 is first task in Sprint 4)
+
+**Critical Path:** T001 → T002 → T004 → T005 → T006 → T008 (critical path dependencies)
+
+---
+
+## Handoff to Builder
+
+### What Builder Needs to Know
+
+1. **Framework Selection**: MLX-LM chosen for M1 Max optimization, memory efficiency, ease of use
+2. **Model Target**: Qwen2.5-Coder-7B-Instruct (~14GB download, 7B parameters)
+3. **Proof-of-Concept Scope**: Install MLX-LM, load model, run inference, profile memory (no training yet)
+4. **Success Criteria**: All 8 ACs validated, especially AC6 (memory ≤16GB target)
+5. **Timeline**: 160 minutes total (120 min T001-B01, 40 min T001-B02)
+
+### Key Implementation Notes
+
+- **Branch Naming**: `feat/T001-step-01-framework-selection`
+- **Commit Labels**: `[plan]` for planning artifacts, `[impl]` for code/config changes
+- **Quality Gates**: All must pass (black, ruff, mypy, pytest, pip-audit)
+- **Documentation**: Comprehensive guides for reproducibility (future sprints will reference)
+- **Memory Target**: ≤16GB training, ≤8GB inference (validate in Step 5)
+
+### Exit Criteria Checklist
+
+Builder should verify each AC before marking T001-B01/T001-B02 complete:
+- [ ] AC1: Framework evaluation report exists with 2 frameworks compared
+- [ ] AC2: Framework selected (MLX-LM) with 3+ decision factors
+- [ ] AC3: MLX-LM installed, import test passes
+- [ ] AC4: Qwen2.5-Coder-7B-Instruct loaded, architecture validated
+- [ ] AC5: Inference test passes, generates coherent response
+- [ ] AC6: Memory profiled (inference + training estimate)
+- [ ] AC7: Installation guide documented
+- [ ] AC8: pyproject.toml updated, pip-audit passes
+
+---
+
+**Plan Status:** ✅ COMPLETE — Ready for Builder assignment
+
+**Next Action:** Negotiator assigns T001-B01 to Builder (120 min estimate)
