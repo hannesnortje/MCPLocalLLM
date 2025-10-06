@@ -545,7 +545,7 @@ qdrant:
 embedding:
   model_name: string   # HuggingFace model name
   dimension: integer   # Vector dimension
-  device: string       # cpu|cuda|mps
+  device: string       # cpu|mps (Apple Silicon GPU)
   cache_folder: string? # Optional cache directory
 
 markdown:

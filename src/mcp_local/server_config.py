@@ -58,7 +58,7 @@ class EmbeddingConfig:
     model_name: str = "all-MiniLM-L6-v2"
     dimension: int = 384
     cache_folder: str | None = None
-    device: str = "cpu"  # or "cuda" for GPU
+    device: str = "cpu"  # or "mps" for Apple Silicon GPU
 
 
 @dataclass

@@ -24,7 +24,7 @@
 - **Parameters:** 7,615,616,512 (7.62B)
 - **Architecture:** Qwen2ForCausalLM
 - **Precision:** float16 (torch.float16)
-- **Device:** CPU (no CUDA available)
+- **Device:** CPU (MPS available for Apple Silicon)
 
 **Inference Parameters:**
 - **Max new tokens:** 100
@@ -238,7 +238,7 @@ print(f"Target {target} found at index: {result}")  # Output: Target 7 found at 
 
 ### For Production Deployment
 1. **Upgrade to M1 Max** — Original target hardware for optimal performance
-2. **Add GPU acceleration** — CUDA-compatible GPU for better speed
+2. **Add GPU acceleration** — Apple Silicon MPS or MLX-LM for better speed
 3. **Implement optimizations** — Model quantization, batch processing
 
 ### For Framework Validation

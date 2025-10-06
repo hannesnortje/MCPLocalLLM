@@ -26,7 +26,7 @@ Memory profiling reveals that **Qwen2.5-Coder-7B-Instruct training exceeds the 1
 **Test Configuration:**
 - Model: Qwen2.5-Coder-7B-Instruct (7.62B parameters)
 - Framework: axolotl/transformers with PyTorch
-- Device: CPU (no CUDA available)
+- Device: CPU (MPS available for Apple Silicon)
 - Precision: float16 (torch.float16)
 
 **Memory Measurements:**
@@ -117,7 +117,7 @@ Total estimated:      18.67 GB
 
 #### Option 2: Hardware Upgrade
 - **More RAM:** Upgrade to 32GB+ system
-- **GPU acceleration:** Add CUDA-compatible GPU
+- **GPU acceleration:** Use Apple Silicon MPS or MLX-LM
 - **M1 Max system:** Use original target hardware
 
 #### Option 3: Model Alternatives

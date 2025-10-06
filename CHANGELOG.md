@@ -1403,14 +1403,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Installation Achievement:**
 - **Total packages:** 83 packages installed
-- **Installation size:** ~7GB (includes PyTorch 2.8.0 with CUDA support)
+- **Installation size:** ~7GB (includes PyTorch 2.8.0 with MPS support)
 - **Key packages:**
-  - PyTorch 2.8.0+cu128 (ML framework with CUDA)
+  - PyTorch 2.8.0 (ML framework with MPS support)
   - sentence-transformers 2.7.0 (semantic embeddings)
   - qdrant-client 1.15.1 (vector database)
   - mcp 1.15.0 (Model Context Protocol)
   - transformers 4.56.2 (Hugging Face transformers)
-  - All NVIDIA CUDA libraries included
+  - Apple Silicon MPS support included
 
 **Import Verification (All PASS):**
 - ✅ 10/10 MCP imports successful (mcp, qdrant_client, sentence_transformers, torch, numpy, markdown, bs4, aiohttp, aiofiles, yaml)

@@ -30,7 +30,7 @@ def load_model():
     print(f"Model: {model_name}")
     print("Framework: axolotl/transformers")
     print(f"PyTorch version: {torch.__version__}")
-    print(f"Device: {'CUDA' if torch.cuda.is_available() else 'CPU'}")
+    print(f"Device: {'MPS' if torch.backends.mps.is_available() else 'CPU'}")
     print()
 
     # Check initial memory
@@ -51,7 +51,7 @@ def load_model():
         print("\nStep 2: Loading model...")
         start_time = time.time()
 
-        # Load model with CPU (since we don't have CUDA on this system)
+        # Load model with CPU (MPS available but using CPU for compatibility)
         model = AutoModelForCausalLM.from_pretrained(
             model_name,
             torch_dtype=torch.float16,  # Use float16 to save memory

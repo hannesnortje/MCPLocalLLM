@@ -89,7 +89,7 @@
    # In config.yaml
    embedding:
      model_name: "all-MiniLM-L6-v2"  # Faster, smaller model
-     device: "cpu"  # Use "cuda" if you have GPU
+     device: "cpu"  # Use "mps" if you have Apple Silicon
    
    markdown:
      chunk_size: 500  # Reduce for lower memory usage
@@ -213,7 +213,7 @@
 3. **Use GPU acceleration** (if available):
    ```yaml
    embedding:
-     device: "cuda"  # or "mps" for Apple Silicon
+     device: "mps"  # Apple Silicon GPU acceleration
    ```
 
 ### Memory Usage Optimization

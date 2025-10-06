@@ -161,7 +161,7 @@ def estimate_training_memory(model, tokenizer):
         # Gradients: ~50MB (16-bit)
         # Optimizer states: ~100MB (AdamW)
         # Activations: ~2-4GB (depends on sequence length)
-        # Overhead: ~1-2GB (PyTorch, CUDA, etc.)
+        # Overhead: ~1-2GB (PyTorch, MLX, etc.)
 
         base_model_memory = 14.0  # GB (measured)
         lora_params_memory = total_lora_params * 2 / (1024**3)  # 16-bit = 2 bytes

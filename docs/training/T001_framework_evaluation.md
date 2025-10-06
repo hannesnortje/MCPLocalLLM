@@ -138,6 +138,7 @@ Popular LoRA/QLoRA training framework built on HuggingFace Transformers and PyTo
 ### Cons ⚠️
 
 **M1 Max Optimization (Poor)**
+- ✅ **MLX-LM framework** — Apple's native framework optimized for M1 Max
 - ⚠️ **PyTorch MPS backend** — MPS (Metal Performance Shaders) support is less mature than CUDA
 - ⚠️ **Generic optimization** — Not specifically optimized for Apple Silicon
 - ⚠️ **Slower inference** — PyTorch MPS generally slower than native MLX on M1 Max
